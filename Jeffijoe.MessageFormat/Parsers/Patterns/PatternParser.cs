@@ -26,7 +26,6 @@ namespace Jeffijoe.MessageFormat.Parsers.Patterns
             {
                 // The first token to follow an opening brace will be the key, ended by a comma.
                 var key = GetKey(literal);
-                
             }
         }
 
