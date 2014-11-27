@@ -1,7 +1,14 @@
-﻿using System.Collections.Generic;
+﻿// ILiteralParser.cs
+// - MessageFormat
+// -- Jeffijoe.MessageFormat
+// 
+// Author: Jeff Hansen <jeff@jeffijoe.com>
+// Copyright © 2014.
+
+using System.Collections.Generic;
 using System.Text;
 
-namespace Jeffijoe.MessageFormat.Parsers.Literals
+namespace Jeffijoe.MessageFormat.Parsing
 {
     /// <summary>
     /// Brace parser contract.

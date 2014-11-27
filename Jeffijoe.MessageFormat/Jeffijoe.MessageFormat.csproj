@@ -37,14 +37,16 @@
     <!-- A reference to the entire .NET Framework is automatically included -->
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Formatting\FormatterParameters.cs" />
     <Compile Include="Helpers\CharHelper.cs" />
-    <Compile Include="Parsers\MalformedLiteralException.cs" />
-    <Compile Include="Parsers\Literals\Literal.cs" />
-    <Compile Include="Parsers\Literals\UnbalancedBracesException.cs" />
-    <Compile Include="Parsers\Literals\LiteralParser.cs" />
-    <Compile Include="Parsers\Literals\ILiteralParser.cs" />
-    <Compile Include="Parsers\Patterns\IPatternParser.cs" />
-    <Compile Include="Parsers\Patterns\PatternParser.cs" />
+    <Compile Include="Helpers\StringBuilderHelper.cs" />
+    <Compile Include="Parsing\MalformedLiteralException.cs" />
+    <Compile Include="Parsing\Literal.cs" />
+    <Compile Include="Parsing\UnbalancedBracesException.cs" />
+    <Compile Include="Parsing\LiteralParser.cs" />
+    <Compile Include="Parsing\ILiteralParser.cs" />
+    <Compile Include="Parsing\IPatternParser.cs" />
+    <Compile Include="Parsing\PatternParser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />

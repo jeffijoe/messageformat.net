@@ -1,12 +1,30 @@
-﻿using System;
+﻿// UnbalancedBracesException.cs
+// - MessageFormat
+// -- Jeffijoe.MessageFormat
+// 
+// Author: Jeff Hansen <jeff@jeffijoe.com>
+// Copyright © 2014.
 
-namespace Jeffijoe.MessageFormat.Parsers.Literals
+using System;
+
+namespace Jeffijoe.MessageFormat.Parsing
 {
     /// <summary>
     /// Thrown when the amount of open and close braces does not match.
     /// </summary>
     public class UnbalancedBracesException : ArgumentException
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="UnbalancedBracesException" /> class.
+        /// </summary>
+        /// <param name="openBraceCount">The brace counter.</param>
+        /// <param name="closeBraceCount">The close brace count.</param>
+        internal UnbalancedBracesException(int openBraceCount, int closeBraceCount) : base(BuildMessage(openBraceCount, closeBraceCount))
+        {
+            OpenBraceCount = openBraceCount;
+            CloseBraceCount = closeBraceCount;
+        }
+
         /// <summary>
         /// Gets the brace count.
         /// </summary>
@@ -22,17 +40,6 @@ namespace Jeffijoe.MessageFormat.Parsers.Literals
         /// The close brace count.
         /// </value>
         public int CloseBraceCount { get; private set; }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="UnbalancedBracesException" /> class.
-        /// </summary>
-        /// <param name="openBraceCount">The brace counter.</param>
-        /// <param name="closeBraceCount">The close brace count.</param>
-        internal UnbalancedBracesException(int openBraceCount, int closeBraceCount) : base(BuildMessage(openBraceCount, closeBraceCount))
-        {
-            OpenBraceCount = openBraceCount;
-            CloseBraceCount = closeBraceCount;
-        }
 
         /// <summary>
         /// Builds the message.

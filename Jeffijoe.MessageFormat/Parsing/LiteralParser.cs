@@ -8,7 +8,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Jeffijoe.MessageFormat.Parsers.Literals
+namespace Jeffijoe.MessageFormat.Parsing
 {
     /// <summary>
     /// Parser for extracting brace matches from a string builder.

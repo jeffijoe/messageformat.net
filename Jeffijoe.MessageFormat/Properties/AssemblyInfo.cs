@@ -1,7 +1,13 @@
-﻿using System.Resources;
+﻿// AssemblyInfo.cs
+// - MessageFormat
+// -- Jeffijoe.MessageFormat
+// 
+// Author: Jeff Hansen <jeff@jeffijoe.com>
+// Copyright © 2014.
+
 using System.Reflection;
+using System.Resources;
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information

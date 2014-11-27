@@ -1,12 +1,41 @@
-﻿using System.Text;
+﻿// Literal.cs
+// - MessageFormat
+// -- Jeffijoe.MessageFormat
+// 
+// Author: Jeff Hansen <jeff@jeffijoe.com>
+// Copyright © 2014.
 
-namespace Jeffijoe.MessageFormat.Parsers.Literals
+using System.Text;
+
+namespace Jeffijoe.MessageFormat.Parsing
 {
     /// <summary>
     /// Represents a position in the source text where we should look for format patterns.
     /// </summary>
     public class Literal
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Literal" /> class.
+        /// </summary>
+        /// <param name="startIndex">The start index.</param>
+        /// <param name="endIndex">The end index.</param>
+        /// <param name="sourceLineNumber">The source line number.</param>
+        /// <param name="sourceColumnNumber">The source column number.</param>
+        /// <param name="innerText">The inner text.</param>
+        public Literal(
+            int startIndex, 
+            int endIndex, 
+            int sourceLineNumber,
+            int sourceColumnNumber,
+            StringBuilder innerText)
+        {
+            StartIndex = startIndex;
+            EndIndex = endIndex;
+            SourceLineNumber = sourceLineNumber;
+            SourceColumnNumber = sourceColumnNumber;
+            InnerText = innerText;
+        }
+
         /// <summary>
         /// Gets or sets the start index in the source string.
         /// </summary>
@@ -46,27 +75,5 @@ namespace Jeffijoe.MessageFormat.Parsers.Literals
         /// The inner text.
         /// </value>
         public StringBuilder InnerText { get; set; }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Literal" /> class.
-        /// </summary>
-        /// <param name="startIndex">The start index.</param>
-        /// <param name="endIndex">The end index.</param>
-        /// <param name="sourceLineNumber">The source line number.</param>
-        /// <param name="sourceColumnNumber">The source column number.</param>
-        /// <param name="innerText">The inner text.</param>
-        public Literal(
-            int startIndex, 
-            int endIndex, 
-            int sourceLineNumber,
-            int sourceColumnNumber,
-            StringBuilder innerText)
-        {
-            StartIndex = startIndex;
-            EndIndex = endIndex;
-            SourceLineNumber = sourceLineNumber;
-            SourceColumnNumber = sourceColumnNumber;
-            InnerText = innerText;
-        }
     }
 }

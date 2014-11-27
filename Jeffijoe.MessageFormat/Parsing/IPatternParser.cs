@@ -4,7 +4,7 @@
 // 
 // Author: Jeff Hansen <jeff@jeffijoe.com>
 // Copyright © 2014.
-namespace Jeffijoe.MessageFormat.Parsers.Patterns
+namespace Jeffijoe.MessageFormat.Parsing
 {
     /// <summary>
     /// The pattern parser extracts patterns from a string.

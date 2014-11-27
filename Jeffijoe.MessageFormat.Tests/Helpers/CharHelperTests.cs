@@ -24,5 +24,15 @@ namespace Jeffijoe.MessageFormat.Tests.Helpers
             Assert.False('æ'.IsAlphaNumeric());
             Assert.False('å'.IsAlphaNumeric());
         }
+
+        [Fact]
+        public void IsWhitespace()
+        {
+            Assert.True(char.IsWhiteSpace(' '));
+            Assert.True(char.IsWhiteSpace('\r'));
+            Assert.True(char.IsWhiteSpace('\n'));
+            Assert.True(char.IsWhiteSpace('\t'));
+            Assert.False(char.IsWhiteSpace('1'));
+        }
     }
 }

@@ -7,11 +7,11 @@
 
 using System.Linq;
 using System.Text;
-using Jeffijoe.MessageFormat.Parsers.Literals;
+using Jeffijoe.MessageFormat.Parsing;
 using Xunit;
 using Xunit.Extensions;
 
-namespace Jeffijoe.MessageFormat.Tests.Parsers.Literals
+namespace Jeffijoe.MessageFormat.Tests.Parsing
 {
     public class LiteralParserTests
     {

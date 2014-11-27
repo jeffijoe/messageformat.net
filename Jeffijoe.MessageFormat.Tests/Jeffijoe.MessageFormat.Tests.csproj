@@ -56,8 +56,10 @@
   </Choose>
   <ItemGroup>
     <Compile Include="Helpers\CharHelperTests.cs" />
-    <Compile Include="Parsers\Literals\LiteralParserTests.cs" />
-    <Compile Include="Parsers\Patterns\PatternParserTests.cs" />
+    <Compile Include="Helpers\StringBuilderHelperTests.cs" />
+    <Compile Include="Parsing\LiteralParserTests.cs" />
+    <Compile Include="Parsing\PatternParser\PatternParser_GetKey_Tests.cs" />
+    <Compile Include="Parsing\PatternParser\PatternParser_Parse_Tests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
