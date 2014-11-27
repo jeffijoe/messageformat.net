@@ -1,0 +1,32 @@
+#ignore thumbnails created by windows
+Thumbs.db
+#Ignore files build by Visual Studio
+*.user
+*.aps
+*.pch
+*.vspscc
+*_i.c
+*_p.c
+*.ncb
+*.suo
+*.bak
+*.cache
+*.ilk
+*.log
+*.log.*
+[Bb]in
+[Dd]ebug*/
+*.sbr
+obj/
+[Rr]elease*/
+_ReSharper*/
+packages/
+.nuget
+packages
+obj
+bin
+imagecache
+/Source/MemberLinkTeam.Apps/Components/googleplayservices-19.0.0.2/samples
+/Source/MemberLinkTeam.Apps/Libraries/googleplayservices-19.0.0.2/lib/android/19/content/google-play-services
+/Source/MemberLinkTeam.Apps/Libraries/googleplayservices-19.0.0.2/samples
+/Source/MemberLinkTeam.Apps/Components/googleplayservices-19.0.0.2/lib/android/19/content/google-play-services
