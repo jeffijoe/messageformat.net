@@ -75,5 +75,16 @@ namespace Jeffijoe.MessageFormat.Parsing
         /// The inner text.
         /// </value>
         public StringBuilder InnerText { get; set; }
+
+        /// <summary>
+        /// Updates the start and end index.
+        /// </summary>
+        /// <param name="resultLength">Length of the result.</param>
+        /// <param name="literal">The literal that was just formatted. We use it's inner text length to determine the new indices.</param>
+        public void ShiftIndices(int resultLength, Literal literal)
+        {
+            StartIndex = (StartIndex - literal.InnerText.Length) + resultLength;
+            EndIndex = (EndIndex - literal.InnerText.Length) + resultLength;
+        }
     }
 }

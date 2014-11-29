@@ -37,9 +37,20 @@
     <!-- A reference to the entire .NET Framework is automatically included -->
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Formatting\FormatterParameters.cs" />
+    <Compile Include="FormatterNotFoundException.cs" />
+    <Compile Include="Formatting\FormatterLibrary.cs" />
+    <Compile Include="Formatting\IFormatterLibrary.cs" />
+    <Compile Include="Formatting\VariableNotFoundException.cs" />
+    <Compile Include="Formatting\FormatterRequest.cs" />
+    <Compile Include="Formatting\Formatters\SelectFormatter.cs" />
+    <Compile Include="Formatting\IFormatter.cs" />
     <Compile Include="Helpers\CharHelper.cs" />
     <Compile Include="Helpers\StringBuilderHelper.cs" />
+    <Compile Include="IMessageFormatter.cs" />
+    <Compile Include="MessageFormatter.cs" />
+    <Compile Include="MessageFormatterException.cs" />
+    <Compile Include="Parsing\FormatterRequestCollection.cs" />
+    <Compile Include="Parsing\IFormatterRequestCollection.cs" />
     <Compile Include="Parsing\MalformedLiteralException.cs" />
     <Compile Include="Parsing\Literal.cs" />
     <Compile Include="Parsing\UnbalancedBracesException.cs" />

@@ -12,7 +12,7 @@ namespace Jeffijoe.MessageFormat.Parsing
     /// <summary>
     /// Thrown when the pattern parser finds an invalid character in a literal.
     /// </summary>
-    public class MalformedLiteralException : Exception
+    public class MalformedLiteralException : MessageFormatterException
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="MalformedLiteralException" /> class.

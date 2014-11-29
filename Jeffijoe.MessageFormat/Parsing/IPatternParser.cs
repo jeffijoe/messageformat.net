@@ -4,6 +4,11 @@
 // 
 // Author: Jeff Hansen <jeff@jeffijoe.com>
 // Copyright © 2014.
+
+using System.Collections.Generic;
+using System.Text;
+using Jeffijoe.MessageFormat.Formatting;
+
 namespace Jeffijoe.MessageFormat.Parsing
 {
     /// <summary>
@@ -11,6 +16,12 @@ namespace Jeffijoe.MessageFormat.Parsing
     /// </summary>
     public interface IPatternParser
     {
-         
+        /// <summary>
+        /// Parses the source, extracting formatter parameters
+        /// describing what formatter to use, as well as it's options.
+        /// </summary>
+        /// <param name="source">The source.</param>
+        /// <returns></returns>
+        IFormatterRequestCollection Parse(StringBuilder source);
     }
 }
