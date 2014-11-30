@@ -38,8 +38,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="FormatterNotFoundException.cs" />
+    <Compile Include="Formatting\BaseFormatter.cs" />
+    <Compile Include="Formatting\FormatterExtension.cs" />
     <Compile Include="Formatting\FormatterLibrary.cs" />
     <Compile Include="Formatting\IFormatterLibrary.cs" />
+    <Compile Include="Formatting\KeyedBlock.cs" />
+    <Compile Include="Formatting\ParsedArguments.cs" />
     <Compile Include="Formatting\VariableNotFoundException.cs" />
     <Compile Include="Formatting\FormatterRequest.cs" />
     <Compile Include="Formatting\Formatters\SelectFormatter.cs" />

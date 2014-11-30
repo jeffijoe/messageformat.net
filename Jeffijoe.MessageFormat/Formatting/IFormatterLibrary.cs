@@ -18,15 +18,9 @@ namespace Jeffijoe.MessageFormat.Formatting
         void Add(IFormatter formatter);
 
         /// <summary>
-        /// Removes the specified formatter. Why you doin' me like this eh?
-        /// </summary>
-        /// <param name="formatter">The formatter.</param>
-        void Remove(IFormatter formatter);
-
-        /// <summary>
         /// Gets the formatter to use. If none was found, throws an exception.
         /// </summary>
-        /// <param name="request">The parameters.</param>
+        /// <param name="request">The request.</param>
         /// <returns></returns>
         IFormatter GetFormatter(FormatterRequest request);
     }

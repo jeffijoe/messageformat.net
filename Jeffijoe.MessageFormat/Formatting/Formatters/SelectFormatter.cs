@@ -5,7 +5,7 @@ namespace Jeffijoe.MessageFormat.Formatting.Formatters
     /// <summary>
     /// Implementation of the SelectFormat.
     /// </summary>
-    public class SelectFormatter : IFormatter
+    public class SelectFormatter : BaseFormatter, IFormatter
     {
         /// <summary>
         /// Determines whether this instance can format a message based on the specified parameters.

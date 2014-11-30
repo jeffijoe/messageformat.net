@@ -95,7 +95,7 @@ namespace Jeffijoe.MessageFormat.Parsing
 
 
                 if (openBraces != closeBraces) continue;
-                // Passing in the text buffer instead of the actual string to void allocating a new string.
+                // Passing in the text buffer instead of the actual string to avoid allocating a new string.
                 result.Add(new Literal(start, i, startLineNumber, startColumnNumber, matchTextBuf));
                 matchTextBuf = new StringBuilder();
                 start = 0;

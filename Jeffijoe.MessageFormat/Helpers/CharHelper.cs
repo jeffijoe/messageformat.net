@@ -28,15 +28,5 @@ namespace Jeffijoe.MessageFormat.Helpers
              }
              return false;
          }
-
-         /// <summary>
-         /// Determines whether the specified char is whitespace (space, tab, carriage return, line feed).
-         /// </summary>
-         /// <param name="c">The c.</param>
-         /// <returns></returns>
-        internal static bool IsWhitespace(this char c)
-        {
-            return (c == ' ' || c == '\r' || c == '\n' || c == '\t');
-        }
     }
 }
