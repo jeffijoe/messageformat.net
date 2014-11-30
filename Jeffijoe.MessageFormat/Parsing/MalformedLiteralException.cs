@@ -65,14 +65,14 @@ namespace Jeffijoe.MessageFormat.Parsing
         /// <returns></returns>
         private static string BuildMessage(string message, int lineNumber, int columnNumber, string sourceSnippet)
         {
-            var str = string.Empty;
+            var str = message;
             if(lineNumber != 0 && columnNumber != 0)
             {
                 str = string.Format("{0}\r\nLine {1}, column {2}", message, lineNumber, columnNumber);
             }
             if (string.IsNullOrWhiteSpace(sourceSnippet))
                 return str;
-            return string.Format("{0}\r\nOffending snippet: \"{1}\"", str, sourceSnippet);
+            return string.Format("Parser error: {0}\r\nOffending snippet: \"{1}\"", str, sourceSnippet);
         }
     }
 }

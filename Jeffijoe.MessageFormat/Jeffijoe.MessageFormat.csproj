@@ -41,6 +41,8 @@
     <Compile Include="Formatting\BaseFormatter.cs" />
     <Compile Include="Formatting\FormatterExtension.cs" />
     <Compile Include="Formatting\FormatterLibrary.cs" />
+    <Compile Include="Formatting\Formatters\PluralFormatter.cs" />
+    <Compile Include="Formatting\Formatters\ReplaceFormatter.cs" />
     <Compile Include="Formatting\IFormatterLibrary.cs" />
     <Compile Include="Formatting\KeyedBlock.cs" />
     <Compile Include="Formatting\ParsedArguments.cs" />

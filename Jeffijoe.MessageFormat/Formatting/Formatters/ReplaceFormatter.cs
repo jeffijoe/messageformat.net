@@ -1,12 +1,18 @@
-﻿using System;
+﻿// ReplaceFormatter.cs
+// - MessageFormat
+// -- Jeffijoe.MessageFormat
+// 
+// Author: Jeff Hansen <jeff@jeffijoe.com>
+// Copyright © 2014.
+
 using System.Collections.Generic;
 
 namespace Jeffijoe.MessageFormat.Formatting.Formatters
 {
     /// <summary>
-    /// Implementation of the SelectFormat.
+    /// Simple variable replacer.
     /// </summary>
-    public class SelectFormatter : BaseFormatter, IFormatter
+    public class ReplaceFormatter : IFormatter
     {
         /// <summary>
         /// Determines whether this instance can format a message based on the specified parameters.
@@ -15,7 +21,7 @@ namespace Jeffijoe.MessageFormat.Formatting.Formatters
         /// <returns></returns>
         public bool CanFormat(FormatterRequest request)
         {
-            return request.FormatterName == "select";
+            return request.FormatterName == null;
         }
 
         /// <summary>
@@ -31,22 +37,7 @@ namespace Jeffijoe.MessageFormat.Formatting.Formatters
         /// <returns></returns>
         public string Format(string locale, FormatterRequest request, Dictionary<string, object> args, IMessageFormatter messageFormatter)
         {
-            var parsed = ParseArguments(request);
-            KeyedBlock other = null;
-            foreach (var keyedBlock in parsed.KeyedBlocks)
-            {
-                object value;
-                if(args.TryGetValue(request.Variable, out value) == false)
-                    throw new VariableNotFoundException(keyedBlock.Key);
-                var str = Convert.ToString(value);
-                if (str == keyedBlock.Key)
-                    return messageFormatter.FormatMessage(keyedBlock.BlockText, args);
-                if (keyedBlock.Key == Other)
-                    other = keyedBlock;
-            }
-            if(other == null)
-                throw new MessageFormatterException("'other' option not found in pattern.");
-            return messageFormatter.FormatMessage(other.BlockText, args);
+            return args[request.Variable].ToString();
         }
     }
 }

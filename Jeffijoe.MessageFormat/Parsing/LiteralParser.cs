@@ -51,11 +51,13 @@ namespace Jeffijoe.MessageFormat.Parsing
 
                 if(c == openBrace)
                 {
-                    // Don't check for escaping when we're at the first char.
+                    // Don't check for escaping when we're at the first char
                     if (i != 0)
                     {
-                        if (sb[i - 1] == escapingBackslash) 
-                            continue;
+                        // Only escape if we're not inside a brace match
+                        if (sb[i - 1] == escapingBackslash)
+                            if(braceBalance == 0)
+                                continue;
                     }
                     openBraces++;
                     braceBalance++;
@@ -74,8 +76,10 @@ namespace Jeffijoe.MessageFormat.Parsing
                     // Don't check for escaping when we're at the first char.
                     if (i != 0)
                     {
+                        // Only escape if we're not inside a brace match
                         if (sb[i - 1] == escapingBackslash)
-                            continue;
+                            if (braceBalance <= 1)
+                                continue;
                     }
                     closeBraces++;
                     braceBalance--;

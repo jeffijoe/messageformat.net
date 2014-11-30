@@ -80,8 +80,51 @@ namespace Jeffijoe.MessageFormat
                 // The next requests will want to know what happened.
                 requests.ShiftIndices(i, result.Length);
             }
+
+            sourceBuilder = UnescapeLiterals(sourceBuilder);
+
             // And we're done.
             return sourceBuilder.ToString();
+        }
+
+        /// <summary>
+        /// Unescapes the literals from the source builder, and returns a new instance with literals unescaped..
+        /// </summary>
+        /// <param name="sourceBuilder">The source builder.</param>
+        /// <returns></returns>
+        /// <exception cref="System.NotImplementedException"></exception>
+        protected internal StringBuilder UnescapeLiterals(StringBuilder sourceBuilder)
+        {
+            var dest = new StringBuilder(sourceBuilder.Length, sourceBuilder.Length);
+            int length = sourceBuilder.Length;
+            const char escapeChar = '\\';
+            const char openBrace = '{';
+            const char closeBrace = '}';
+            int braceBalance = 0;
+            for (int i = 0; i < length; i++)
+            {
+                var c = sourceBuilder[i];
+                if(c == escapeChar)
+                {
+                    if (i != length - 1)
+                    {
+                        char next = sourceBuilder[i+1];
+                        if (next == openBrace)
+                        {
+                            braceBalance++;
+                            continue;
+                        }
+
+                        if(next == closeBrace)
+                        {
+                            braceBalance--;
+                            continue;
+                        }
+                    }
+                }
+                dest.Append(c);
+            }
+            return dest;
         }
 
         /// <summary>

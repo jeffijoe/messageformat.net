@@ -19,6 +19,9 @@ namespace Jeffijoe.MessageFormat.Tests.Parsing
     {
         [Theory]
         [InlineData("test, select, args", "test", "select", "args")]
+        [InlineData("test, select, stuff {dawg}", "test", "select", "stuff {dawg}")]
+        [InlineData("test, select, stuff \\{{dawg}\\}", "test", "select", "stuff \\{{dawg}\\}")]
+        [InlineData("test, select, stuff {dawg, select, {name is \\{{name}\\}}}", "test", "select", "stuff {dawg, select, {name is \\{{name}\\}}}")]
         public void Parse(string source, string expectedKey, string expectedFormat, string expectedArgs)
         {
             var literalParserMock = new Mock<ILiteralParser>();

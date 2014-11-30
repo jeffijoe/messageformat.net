@@ -12,6 +12,7 @@ using Jeffijoe.MessageFormat.Formatting;
 using Jeffijoe.MessageFormat.Parsing;
 using Moq;
 using Xunit;
+using Xunit.Extensions;
 
 namespace Jeffijoe.MessageFormat.Tests
 {
@@ -74,6 +75,19 @@ namespace Jeffijoe.MessageFormat.Tests
                 });
             var actual = subject.FormatMessage(pattern, args);
             collectionMock.Verify(x => x.ShiftIndices(0, 4), Times.Once);
+            Assert.Equal(expected, actual);
+        }
+
+        [Theory]
+        [InlineData(@"Hello \{buddy\}, how are you \{doing\}?", "Hello {buddy}, how are you {doing}?")]
+        [InlineData(@"Hello \\{buddy\\}, how are you \{doing\}?", @"Hello \{buddy\}, how are you {doing}?")]
+        public void UnescapeLiterals(string source, string expected)
+        {
+            var patternParserMock = new Mock<IPatternParser>();
+            var libraryMock = new Mock<IFormatterLibrary>();
+            var subject = new MessageFormatter(patternParserMock.Object, libraryMock.Object, "en");
+
+            var actual = subject.UnescapeLiterals(new StringBuilder(source)).ToString();
             Assert.Equal(expected, actual);
         }
 

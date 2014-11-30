@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using Jeffijoe.MessageFormat.Helpers;
+using Jeffijoe.MessageFormat.Parsing;
 
 namespace Jeffijoe.MessageFormat.Formatting
 {
@@ -10,6 +11,8 @@ namespace Jeffijoe.MessageFormat.Formatting
     /// </summary>
     public abstract class BaseFormatter
     {
+        protected const string Other = "other";
+
         /// <summary>
         /// Parses the arguments.
         /// </summary>
@@ -72,11 +75,6 @@ namespace Jeffijoe.MessageFormat.Formatting
                     continue;
                 }
 
-                if(c.IsAlphaNumeric() == false)
-                {
-                    throw new MessageFormatterException("Extension names can only be alpha-numerical characters. Not even sure numerical characters are valid, but what the hell.");
-                }
-
                 if(foundExtension)
                 {
                     value.Append(c);
@@ -104,8 +102,8 @@ namespace Jeffijoe.MessageFormat.Formatting
             var result = new List<KeyedBlock>();
             var key = new StringBuilder();
             var block = new StringBuilder();
-            var openBraces = 0;
-
+            var braceBalance = 0;
+            var foundWhitespaceAfterKey = false;
             for (int i = startIndex; i < request.FormatterArguments.Length; i++)
             {
                 var c = request.FormatterArguments[i];
@@ -113,35 +111,76 @@ namespace Jeffijoe.MessageFormat.Formatting
 
                 if(c == openBrace)
                 {
-                    if(i != 0 && request.FormatterArguments[i-1] == escapingChar) continue;
-                    openBraces++;
+                    if(key.Length == 0)
+                        throw new MalformedLiteralException("Expected a key, but found start of a new block.", 0, 0, request.FormatterArguments);
+
+                    if(i != 0 && request.FormatterArguments[i-1] == escapingChar)
+                    {
+                        block.Append(c);
+                        continue;
+                    }
+                    braceBalance++;
+                    if (braceBalance > 1)
+                        block.Append(c);
                     continue;
                 }
                 if(c == closeBrace)
                 {
-                    if (i != 0 && request.FormatterArguments[i - 1] == escapingChar) continue;
-                    openBraces--;
-                    if (openBraces == 0)
+                    if (key.Length == 0)
+                        throw new MalformedLiteralException("Expected a key, but found end of a block.", 0, 0, request.FormatterArguments);
+
+                    if (i != 0 && request.FormatterArguments[i - 1] == escapingChar)
+                    {
+                        block.Append(c);
+                        continue;
+                    }
+                    if(braceBalance == 0)
+                    {
+                        throw new MalformedLiteralException("Found end of a block, but no block has been started, or the" +
+                                                            " block has already been closed. " +
+                                                            "This could indicate an unescaped brace somewhere.", 
+                            0, 0, request.FormatterArguments);
+                    }
+                    braceBalance--;
+                    if (braceBalance == 0)
                     {
                         result.Add(new KeyedBlock(key.ToString(), block.ToString()));
                         block.Clear();
                         key.Clear();
+                        foundWhitespaceAfterKey = false;
                         continue;
+                    }
+                    if (braceBalance < 0)
+                    {
+                        throw new MalformedLiteralException(
+                            "Expected '{', but found '}' - essentially this means there are more close braces than there are open braces.",
+                            0, 0, request.FormatterArguments);
                     }
                 }
 
                 // If we are inside a block, append to the block buffer
-                if (openBraces > 0)
+                if (braceBalance > 0)
                 {
                     block.Append(c);
                     continue;
                 }
 
                 // Else, we are buffering our key
-                if(isWhitespace == false)
+                if (isWhitespace == false)
                 {
+                    if (foundWhitespaceAfterKey)
+                        throw new MalformedLiteralException(
+                            "Any whitespace after a key should be followed by the beginning of a block.", 0, 0,
+                            request.FormatterArguments);
                     key.Append(c);
                 }
+                else if(key.Length > 0) foundWhitespaceAfterKey = true;
+            }
+            if(braceBalance > 0)
+            {
+                throw new MalformedLiteralException(
+                    "There are more open braces than there are close braces.",
+                    0, 0, request.FormatterArguments);
             }
             return result;
         }

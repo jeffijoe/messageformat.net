@@ -20,6 +20,22 @@ namespace Jeffijoe.MessageFormat.Tests.Formatting
     public class BaseFormatterTests
     {
         [Theory]
+        [InlineData("hello {{dawg}")]
+        [InlineData("hello {dawg}}")]
+        [InlineData("hello \\{dawg}")]
+        [InlineData("hello {dawg\\}")]
+        [InlineData("hello {dawg} {sweet}")]
+        [InlineData("hello {dawg} test{sweet}}")]
+        [InlineData("hello \\{{dawg\\}} test{sweet}")]
+        public void ParseArguments_invalid(string args)
+        {
+            var subject = new BaseFormatterImpl();
+            var req = new FormatterRequest(new Literal(1, 1, 1, 1, new StringBuilder()), null, null, args);
+            var ex = Assert.Throws<MalformedLiteralException>(() => subject.ParseArguments(req));
+            Console.WriteLine(ex.Message);
+        }
+
+        [Theory]
         [PropertyData("ParseArguments_tests")]
         public void ParseArguments(string args, string[] extensionKeys, string[] extensionValues, string[] keys, string[] blocks)
         {
@@ -148,6 +164,20 @@ namespace Jeffijoe.MessageFormat.Tests.Formatting
                     }
                 };
 
+                yield return new object[]
+                {
+                    "offset:1 test:1337 one\\123 {programmer}   other{programmers}",
+                    new []{"offset", "test"},
+                    new []{"1", "1337"},
+                    new []
+                    {
+                        "one\\123", "other"
+                    },
+                    new []
+                    {
+                        "programmer", "programmers"
+                    }
+                };
             }
         }
 
@@ -182,6 +212,23 @@ unknown
                     new []
                     {
                         "he","she","they"
+                    }
+                };
+                yield return new object[]
+                {
+                    @"
+                        male {he} 
+                        female {she{dawg}}
+unknown
+    {they\{dawg\}}
+",
+                    new[]
+                    {
+                        "male", "female", "unknown"
+                    },
+                    new []
+                    {
+                        "he","she{dawg}",@"they\{dawg\}"
                     }
                 };
             }
