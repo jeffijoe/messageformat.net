@@ -93,6 +93,7 @@ namespace Jeffijoe.MessageFormat.Tests
                             =42 {a universal amount of notifications}
                             other {# notifications}
                       }. Have a nice day!";
+                // Please take the following sample in the spirit it was intended. :)
                 string case5 = @"{gender, select, 
                            male {He (who has {genitals, plural, 
                                     zero {no testicles}
