@@ -5,10 +5,12 @@
 // Author: Jeff Hansen <jeff@jeffijoe.com>
 // Copyright © 2014.
 
+using System;
 using System.Collections.Generic;
 using Jeffijoe.MessageFormat.Formatting;
 using Jeffijoe.MessageFormat.Formatting.Formatters;
 using Jeffijoe.MessageFormat.Parsing;
+using Jeffijoe.MessageFormat.Tests.TestHelpers;
 using Xunit;
 using Xunit.Extensions;
 
@@ -20,15 +22,15 @@ namespace Jeffijoe.MessageFormat.Tests
         [PropertyData("Tests")]
         public void FormatMessage(string source, Dictionary<string, object> args, string expected)
         {
-            var formatterLibrary = new FormatterLibrary();
-            formatterLibrary.Add(new ReplaceFormatter());
-            formatterLibrary.Add(new SelectFormatter());
-            formatterLibrary.Add(new PluralFormatter());
-            var literalParser = new LiteralParser();
-            var patternParser = new PatternParser(literalParser);
-            var subject = new MessageFormatter(patternParser, formatterLibrary);
+            var subject = new MessageFormatter();
 
-            Assert.Equal(expected, subject.FormatMessage(source, args));
+            // Warmup
+            subject.FormatMessage(source, args);
+            Benchmark.Start("Formatting");
+            string result = subject.FormatMessage(source, args);
+            Benchmark.End();
+            Assert.Equal(expected, result);
+            Console.WriteLine(result);
         }
 
         [Fact]

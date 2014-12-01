@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Jeffijoe.MessageFormat.Formatting;
+using Jeffijoe.MessageFormat.Formatting.Formatters;
 using Jeffijoe.MessageFormat.Parsing;
 
 namespace Jeffijoe.MessageFormat
@@ -14,6 +15,30 @@ namespace Jeffijoe.MessageFormat
     {
         private readonly IPatternParser _patternParser;
         private readonly IFormatterLibrary _library;
+        private PluralFormatter _pluralFormatter;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MessageFormatter"/> class.
+        /// </summary>
+        public MessageFormatter(string locale = "en")
+            : this(new PatternParser(new LiteralParser()), new FormatterLibrary(), locale)
+        {
+            Formatters.Add(new ReplaceFormatter());
+            Formatters.Add(new SelectFormatter());
+            _pluralFormatter = new PluralFormatter();
+            Formatters.Add(_pluralFormatter);
+        }
+
+        /// <summary>
+        /// Gets the pluralizers dictionary. Key is the locale.
+        /// </summary>
+        /// <value>
+        /// The pluralizers.
+        /// </value>
+        public Dictionary<string, Pluralizer> Pluralizers
+        {
+            get { return _pluralFormatter.Pluralizers; }
+        }
 
         /// <summary>
         /// Gets or sets the locale.
@@ -24,13 +49,24 @@ namespace Jeffijoe.MessageFormat
         public string Locale { get; set; }
 
         /// <summary>
+        /// Gets the formatters library, where you can add your own formatters if you want.
+        /// </summary>
+        /// <value>
+        /// The formatters.
+        /// </value>
+        public IFormatterLibrary Formatters
+        {
+            get { return _library; }
+        }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="MessageFormatter" /> class.
         /// </summary>
         /// <param name="patternParser">The pattern parser.</param>
         /// <param name="library"></param>
         /// <param name="locale">The locale to use. Formatters may need this.</param>
         /// <exception cref="System.ArgumentNullException">patternParser</exception>
-        public MessageFormatter(IPatternParser patternParser, IFormatterLibrary library, string locale = "en")
+        internal MessageFormatter(IPatternParser patternParser, IFormatterLibrary library, string locale = "en")
         {
             if (patternParser == null) throw new ArgumentNullException("patternParser");
             if (library == null) throw new ArgumentNullException("library");
@@ -63,7 +99,7 @@ namespace Jeffijoe.MessageFormat
             for (int i = 0; i < requestsEnumerated.Length; i++)
             {
                 var request = requestsEnumerated[i];
-                var formatter = _library.GetFormatter(request);
+                var formatter = Formatters.GetFormatter(request);
                 if (formatter == null)
                     throw new FormatterNotFoundException(request);
 
