@@ -28,11 +28,13 @@ namespace Jeffijoe.MessageFormat.Parsing
         public void ShiftIndices(int indexToStartFrom, int formatterResultLength)
         {
             var start = this[indexToStartFrom];
+            // "- 2" will compensate for { and }. (This works, don't ask why).
+            int resultLength = formatterResultLength - 2;
             for (int i = indexToStartFrom +1; i < Count; i++)
             {
                 var next = this[i];
-                // "- 2" will compensate for { and }. (This works, don't ask why).
-                next.SourceLiteral.ShiftIndices(formatterResultLength - 2, start.SourceLiteral);
+                next.SourceLiteral.ShiftIndices(resultLength, start.SourceLiteral);
+                start = next;
             }
         }
     }

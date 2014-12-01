@@ -31,6 +31,36 @@ namespace Jeffijoe.MessageFormat.Tests
             Assert.Equal(expected, subject.FormatMessage(source, args));
         }
 
+        [Fact]
+        public void FormatMessage_debug()
+        {
+            var source = @"{gender, select, 
+                           male {He}
+                           female {She}
+                           other {They}
+                      } said: You have {count, plural, 
+                            zero {no notifications}
+                            one {just one notification}
+                            =42 {a universal amount of notifications}
+                            other {# notifications}
+                      }. Have a nice day!";
+            var expected = "He said: You have 5 notifications. Have a nice day!";
+            var args = new Dictionary<string, object>
+            {
+                {"gender", "male"},
+                {"count", 5}
+            };
+            var formatterLibrary = new FormatterLibrary();
+            formatterLibrary.Add(new ReplaceFormatter());
+            formatterLibrary.Add(new SelectFormatter());
+            formatterLibrary.Add(new PluralFormatter());
+            var literalParser = new LiteralParser();
+            var patternParser = new PatternParser(literalParser);
+            var subject = new MessageFormatter(patternParser, formatterLibrary);
+
+            Assert.Equal(expected, subject.FormatMessage(source, args));
+        }
+
         public static IEnumerable<object[]> Tests
         {
             get
@@ -47,13 +77,43 @@ namespace Jeffijoe.MessageFormat.Tests
                       } said: You have {count, plural, 
                             zero {no notifications}
                             one {just one notification}
-                            =42 {an universal amount of notifications}
+                            =42 {a universal amount of notifications}
                             other {# notifications}
                       }. Have a nice day!";
                 string case3 = @"You have {count, plural, 
                             zero {no notifications}
                             one {just one notification}
-                            =42 {an universal amount of notifications}
+                            =42 {a universal amount of notifications}
+                            other {# notifications}
+                      }. Have a nice day!";
+                string case4 = @"{gender, select, 
+                           male {He}
+                           female {She}
+                           other {They}
+                      } said: You have {count, plural, 
+                            zero {no notifications}
+                            one {just one notification}
+                            =42 {a universal amount of notifications}
+                            other {# notifications}
+                      }. Have a nice day!";
+                string case5 = @"{gender, select, 
+                           male {He (who has {genitals, plural, 
+                                    zero {no testicles}
+                                    one {just one testicle}
+                                    =2 {a normal amount of testicles}
+                                    other {the insane amount of # testicles}
+                                })}
+                           female {She (who has {genitals, plural, 
+                                    zero {no boobies}
+                                    one {just one boob}
+                                    =2 {a pair of lovelies}
+                                    other {the freakish amount of # boobies}
+                                })}
+                           other {They}
+                      } said: You have {count, plural, 
+                            zero {no notifications}
+                            one {just one notification}
+                            =42 {a universal amount of notifications}
                             other {# notifications}
                       }. Have a nice day!";
                 yield return new object[]
@@ -86,7 +146,7 @@ namespace Jeffijoe.MessageFormat.Tests
                         {"name", "Amanda"},
                         {"count", 1}
                     },
-                    "She - {Amanda} - said: You have one notification. Have a nice day!"
+                    "She - {Amanda} - said: You have just one notification. Have a nice day!"
                 };
                 yield return new object[]
                 {
@@ -96,7 +156,7 @@ namespace Jeffijoe.MessageFormat.Tests
                         {"gender", "uni"},
                         {"count", 42}
                     },
-                    "They said: You have an universal amount of notifications. Have a nice day!"
+                    "They said: You have a universal amount of notifications. Have a nice day!"
                 };
                 yield return new object[]
                 {
@@ -106,6 +166,93 @@ namespace Jeffijoe.MessageFormat.Tests
                         {"count", 5}
                     },
                     "You have 5 notifications. Have a nice day!"
+                };
+                yield return new object[]
+                {
+                    case4,
+                    new Dictionary<string, object>
+                    {
+                        {"count", 5},
+                        {"gender", "male"}
+                    },
+                    "He said: You have 5 notifications. Have a nice day!"
+                };
+                yield return new object[]
+                {
+                    case5,
+                    new Dictionary<string, object>
+                    {
+                        {"count", 5},
+                        {"gender", "male"},
+                        {"genitals", 0}
+                    },
+                    "He (who has no testicles) said: You have 5 notifications. Have a nice day!"
+                };
+                yield return new object[]
+                {
+                    case5,
+                    new Dictionary<string, object>
+                    {
+                        {"count", 5},
+                        {"gender", "female"},
+                        {"genitals", 0}
+                    },
+                    "She (who has no boobies) said: You have 5 notifications. Have a nice day!"
+                };
+                yield return new object[]
+                {
+                    case5,
+                    new Dictionary<string, object>
+                    {
+                        {"count", 0},
+                        {"gender", "female"},
+                        {"genitals", 1}
+                    },
+                    "She (who has just one boob) said: You have no notifications. Have a nice day!"
+                };
+                yield return new object[]
+                {
+                    case5,
+                    new Dictionary<string, object>
+                    {
+                        {"count", 0},
+                        {"gender", "female"},
+                        {"genitals", 2}
+                    },
+                    "She (who has a pair of lovelies) said: You have no notifications. Have a nice day!"
+                };
+                yield return new object[]
+                {
+                    case5,
+                    new Dictionary<string, object>
+                    {
+                        {"count", 0},
+                        {"gender", "female"},
+                        {"genitals", 102}
+                    },
+                    "She (who has the freakish amount of 102 boobies) said: You have no notifications. Have a nice day!"
+                };
+                yield return new object[]
+                {
+                    case5,
+                    new Dictionary<string, object>
+                    {
+                        {"count", 42},
+                        {"gender", "female"},
+                        {"genitals", 102}
+                    },
+                    "She (who has the freakish amount of 102 boobies) said: You have a universal amount of notifications. Have a nice day!"
+                };
+                yield return new object[]
+                {
+                    case5,
+                    new Dictionary<string, object>
+                    {
+                        {"count", 1},
+                        {"gender", "male"},
+                        {"genitals", 102}
+                    },
+                    "He (who has the insane amount of 102 testicles) said: You have just one notification. Have a nice day!"
                 };
             }
         }

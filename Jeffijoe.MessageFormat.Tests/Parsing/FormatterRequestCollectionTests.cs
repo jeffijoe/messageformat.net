@@ -40,9 +40,8 @@ namespace Jeffijoe.MessageFormat.Tests.Parsing
             subject.ShiftIndices(1, 4);
             Assert.Equal(0, subject[0].SourceLiteral.StartIndex);
             Assert.Equal(10, subject[1].SourceLiteral.StartIndex);
-            // 12 because req 2's length is 10, the result length is 4, minus 2 braces.
-            // 20 - 10 + (4 - 2) = 12
-            Assert.Equal(12, subject[2].SourceLiteral.StartIndex);
+
+            Assert.Equal(14, subject[2].SourceLiteral.StartIndex);
         }
     }
 }

@@ -37,6 +37,7 @@ namespace Jeffijoe.MessageFormat.Parsing
             var startLineNumber = 1;
             var startColumnNumber = 0;
             var columnNumber = 0;
+            const char CR = '\r'; // Carriage return
             const char LF = '\n'; // Line feed
             for (var i = 0; i < sb.Length; i++)
             {
@@ -45,6 +46,10 @@ namespace Jeffijoe.MessageFormat.Parsing
                 {
                     lineNumber++;
                     columnNumber = 0;
+                    continue;
+                }
+                if(c == CR)
+                {
                     continue;
                 }
                 columnNumber++;

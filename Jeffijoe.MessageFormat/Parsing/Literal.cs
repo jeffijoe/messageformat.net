@@ -80,11 +80,12 @@ namespace Jeffijoe.MessageFormat.Parsing
         /// Updates the start and end index.
         /// </summary>
         /// <param name="resultLength">Length of the result.</param>
-        /// <param name="literal">The literal that was just formatted. We use it's inner text length to determine the new indices.</param>
+        /// <param name="literal">The literal that was just formatted.</param>
         public void ShiftIndices(int resultLength, Literal literal)
         {
-            StartIndex = (StartIndex - literal.InnerText.Length) + resultLength;
-            EndIndex = (EndIndex - literal.InnerText.Length) + resultLength;
+            int offset = (literal.EndIndex - literal.StartIndex) - 1;
+            StartIndex = (StartIndex - offset) + resultLength;
+            EndIndex = (EndIndex - offset) + resultLength;
         }
     }
 }
