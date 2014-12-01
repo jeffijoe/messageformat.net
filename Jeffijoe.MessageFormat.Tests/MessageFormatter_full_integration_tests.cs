@@ -52,15 +52,10 @@ namespace Jeffijoe.MessageFormat.Tests
                 {"gender", "male"},
                 {"count", 5}
             };
-            var formatterLibrary = new FormatterLibrary();
-            formatterLibrary.Add(new ReplaceFormatter());
-            formatterLibrary.Add(new SelectFormatter());
-            formatterLibrary.Add(new PluralFormatter());
-            var literalParser = new LiteralParser();
-            var patternParser = new PatternParser(literalParser);
-            var subject = new MessageFormatter(patternParser, formatterLibrary);
+            var subject = new MessageFormatter();
 
-            Assert.Equal(expected, subject.FormatMessage(source, args));
+            string result = subject.FormatMessage(source, args);
+            Assert.Equal(expected, result);
         }
 
         public static IEnumerable<object[]> Tests
