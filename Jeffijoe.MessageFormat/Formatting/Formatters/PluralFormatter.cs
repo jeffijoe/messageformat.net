@@ -118,15 +118,23 @@ namespace Jeffijoe.MessageFormat.Formatting.Formatters
                 }
                 else if(c == pound)
                 {
-                    if(i != 0)
+                    if (i != 0)
+                    {
                         if (pluralized[i - 1] != escapeChar)
                         {
-                            if(braceBalance == 0)
+                            if (braceBalance == 0)
                             {
                                 sb.Append(n);
                                 continue;
                             }
                         }
+                    }
+                    else
+                    {
+                        sb.Append(n);
+                        continue;
+                    } 
+                        
                 }
                 else if(c == escapeChar)
                 {

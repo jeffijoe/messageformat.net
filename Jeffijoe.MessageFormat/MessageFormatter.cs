@@ -73,7 +73,7 @@ namespace Jeffijoe.MessageFormat
                 // First, we remove the literal from the source.
                 Literal sourceLiteral = request.SourceLiteral;
                 sourceBuilder.Remove(sourceLiteral.StartIndex, (sourceLiteral.EndIndex - sourceLiteral.StartIndex) + 1);
-
+     
                 // Now, we inject the result.
                 sourceBuilder.Insert(sourceLiteral.StartIndex, result);
 

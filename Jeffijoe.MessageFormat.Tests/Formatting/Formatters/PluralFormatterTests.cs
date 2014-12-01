@@ -47,6 +47,7 @@ namespace Jeffijoe.MessageFormat.Tests.Formatting.Formatters
 
         [Theory]
         [InlineData(@"Number \#1 has # results", "Number #1 has 1337 results")]
+        [InlineData(@"# results", "1337 results")]
         public void ReplaceNumberLiterals(string input, string expected)
         {
             var subject = new PluralFormatter();

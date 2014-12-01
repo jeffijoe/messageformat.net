@@ -50,6 +50,12 @@ namespace Jeffijoe.MessageFormat.Tests
                             =42 {an universal amount of notifications}
                             other {# notifications}
                       }. Have a nice day!";
+                string case3 = @"You have {count, plural, 
+                            zero {no notifications}
+                            one {just one notification}
+                            =42 {an universal amount of notifications}
+                            other {# notifications}
+                      }. Have a nice day!";
                 yield return new object[]
                 {
                     case1,
@@ -91,6 +97,15 @@ namespace Jeffijoe.MessageFormat.Tests
                         {"count", 42}
                     },
                     "They said: You have an universal amount of notifications. Have a nice day!"
+                };
+                yield return new object[]
+                {
+                    case3,
+                    new Dictionary<string, object>
+                    {
+                        {"count", 5}
+                    },
+                    "You have 5 notifications. Have a nice day!"
                 };
             }
         }
