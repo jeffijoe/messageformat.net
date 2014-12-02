@@ -34,6 +34,29 @@ namespace Jeffijoe.MessageFormat.Tests
         }
 
         [Fact]
+        public void ReadMe_test_to_make_sure_I_dont_look_like_a_fool()
+        {
+            {
+                var mf = new MessageFormatter();
+                var str = @"You have {notifications, plural,
+                              zero {no notifications}
+                              one {one notification}
+                              =42 {a universal amount of notifications}
+                              other {# notifications}
+                            }. Have a nice day, {name}!";
+                var formatted = mf.FormatMessage(str, new Dictionary<string, object>{
+                  {"notifications", 4},
+                  {"name", "Jeff"}
+                });
+                Assert.Equal("You have 4 notifications. Have a nice day, Jeff!", formatted);
+            }
+
+            {
+
+            }
+        }
+
+        [Fact]
         public void FormatMessage_debug()
         {
             var source = @"{gender, select, 
