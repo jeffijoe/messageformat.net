@@ -4,7 +4,7 @@ This is an implementation of the ICU Message Format in .NET.
 
 ## TL;DR:
 
-```c#
+````csharp
 var mf = new MessageFormatter();
 
 var str = @"You have {notifications, plural,
@@ -19,7 +19,7 @@ var formatted = mf.FormatMessage(str, new Dictionary<string, object>{
 });
 
 // You have 4 notifications. Have a nice day, Jeff!
-```
+````
 
 ## Features
 
@@ -47,7 +47,7 @@ Same thing as with [NessageFormat.js][0], you can add your own pluralizer functi
 The `Pluralizers` property is a `Dictionary<string, object>`, so you can remove the built-in
 ones if you want.
 
-```c#
+````csharp
 var mf = new MessageFormat();
 mf.Pluralizers.Add("<locale>", n => {
   // ´n´ is the number being pluralized.
@@ -57,7 +57,7 @@ mf.Pluralizers.Add("<locale>", n => {
     return "one";
   return "other";
 });
-```
+````
   
 # Documentation
 
