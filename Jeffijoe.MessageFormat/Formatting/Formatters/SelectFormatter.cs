@@ -36,16 +36,18 @@ namespace Jeffijoe.MessageFormat.Formatting.Formatters
             foreach (var keyedBlock in parsed.KeyedBlocks)
             {
                 object value;
-                if(args.TryGetValue(request.Variable, out value) == false)
-                    throw new VariableNotFoundException(keyedBlock.Key);
-                var str = Convert.ToString(value);
-                if (str == keyedBlock.Key)
-                    return messageFormatter.FormatMessage(keyedBlock.BlockText, args);
+                if(args.TryGetValue(request.Variable, out value))
+                {
+                    var str = Convert.ToString(value);
+                    if (str == keyedBlock.Key)
+                        return messageFormatter.FormatMessage(keyedBlock.BlockText, args);
+                }
+
                 if (keyedBlock.Key == Other)
                     other = keyedBlock;
             }
             if(other == null)
-                throw new MessageFormatterException("'other' option not found in pattern.");
+                throw new MessageFormatterException("'other' option not found in pattern, and variable was not present in collection.");
             return messageFormatter.FormatMessage(other.BlockText, args);
         }
     }

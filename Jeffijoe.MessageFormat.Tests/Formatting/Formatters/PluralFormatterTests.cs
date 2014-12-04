@@ -41,7 +41,7 @@ namespace Jeffijoe.MessageFormat.Tests.Formatting.Formatters
                 new Literal(1,1,1,1, new StringBuilder()),
                 "test", "plural", null
             );
-            var actual = subject.Pluralize("en", request, arguments, args, Convert.ToDouble(args[request.Variable]));
+            var actual = subject.Pluralize("en", request, arguments, args, Convert.ToDouble(args[request.Variable]), 0);
             Assert.Equal(expected, actual);
         }
 

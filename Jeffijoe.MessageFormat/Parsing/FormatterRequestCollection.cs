@@ -34,7 +34,6 @@ namespace Jeffijoe.MessageFormat.Parsing
             {
                 var next = this[i];
                 next.SourceLiteral.ShiftIndices(resultLength, start.SourceLiteral);
-                start = next;
             }
         }
     }

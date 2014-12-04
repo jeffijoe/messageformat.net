@@ -7,9 +7,6 @@
 
 using System;
 using System.Collections.Generic;
-using Jeffijoe.MessageFormat.Formatting;
-using Jeffijoe.MessageFormat.Formatting.Formatters;
-using Jeffijoe.MessageFormat.Parsing;
 using Jeffijoe.MessageFormat.Tests.TestHelpers;
 using Xunit;
 using Xunit.Extensions;
@@ -18,6 +15,15 @@ namespace Jeffijoe.MessageFormat.Tests
 {
     public class MessageFormatter_full_integration_tests
     {
+        [Fact]
+        public void FormatMessage_lets_non_ascii_characters_right_through()
+        {
+            var input = "中test中国话不用彁字。";
+            var subject = new MessageFormatter();
+            var actual = subject.FormatMessage(input, new Dictionary<string, object>());
+            Assert.Equal(input, actual);
+        }
+
         [Theory]
         [PropertyData("Tests")]
         public void FormatMessage(string source, Dictionary<string, object> args, string expected)
@@ -52,7 +58,115 @@ namespace Jeffijoe.MessageFormat.Tests
             }
 
             {
+                var mf = new MessageFormatter();
+                var str = @"You {NUM_ADDS, plural, offset:1
+                              =0{didnt add this to your profile} 
+                              zero{added this to your profile}
+                              one{and one other person added this to their profile}
+                              other{and # others added this to their profiles}
+                          }.";
+                var formatted = mf.FormatMessage(str, new Dictionary<string, object>{
+                  {"NUM_ADDS", 0}
+                });
+                Assert.Equal("You didnt add this to your profile.", formatted);
 
+                formatted = mf.FormatMessage(str, new Dictionary<string, object>{
+                  {"NUM_ADDS", 1}
+                });
+                Assert.Equal("You added this to your profile.", formatted);
+
+                formatted = mf.FormatMessage(str, new Dictionary<string, object>{
+                  {"NUM_ADDS", 2}
+                });
+                Assert.Equal("You and one other person added this to their profile.", formatted);
+
+                formatted = mf.FormatMessage(str, new Dictionary<string, object>{
+                  {"NUM_ADDS", 3}
+                });
+                Assert.Equal("You and 2 others added this to their profiles.", formatted);
+            }
+
+            {
+                var mf = new MessageFormatter();
+                var str = @"{GENDER, select,
+                                male {He}
+                              female {She}
+                               other {They}
+                            } found {NUM_RESULTS, plural,
+                                        one {1 result}
+                                      other {# results}
+                                    } in {NUM_CATEGORIES, plural,
+                                              one {1 category}
+                                            other {# categories}
+                                         }.";
+                var formatted = mf.FormatMessage(str, new Dictionary<string, object>{
+                  {"GENDER", "male"},
+                  {"NUM_RESULTS", 1},
+                  {"NUM_CATEGORIES", 2}
+                });
+                Assert.Equal(formatted, "He found 1 result in 2 categories.");
+
+                formatted = mf.FormatMessage(str, new Dictionary<string, object>{
+                  {"GENDER", "male"},
+                  {"NUM_RESULTS", 1},
+                  {"NUM_CATEGORIES", 1}
+                });
+                Assert.Equal(formatted, "He found 1 result in 1 category.");
+
+                formatted = mf.FormatMessage(str, new Dictionary<string, object>{
+                  {"GENDER", "female"},
+                  {"NUM_RESULTS", 2},
+                  {"NUM_CATEGORIES", 1}
+                });
+                Assert.Equal(formatted, "She found 2 results in 1 category.");
+            }
+
+            {
+                var mf = new MessageFormatter();
+                var str = @"Your {NUM, plural, one{message} other{messages}} go here.";
+                var formatted = mf.FormatMessage(str, new Dictionary<string, object>{
+                  {"NUM", 1}
+                });
+                Assert.Equal(formatted, "Your message go here.");
+
+                formatted = mf.FormatMessage(str, new Dictionary<string, object>{
+                  {"NUM", 3}
+                });
+                Assert.Equal(formatted, "Your messages go here.");
+            }
+
+            {
+                var mf = new MessageFormatter();
+                var str = @"His name is {LAST_NAME}... {FIRST_NAME} {LAST_NAME}";
+                var formatted = mf.FormatMessage(str, new Dictionary<string, object>{
+                  {"FIRST_NAME", "James"},
+                  {"LAST_NAME", "Bond"}
+                });
+                Assert.Equal(formatted, "His name is Bond... James Bond");
+            }
+
+            {
+                var mf = new MessageFormatter();
+                var str = @"{GENDER, select, male{He} female{She} other{They}} liked this.";
+                var formatted = mf.FormatMessage(str, new Dictionary<string, object>{
+                  {"GENDER", "male"}
+                });
+                Assert.Equal(formatted, "He liked this.");
+
+                formatted = mf.FormatMessage(str, new Dictionary<string, object>{
+                  {"GENDER", "female"}
+                });
+                Assert.Equal(formatted, "She liked this.");
+
+                formatted = mf.FormatMessage(str, new Dictionary<string, object>{
+                  {"GENDER", "somethingelse"}
+                });
+                Assert.Equal(formatted, "They liked this.");
+
+                formatted = mf.FormatMessage(str, new Dictionary<string, object>{
+                  
+                });
+                Assert.Equal(formatted, "They liked this.");
             }
         }
 

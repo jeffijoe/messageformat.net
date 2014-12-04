@@ -11,7 +11,7 @@ namespace Jeffijoe.MessageFormat.Helpers
     /// </summary>
     internal static class CharHelper
     {
-        private static readonly char[] Alphanumberic = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".ToCharArray();
+        private static readonly char[] Alphanumberic = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_".ToCharArray();
         
 
         /// <summary>

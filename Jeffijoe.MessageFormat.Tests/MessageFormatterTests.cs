@@ -98,23 +98,5 @@ namespace Jeffijoe.MessageFormat.Tests
                 yield return formatterRequest;
             }
         }
-            
-        [Fact]
-        public void ValidateVariableExistence()
-        {
-            var formatters = new FormatterRequest[]
-            {
-                new FormatterRequest(new Literal(1,1,1,1, new StringBuilder()), "test", "meh" ,"meh"),
-                new FormatterRequest(new Literal(1,1,1,1, new StringBuilder()), "dawg", "meh" ,"meh"),
-            };
-            var args = new Dictionary<string, object>();
-            Assert.Throws<VariableNotFoundException>(() => MessageFormatter.ValidateVariableExistence(formatters, args));
-
-            args.Add("test", "weow");
-            Assert.Throws<VariableNotFoundException>(() => MessageFormatter.ValidateVariableExistence(formatters, args));
-
-            args.Add("dawg", "weow");
-            Assert.DoesNotThrow(() => MessageFormatter.ValidateVariableExistence(formatters, args));
-        }
     }
 }

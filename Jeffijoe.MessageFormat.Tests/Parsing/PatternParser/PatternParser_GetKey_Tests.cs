@@ -75,6 +75,7 @@ namespace Jeffijoe.MessageFormat.Tests.Parsing
         [InlineData("SupDawg, yeah", "SupDawg", 7)]
         [InlineData("hello", "hello", 4)]
         [InlineData(" hello ", "hello", 6)]
+        [InlineData("\r\nhello ", "hello", 7)]
         [InlineData("0,", "0", 1)]
         [InlineData("0, ", "0", 1)]
         [InlineData("0 ,", "0", 2)]

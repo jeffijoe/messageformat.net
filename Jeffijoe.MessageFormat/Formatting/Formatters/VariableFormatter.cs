@@ -1,4 +1,4 @@
-﻿// ReplaceFormatter.cs
+﻿// VariableFormatter.cs
 // - MessageFormat
 // -- Jeffijoe.MessageFormat
 // 
@@ -12,7 +12,7 @@ namespace Jeffijoe.MessageFormat.Formatting.Formatters
     /// <summary>
     /// Simple variable replacer.
     /// </summary>
-    public class ReplaceFormatter : IFormatter
+    public class VariableFormatter : IFormatter
     {
         /// <summary>
         /// Determines whether this instance can format a message based on the specified parameters.

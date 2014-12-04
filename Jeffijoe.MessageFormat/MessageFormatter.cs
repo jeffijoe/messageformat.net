@@ -23,7 +23,7 @@ namespace Jeffijoe.MessageFormat
         public MessageFormatter(string locale = "en")
             : this(new PatternParser(new LiteralParser()), new FormatterLibrary(), locale)
         {
-            Formatters.Add(new ReplaceFormatter());
+            Formatters.Add(new VariableFormatter());
             Formatters.Add(new SelectFormatter());
             _pluralFormatter = new PluralFormatter();
             Formatters.Add(_pluralFormatter);
@@ -93,8 +93,6 @@ namespace Jeffijoe.MessageFormat
 
             // If we got no formatters, then we're done here.
             if (requestsEnumerated.Length == 0) return pattern;
-            
-            ValidateVariableExistence(requestsEnumerated, args);
 
             for (int i = 0; i < requestsEnumerated.Length; i++)
             {
@@ -109,7 +107,8 @@ namespace Jeffijoe.MessageFormat
                 // First, we remove the literal from the source.
                 Literal sourceLiteral = request.SourceLiteral;
                 // +1 because we want to include the last index.
-                sourceBuilder.Remove(sourceLiteral.StartIndex, (sourceLiteral.EndIndex - sourceLiteral.StartIndex) + 1);
+                var length = (sourceLiteral.EndIndex - sourceLiteral.StartIndex) + 1;
+                sourceBuilder.Remove(sourceLiteral.StartIndex, length);
      
                 // Now, we inject the result.
                 sourceBuilder.Insert(sourceLiteral.StartIndex, result);
@@ -162,20 +161,6 @@ namespace Jeffijoe.MessageFormat
                 dest.Append(c);
             }
             return dest;
-        }
-
-        /// <summary>
-        /// Validates that all variables exist in the args collection.
-        /// </summary>
-        /// <param name="formatters">The formatters.</param>
-        /// <param name="args">The arguments.</param>
-        internal static void ValidateVariableExistence(IEnumerable<FormatterRequest> formatters, Dictionary<string, object> args)
-        {
-            foreach (var formatterParameters in formatters)
-            {
-                if(args.ContainsKey(formatterParameters.Variable) == false)
-                    throw new VariableNotFoundException(formatterParameters.Variable);
-            }
         }
     }
 }

@@ -79,8 +79,8 @@ namespace Jeffijoe.MessageFormat.Formatting.Formatters
                 offset = Convert.ToDouble(offsetExtension.Value);
 
             double n = Convert.ToDouble(args[request.Variable]);
-            var pluralized = new StringBuilder(Pluralize(locale, request, arguments, args, n));
-            var result =  ReplaceNumberLiterals(pluralized, n + offset);
+            var pluralized = new StringBuilder(Pluralize(locale, request, arguments, args, n, offset));
+            var result =  ReplaceNumberLiterals(pluralized, n - offset);
             var formatted = messageFormatter.FormatMessage(result, args);
             return formatted;
         }
@@ -155,14 +155,15 @@ namespace Jeffijoe.MessageFormat.Formatting.Formatters
         /// <param name="arguments">The arguments.</param>
         /// <param name="args">The arguments.</param>
         /// <param name="n"></param>
+        /// <param name="offset"></param>
         /// <returns></returns>
         /// <exception cref="MessageFormatterException">'other' option not found in pattern.</exception>
-        internal string Pluralize(string locale, FormatterRequest request, ParsedArguments arguments, Dictionary<string, object> args, double n)
+        internal string Pluralize(string locale, FormatterRequest request, ParsedArguments arguments, Dictionary<string, object> args, double n, double offset)
         {
             Pluralizer pluralizer;
             if (Pluralizers.TryGetValue(locale, out pluralizer) == false)
                 pluralizer = Pluralizers["en"];
-            var pluralForm = pluralizer(n);
+            var pluralForm = pluralizer(n - offset);
             KeyedBlock other = null;
             foreach (var keyedBlock in arguments.KeyedBlocks)
             {

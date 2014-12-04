@@ -68,7 +68,7 @@ namespace Jeffijoe.MessageFormat.Tests.Formatting
         {
             var subject = new BaseFormatterImpl();
             int index;
-            var req = new FormatterRequest(new Literal(1,1,1,1, new StringBuilder()),null,null, args );
+            var req = new FormatterRequest(new Literal(1, 1, 1, 1, new StringBuilder()), null, null, args);
 
             // Warmup
             subject.ParseExtensions(req, out index);
@@ -139,10 +139,22 @@ namespace Jeffijoe.MessageFormat.Tests.Formatting
                 var expectedValue = values[index];
                 Assert.Equal(expectedKey, keyedBlock.Key);
                 Assert.Equal(expectedValue, keyedBlock.BlockText);
-                
-                Console.WriteLine("Key: "+keyedBlock.Key);
-                Console.WriteLine("Block: "+keyedBlock.BlockText);
+
+                Console.WriteLine("Key: " + keyedBlock.Key);
+                Console.WriteLine("Block: " + keyedBlock.BlockText);
             }
+        }
+
+        [Fact]
+        public void AssertVariableExists()
+        {
+            var subject = new BaseFormatterImpl();
+            var args = new Dictionary<string, object>
+                           {
+                               {"dawg", "wee"}
+                           };
+            Assert.Throws<VariableNotFoundException>(() => subject.AssertVariableExists(args, "Test"));
+            Assert.DoesNotThrow(() => subject.AssertVariableExists(args, "dawg"));
         }
 
         public static IEnumerable<object[]> ParseArguments_tests
@@ -234,13 +246,13 @@ unknown
             }
         }
 
-#region Test classes
+        #region Test classes
 
         class BaseFormatterImpl : BaseFormatter
         {
 
         }
 
-#endregion
+        #endregion
     }
 }
