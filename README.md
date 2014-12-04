@@ -58,6 +58,10 @@ mf.Pluralizers.Add("<locale>", n => {
   return "other";
 });
 ````
+## Escaping literals
+
+Simple - the literals are `{`, `}` and `#` (in a plural block). 
+To escape a literal, use a `\` - e.g. `\{`.
   
 # Documentation
 
