@@ -31,7 +31,11 @@ var formatted = mf.FormatMessage(str, new Dictionary<string, object>{
 * **It's very white-space tolerant.** You can structure your blocks so they are more readable - look at the example above.
 * **Nesting is supported.** You can nest your blocks as you please, there's no special structure required to do this, just ensure your braces match.
 * **Exceptions make atleast a little sense.** When exceptions are thrown due to a bad pattern, the exception should include useful information.
+* **There's unit tests.** Run them yourself.
 
+## Performance
+
+PerfTests coming soon..
 
 ## Supported formats
 
@@ -39,9 +43,9 @@ Basically, it should be able to do anything that [MessageFormat.js][0] can do.
 
 * Select Format: `{gender, select, male{He likes} female{She likes} other{They like}} cheeseburgers`
 * Plural Format: `There {msgCount, plural, zero {are no unread messages} one {is 1 unread message} other{are # unread messages}}.`
-* Simple variable replacement
+* Simple variable replacement: `Your name is {name}`
  
-## Adding your own pluralizer function
+## Adding your own pluralizer functions
 
 Same thing as with [NessageFormat.js][0], you can add your own pluralizer function.
 The `Pluralizers` property is a `Dictionary<string, object>`, so you can remove the built-in
@@ -58,25 +62,49 @@ mf.Pluralizers.Add("<locale>", n => {
   return "other";
 });
 ````
+
+There's no restrictions on what strings you may return, nor what strings
+you may use in your pluralization block.
+
+````csharp
+var mf = new MessageFormat("en");
+mf.Pluralizers.Add("en", n => {
+  // ´n´ is the number being pluralized.
+  if(n == 0)
+    return "zero";
+  if(n == 1)
+    return "one";
+  if(n > 1000)
+    return "thatsalot";
+  return "other";
+});
+
+mf.FormatMessage("You have {number, plural, thatsalot {a shitload of notifications} other {# notifications}}", new Dictionary<string, object>{
+  {"number", 1001}
+});
+````
+
 ## Escaping literals
 
 Simple - the literals are `{`, `}` and `#` (in a plural block). 
 To escape a literal, use a `\` - e.g. `\{`.
   
-# Documentation
+# Anything else?
 
 There's not a lot - Alex Sexton of [MessageFormat.js][0] did a great job documenting his library, and like I said,
-I wrote my implementation so it would be compatible with his.
+I wrote my implementation so it would be (somewhat) compatible with his.
 
 # Bugs / issues
 
 If you have issues with the library, and the exception is rather cryptic, please open an issue
-and include your message, as well as the data you've used.
+and include your message, as well as the data you used.
 
 # Todo
 
 * A `FormatMessage` overload that takes an object arg, using reflection to create a dictionary of the values.
 * Built-in locales (currently only `en` is added per default).
+* Optional caching when formatting the same pattern. This may improve speed (although that shouldn't be necessary), but may take up a bit more memory
+  for the `MessageFormatter`'s object lifetime (which is usually very short as well).
 
 # Author
 
