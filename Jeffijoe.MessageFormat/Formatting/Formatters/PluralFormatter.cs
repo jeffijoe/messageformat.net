@@ -1,6 +1,6 @@
 ﻿// PluralFormatter.cs
 // - MessageFormat
-// -- Jeffijoe.MessageFormat.Tests
+// -- Jeffijoe.MessageFormat
 // 
 // Author: Jeff Hansen <jeff@jeffijoe.com>
 // Copyright © 2014.
@@ -24,21 +24,6 @@ namespace Jeffijoe.MessageFormat.Formatting.Formatters
         {
             Pluralizers = new Dictionary<string, Pluralizer>();
             AddStandardPluralizers();
-        }
-
-        /// <summary>
-        /// Adds the standard pluralizers.
-        /// </summary>
-        private void AddStandardPluralizers()
-        {
-            Pluralizers.Add("en", n =>
-            {
-                if (Math.Abs(n) < Double.Epsilon)
-                    return "zero";
-                if (Math.Abs(n - 1) < Double.Epsilon)
-                    return "one";
-                return "other";
-            });
         }
 
         /// <summary>
@@ -89,6 +74,21 @@ namespace Jeffijoe.MessageFormat.Formatting.Formatters
             var result =  ReplaceNumberLiterals(pluralized, n - offset);
             var formatted = messageFormatter.FormatMessage(result, args);
             return formatted;
+        }
+
+        /// <summary>
+        /// Adds the standard pluralizers.
+        /// </summary>
+        private void AddStandardPluralizers()
+        {
+            Pluralizers.Add("en", n =>
+            {
+                if (Math.Abs(n) < Double.Epsilon)
+                    return "zero";
+                if (Math.Abs(n - 1) < Double.Epsilon)
+                    return "one";
+                return "other";
+            });
         }
 
         /// <summary>

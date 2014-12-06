@@ -5,7 +5,6 @@
 // Author: Jeff Hansen <jeff@jeffijoe.com>
 // Copyright © 2014.
 
-using System;
 using System.Collections.Generic;
 using System.Text;
 using Jeffijoe.MessageFormat.Formatting;

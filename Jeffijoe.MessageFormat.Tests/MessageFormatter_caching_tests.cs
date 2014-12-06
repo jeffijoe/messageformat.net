@@ -9,10 +9,8 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Jeffijoe.MessageFormat.Formatting;
-using Jeffijoe.MessageFormat.Formatting.Formatters;
 using Jeffijoe.MessageFormat.Helpers;
 using Jeffijoe.MessageFormat.Parsing;
-using Jeffijoe.MessageFormat.Tests.TestHelpers;
 using Moq;
 using Xunit;
 

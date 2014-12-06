@@ -1,4 +1,11 @@
-﻿using System;
+﻿// MessageFormatter.cs
+// - MessageFormat
+// -- Jeffijoe.MessageFormat
+// 
+// Author: Jeff Hansen <jeff@jeffijoe.com>
+// Copyright © 2014.
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,14 +22,14 @@ namespace Jeffijoe.MessageFormat
     public class MessageFormatter : IMessageFormatter
     {
         /// <summary>
-        /// The pattern parser
-        /// </summary>
-        private readonly IPatternParser _patternParser;
-
-        /// <summary>
         /// The formatter library.
         /// </summary>
         private readonly IFormatterLibrary _library;
+
+        /// <summary>
+        /// The pattern parser
+        /// </summary>
+        private readonly IPatternParser _patternParser;
 
         /// <summary>
         /// Pattern cache. If enabled, should speed up formatting the same pattern multiple times,
@@ -37,6 +44,25 @@ namespace Jeffijoe.MessageFormat
             : this(new PatternParser(new LiteralParser()), new FormatterLibrary(), useCache, locale)
         {
             
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MessageFormatter" /> class.
+        /// </summary>
+        /// <param name="patternParser">The pattern parser.</param>
+        /// <param name="library">The library.</param>
+        /// <param name="useCache">if set to <c>true</c> uses the cache.</param>
+        /// <param name="locale">The locale to use. Formatters may need this.</param>
+        /// <exception cref="System.ArgumentNullException">patternParser</exception>
+        internal MessageFormatter(IPatternParser patternParser, IFormatterLibrary library, bool useCache, string locale = "en")
+        {
+            if (patternParser == null) throw new ArgumentNullException("patternParser");
+            if (library == null) throw new ArgumentNullException("library");
+            _patternParser = patternParser;
+            _library = library;
+            Locale = locale;
+            if (useCache)
+                cache = new Dictionary<string, IFormatterRequestCollection>();
         }
 
         /// <summary>
@@ -72,25 +98,6 @@ namespace Jeffijoe.MessageFormat
         public IFormatterLibrary Formatters
         {
             get { return _library; }
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="MessageFormatter" /> class.
-        /// </summary>
-        /// <param name="patternParser">The pattern parser.</param>
-        /// <param name="library">The library.</param>
-        /// <param name="useCache">if set to <c>true</c> uses the cache.</param>
-        /// <param name="locale">The locale to use. Formatters may need this.</param>
-        /// <exception cref="System.ArgumentNullException">patternParser</exception>
-        internal MessageFormatter(IPatternParser patternParser, IFormatterLibrary library, bool useCache, string locale = "en")
-        {
-            if (patternParser == null) throw new ArgumentNullException("patternParser");
-            if (library == null) throw new ArgumentNullException("library");
-            _patternParser = patternParser;
-            _library = library;
-            Locale = locale;
-            if (useCache)
-                cache = new Dictionary<string, IFormatterRequestCollection>();
         }
 
         /// <summary>
@@ -143,6 +150,17 @@ namespace Jeffijoe.MessageFormat
         }
 
         /// <summary>
+        /// Formats the message, and uses reflection to create a dictionary of property values from the specified object.
+        /// </summary>
+        /// <param name="pattern">The pattern.</param>
+        /// <param name="args">The arguments.</param>
+        /// <returns></returns>
+        public string FormatMessage(string pattern, object args)
+        {
+            return FormatMessage(pattern, args.ToDictionary());
+        }
+
+        /// <summary>
         /// Parses the requests, using the cache if enabled and applicable.
         /// </summary>
         /// <param name="pattern">The pattern.</param>
@@ -164,17 +182,6 @@ namespace Jeffijoe.MessageFormat
             if (cache != null)
                 cache.Add(pattern, requests.Clone());
             return requests;
-        }
-
-        /// <summary>
-        /// Formats the message, and uses reflection to create a dictionary of property values from the specified object.
-        /// </summary>
-        /// <param name="pattern">The pattern.</param>
-        /// <param name="args">The arguments.</param>
-        /// <returns></returns>
-        public string FormatMessage(string pattern, object args)
-        {
-            return FormatMessage(pattern, args.ToDictionary());
         }
 
         /// <summary>

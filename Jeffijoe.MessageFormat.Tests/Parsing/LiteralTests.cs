@@ -5,11 +5,9 @@
 // Author: Jeff Hansen <jeff@jeffijoe.com>
 // Copyright © 2014.
 
-using System;
 using System.Text;
 using Jeffijoe.MessageFormat.Parsing;
 using Xunit;
-using Xunit.Extensions;
 
 namespace Jeffijoe.MessageFormat.Tests.Parsing
 {

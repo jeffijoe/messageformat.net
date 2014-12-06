@@ -1,4 +1,11 @@
-﻿using System.Collections.Generic;
+﻿// FormatterLibrary.cs
+// - MessageFormat
+// -- Jeffijoe.MessageFormat
+// 
+// Author: Jeff Hansen <jeff@jeffijoe.com>
+// Copyright © 2014.
+
+using System.Collections.Generic;
 using System.Linq;
 using Jeffijoe.MessageFormat.Formatting.Formatters;
 

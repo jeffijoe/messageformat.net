@@ -1,3 +1,9 @@
+// FormatterExtension.cs
+// - MessageFormat
+// -- Jeffijoe.MessageFormat
+// 
+// Author: Jeff Hansen <jeff@jeffijoe.com>
+// Copyright © 2014.
 namespace Jeffijoe.MessageFormat.Formatting
 {
     /// <summary>
@@ -6,6 +12,17 @@ namespace Jeffijoe.MessageFormat.Formatting
     /// </summary>
     public class FormatterExtension
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FormatterExtension"/> class.
+        /// </summary>
+        /// <param name="extension">The extension.</param>
+        /// <param name="value">The value.</param>
+        public FormatterExtension(string extension, string value)
+        {
+            Extension = extension;
+            Value = value;
+        }
+
         /// <summary>
         /// Gets the extension.
         /// </summary>
@@ -21,16 +38,5 @@ namespace Jeffijoe.MessageFormat.Formatting
         /// The value.
         /// </value>
         public string Value { get; private set; }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="FormatterExtension"/> class.
-        /// </summary>
-        /// <param name="extension">The extension.</param>
-        /// <param name="value">The value.</param>
-        public FormatterExtension(string extension, string value)
-        {
-            Extension = extension;
-            Value = value;
-        }
     }
 }

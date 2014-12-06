@@ -1,4 +1,11 @@
-﻿using System;
+﻿// ParsedArguments.cs
+// - MessageFormat
+// -- Jeffijoe.MessageFormat
+// 
+// Author: Jeff Hansen <jeff@jeffijoe.com>
+// Copyright © 2014.
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -9,6 +16,17 @@ namespace Jeffijoe.MessageFormat.Formatting
     /// </summary>
     public class ParsedArguments
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ParsedArguments"/> class.
+        /// </summary>
+        public ParsedArguments(IEnumerable<KeyedBlock> keyedBlocks, IEnumerable<FormatterExtension> extensions)
+        {
+            if (keyedBlocks == null) throw new ArgumentNullException("keyedBlocks");
+            if (extensions == null) throw new ArgumentNullException("extensions");
+            KeyedBlocks = keyedBlocks.ToList();
+            Extensions = extensions.ToList();
+        }
+
         /// <summary>
         /// Gets the keyed blocks.
         /// </summary>
@@ -24,16 +42,5 @@ namespace Jeffijoe.MessageFormat.Formatting
         /// The extensions.
         /// </value>
         public IEnumerable<FormatterExtension> Extensions { get; private set; }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ParsedArguments"/> class.
-        /// </summary>
-        public ParsedArguments(IEnumerable<KeyedBlock> keyedBlocks, IEnumerable<FormatterExtension> extensions)
-        {
-            if (keyedBlocks == null) throw new ArgumentNullException("keyedBlocks");
-            if (extensions == null) throw new ArgumentNullException("extensions");
-            KeyedBlocks = keyedBlocks.ToList();
-            Extensions = extensions.ToList();
-        }
     }
 }

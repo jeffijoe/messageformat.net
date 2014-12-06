@@ -5,8 +5,6 @@
 // Author: Jeff Hansen <jeff@jeffijoe.com>
 // Copyright © 2014.
 
-using System;
-
 namespace Jeffijoe.MessageFormat.Formatting
 {
     /// <summary>

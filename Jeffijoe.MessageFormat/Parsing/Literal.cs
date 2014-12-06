@@ -37,7 +37,7 @@ namespace Jeffijoe.MessageFormat.Parsing
         }
 
         /// <summary>
-        /// Gets or sets the start index in the source string.
+        /// Gets the start index in the source string.
         /// </summary>
         /// <value>
         /// The start index.
@@ -45,7 +45,7 @@ namespace Jeffijoe.MessageFormat.Parsing
         public int StartIndex { get; private set; }
 
         /// <summary>
-        /// Gets or sets the end index in the source string.
+        /// Gets the end index in the source string.
         /// </summary>
         /// <value>
         /// The end index.
@@ -69,12 +69,12 @@ namespace Jeffijoe.MessageFormat.Parsing
         public int SourceColumnNumber { get; private set; }
 
         /// <summary>
-        /// Gets or sets the inner text (the content between the braces).
+        /// Gets the inner text (the content between the braces).
         /// </summary>
         /// <value>
         /// The inner text.
         /// </value>
-        public StringBuilder InnerText { get; set; }
+        public StringBuilder InnerText { get; private set; }
 
         /// <summary>
         /// Updates the start and end index.

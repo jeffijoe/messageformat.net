@@ -73,6 +73,5 @@ namespace Jeffijoe.MessageFormat.Tests.Helpers
         }
 
         #endregion
-
     }
 }

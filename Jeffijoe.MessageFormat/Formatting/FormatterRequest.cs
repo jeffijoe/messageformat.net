@@ -1,4 +1,11 @@
-﻿using Jeffijoe.MessageFormat.Parsing;
+﻿// FormatterRequest.cs
+// - MessageFormat
+// -- Jeffijoe.MessageFormat
+// 
+// Author: Jeff Hansen <jeff@jeffijoe.com>
+// Copyright © 2014.
+
+using Jeffijoe.MessageFormat.Parsing;
 
 namespace Jeffijoe.MessageFormat.Formatting
 {
@@ -7,6 +14,25 @@ namespace Jeffijoe.MessageFormat.Formatting
     /// </summary>
     public class FormatterRequest
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FormatterRequest"/> class.
+        /// </summary>
+        /// <param name="sourceLiteral"></param>
+        /// <param name="variable">The variable.</param>
+        /// <param name="formatterName">Name of the formatter.</param>
+        /// <param name="formatterArguments">The formatter arguments.</param>
+        public FormatterRequest(
+            Literal sourceLiteral,
+            string variable, 
+            string formatterName, 
+            string formatterArguments)
+        {
+            SourceLiteral = sourceLiteral;
+            Variable = variable;
+            FormatterName = formatterName;
+            FormatterArguments = formatterArguments;
+        }
+
         /// <summary>
         /// Gets the source literal.
         /// </summary>
@@ -38,25 +64,6 @@ namespace Jeffijoe.MessageFormat.Formatting
         /// The formatter arguments.
         /// </value>
         public string FormatterArguments { get; private set; }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="FormatterRequest"/> class.
-        /// </summary>
-        /// <param name="sourceLiteral"></param>
-        /// <param name="variable">The variable.</param>
-        /// <param name="formatterName">Name of the formatter.</param>
-        /// <param name="formatterArguments">The formatter arguments.</param>
-        public FormatterRequest(
-            Literal sourceLiteral,
-            string variable, 
-            string formatterName, 
-            string formatterArguments)
-        {
-            SourceLiteral = sourceLiteral;
-            Variable = variable;
-            FormatterName = formatterName;
-            FormatterArguments = formatterArguments;
-        }
 
         /// <summary>
         /// Clones this instance.

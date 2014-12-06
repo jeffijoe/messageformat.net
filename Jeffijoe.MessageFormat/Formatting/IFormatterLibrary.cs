@@ -5,7 +5,6 @@
 // Author: Jeff Hansen <jeff@jeffijoe.com>
 // Copyright © 2014.
 
-using System.Collections;
 using System.Collections.Generic;
 
 namespace Jeffijoe.MessageFormat.Formatting

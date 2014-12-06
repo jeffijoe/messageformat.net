@@ -19,6 +19,104 @@ namespace Jeffijoe.MessageFormat.Tests.Formatting
 {
     public class BaseFormatterTests
     {
+        public static IEnumerable<object[]> ParseArguments_tests
+        {
+            get
+            {
+                yield return new object[]
+                {
+                    "offset:1 test:1337 one {programmer}   other{programmers}",
+                    new []{"offset", "test"},
+                    new []{"1", "1337"},
+                    new []
+                    {
+                        "one", "other"
+                    },
+                    new []
+                    {
+                        "programmer", "programmers"
+                    }
+                };
+
+                yield return new object[]
+                {
+                    "offset:1 test:1337 one\\123 {programmer}   other{programmers}",
+                    new []{"offset", "test"},
+                    new []{"1", "1337"},
+                    new []
+                    {
+                        "one\\123", "other"
+                    },
+                    new []
+                    {
+                        "programmer", "programmers"
+                    }
+                };
+            }
+        }
+
+        public static IEnumerable<object[]> ParseKeyedBlocks_tests
+        {
+            get
+            {
+                yield return new object[]
+                {
+                    "male {he} female {she}unknown{they}",
+                    new[]
+                    {
+                        "male", "female", "unknown"
+                    },
+                    new []
+                    {
+                        "he","she","they"
+                    }
+                };
+                yield return new object[]
+                {
+                    @"
+                        male {he} 
+                        female {she}
+unknown
+    {they}
+",
+                    new[]
+                    {
+                        "male", "female", "unknown"
+                    },
+                    new []
+                    {
+                        "he","she","they"
+                    }
+                };
+                yield return new object[]
+                {
+                    @"
+                        male {he} 
+                        female {she{dawg}}
+unknown
+    {they\{dawg\}}
+",
+                    new[]
+                    {
+                        "male", "female", "unknown"
+                    },
+                    new []
+                    {
+                        "he","she{dawg}",@"they\{dawg\}"
+                    }
+                };
+            }
+        }
+
+        #region Test classes
+
+        class BaseFormatterImpl : BaseFormatter
+        {
+
+        }
+
+        #endregion
+
         [Theory]
         [InlineData("hello {{dawg}")]
         [InlineData("hello {dawg}}")]
@@ -156,103 +254,5 @@ namespace Jeffijoe.MessageFormat.Tests.Formatting
             Assert.Throws<VariableNotFoundException>(() => subject.AssertVariableExists(args, "Test"));
             Assert.DoesNotThrow(() => subject.AssertVariableExists(args, "dawg"));
         }
-
-        public static IEnumerable<object[]> ParseArguments_tests
-        {
-            get
-            {
-                yield return new object[]
-                {
-                    "offset:1 test:1337 one {programmer}   other{programmers}",
-                    new []{"offset", "test"},
-                    new []{"1", "1337"},
-                    new []
-                    {
-                        "one", "other"
-                    },
-                    new []
-                    {
-                        "programmer", "programmers"
-                    }
-                };
-
-                yield return new object[]
-                {
-                    "offset:1 test:1337 one\\123 {programmer}   other{programmers}",
-                    new []{"offset", "test"},
-                    new []{"1", "1337"},
-                    new []
-                    {
-                        "one\\123", "other"
-                    },
-                    new []
-                    {
-                        "programmer", "programmers"
-                    }
-                };
-            }
-        }
-
-        public static IEnumerable<object[]> ParseKeyedBlocks_tests
-        {
-            get
-            {
-                yield return new object[]
-                {
-                    "male {he} female {she}unknown{they}",
-                    new[]
-                    {
-                        "male", "female", "unknown"
-                    },
-                    new []
-                    {
-                        "he","she","they"
-                    }
-                };
-                yield return new object[]
-                {
-                    @"
-                        male {he} 
-                        female {she}
-unknown
-    {they}
-",
-                    new[]
-                    {
-                        "male", "female", "unknown"
-                    },
-                    new []
-                    {
-                        "he","she","they"
-                    }
-                };
-                yield return new object[]
-                {
-                    @"
-                        male {he} 
-                        female {she{dawg}}
-unknown
-    {they\{dawg\}}
-",
-                    new[]
-                    {
-                        "male", "female", "unknown"
-                    },
-                    new []
-                    {
-                        "he","she{dawg}",@"they\{dawg\}"
-                    }
-                };
-            }
-        }
-
-        #region Test classes
-
-        class BaseFormatterImpl : BaseFormatter
-        {
-
-        }
-
-        #endregion
     }
 }

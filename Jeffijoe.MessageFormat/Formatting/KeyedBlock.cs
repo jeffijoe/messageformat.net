@@ -1,3 +1,9 @@
+// KeyedBlock.cs
+// - MessageFormat
+// -- Jeffijoe.MessageFormat
+// 
+// Author: Jeff Hansen <jeff@jeffijoe.com>
+// Copyright © 2014.
 namespace Jeffijoe.MessageFormat.Formatting
 {
     /// <summary>
@@ -7,6 +13,17 @@ namespace Jeffijoe.MessageFormat.Formatting
     /// </summary>
     public class KeyedBlock
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="KeyedBlock"/> class.
+        /// </summary>
+        /// <param name="key">The key.</param>
+        /// <param name="blockText">The block text.</param>
+        public KeyedBlock(string key, string blockText)
+        {
+            Key = key;
+            BlockText = blockText;
+        }
+
         /// <summary>
         /// Gets the key used by the formatter to make decisions.
         /// </summary>
@@ -22,16 +39,5 @@ namespace Jeffijoe.MessageFormat.Formatting
         /// The block text.
         /// </value>
         public string BlockText { get; private set; }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="KeyedBlock"/> class.
-        /// </summary>
-        /// <param name="key">The key.</param>
-        /// <param name="blockText">The block text.</param>
-        public KeyedBlock(string key, string blockText)
-        {
-            Key = key;
-            BlockText = blockText;
-        }
     }
 }

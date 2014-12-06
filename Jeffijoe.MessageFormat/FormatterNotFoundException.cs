@@ -1,4 +1,11 @@
-﻿using System;
+﻿// FormatterNotFoundException.cs
+// - MessageFormat
+// -- Jeffijoe.MessageFormat
+// 
+// Author: Jeff Hansen <jeff@jeffijoe.com>
+// Copyright © 2014.
+
+using System;
 using Jeffijoe.MessageFormat.Formatting;
 
 namespace Jeffijoe.MessageFormat
