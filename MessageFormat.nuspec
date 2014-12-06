@@ -1,0 +1,49 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+    <metadata>
+        <id>MessageFormat</id>
+        <version>0.1.0</version>
+        <title>MessageFormatter for .NET</title>
+        <authors>Jeff Hansen</authors>
+        <owners>Jeff Hansen</owners>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>PHP has it. Java has it. Even JavaScript has it. It's time .NET joined in with support for the ICU Message Format.
+
+How would you format "He found 1 result in 4 categories", or "She found 3 results in 1 category" without bloating your code with a billion if-statements? And when you have to translate it, then what?
+
+How about something like:
+
+````csharp
+var pattern = @"{Gender, select,
+  male {He}
+  female {She}
+  other {They}
+} found {ResultCount, plural,
+   zero {no results}
+   one {one result}
+   other {# results}
+} in {CategoryCount, plural,
+   zero {0 categories}
+   one {one category}
+   other {# categories}
+}.";
+
+var mf = new MessageFormatter();
+var result = mf.FormatMessage(pattern, new {
+  Gender = "male",
+  ResultsCount = 3,
+  CategoriesCount = 1
+});
+````
+Check the README for more information.</description>
+        <summary>An implementation of the ICU MessageFormatter for .NET - write contextual UI messages with proper pluralization, and more. Works with Xamarin!</summary>
+        <releaseNotes>0.1.0: First public release.</releaseNotes>
+        <copyright>Copyright © Jeff Hansen 2014 to present. All rights reserved.</copyright>
+        <language>en-US</language>
+        <tags>messageformat,pcl,messageformatter,xamarin,ui,messages,formatting,plural,pluralization,singular,select</tags>
+    </metadata>
+    <files>
+        <file src="lib\_._" target="lib\_._" />
+        <file src="Jeffijoe.MessageFormat\bin\Release\Jeffijoe.MessageFormat.dll" target="Jeffijoe.MessageFormat.dll" />
+    </files>
+</package>
