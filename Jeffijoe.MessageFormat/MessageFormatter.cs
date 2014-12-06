@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Jeffijoe.MessageFormat.Formatting;
 using Jeffijoe.MessageFormat.Formatting.Formatters;
+using Jeffijoe.MessageFormat.Helpers;
 using Jeffijoe.MessageFormat.Parsing;
 
 namespace Jeffijoe.MessageFormat
@@ -13,31 +14,45 @@ namespace Jeffijoe.MessageFormat
     /// </summary>
     public class MessageFormatter : IMessageFormatter
     {
+        /// <summary>
+        /// The pattern parser
+        /// </summary>
         private readonly IPatternParser _patternParser;
+
+        /// <summary>
+        /// The formatter library.
+        /// </summary>
         private readonly IFormatterLibrary _library;
-        private PluralFormatter _pluralFormatter;
+
+        /// <summary>
+        /// Pattern cache. If enabled, should speed up formatting the same pattern multiple times,
+        /// regardless of arguments.
+        /// </summary>
+        private readonly Dictionary<string, IFormatterRequestCollection> cache;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MessageFormatter"/> class.
         /// </summary>
-        public MessageFormatter(string locale = "en")
-            : this(new PatternParser(new LiteralParser()), new FormatterLibrary(), locale)
+        public MessageFormatter(bool useCache = true, string locale = "en")
+            : this(new PatternParser(new LiteralParser()), new FormatterLibrary(), useCache, locale)
         {
-            Formatters.Add(new VariableFormatter());
-            Formatters.Add(new SelectFormatter());
-            _pluralFormatter = new PluralFormatter();
-            Formatters.Add(_pluralFormatter);
+            
         }
 
         /// <summary>
-        /// Gets the pluralizers dictionary. Key is the locale.
+        /// Gets the pluralizers dictionary from the <see cref="PluralFormatter"/>, if set. Key is the locale.
         /// </summary>
         /// <value>
-        /// The pluralizers.
+        /// The pluralizers, or <c>null</c> if the plural formatter has not been added.
         /// </value>
         public Dictionary<string, Pluralizer> Pluralizers
         {
-            get { return _pluralFormatter.Pluralizers; }
+            get
+            {
+                var pluralFormatter = Formatters.OfType<PluralFormatter>().FirstOrDefault();
+                if (pluralFormatter == null) return null;
+                return pluralFormatter.Pluralizers;
+            }
         }
 
         /// <summary>
@@ -63,16 +78,19 @@ namespace Jeffijoe.MessageFormat
         /// Initializes a new instance of the <see cref="MessageFormatter" /> class.
         /// </summary>
         /// <param name="patternParser">The pattern parser.</param>
-        /// <param name="library"></param>
+        /// <param name="library">The library.</param>
+        /// <param name="useCache">if set to <c>true</c> uses the cache.</param>
         /// <param name="locale">The locale to use. Formatters may need this.</param>
         /// <exception cref="System.ArgumentNullException">patternParser</exception>
-        internal MessageFormatter(IPatternParser patternParser, IFormatterLibrary library, string locale = "en")
+        internal MessageFormatter(IPatternParser patternParser, IFormatterLibrary library, bool useCache, string locale = "en")
         {
             if (patternParser == null) throw new ArgumentNullException("patternParser");
             if (library == null) throw new ArgumentNullException("library");
             _patternParser = patternParser;
             _library = library;
             Locale = locale;
+            if (useCache)
+                cache = new Dictionary<string, IFormatterRequestCollection>();
         }
 
         /// <summary>
@@ -86,9 +104,10 @@ namespace Jeffijoe.MessageFormat
             /*
              * We are asuming the formatters are ordered correctly
              * - that is, from left to right, string-wise.
-            */
+             */
+
             var sourceBuilder = new StringBuilder(pattern);
-            var requests = _patternParser.Parse(sourceBuilder);
+            var requests = ParseRequests(pattern, sourceBuilder);
             var requestsEnumerated = requests.ToArray();
 
             // If we got no formatters, then we're done here.
@@ -109,7 +128,7 @@ namespace Jeffijoe.MessageFormat
                 // +1 because we want to include the last index.
                 var length = (sourceLiteral.EndIndex - sourceLiteral.StartIndex) + 1;
                 sourceBuilder.Remove(sourceLiteral.StartIndex, length);
-     
+
                 // Now, we inject the result.
                 sourceBuilder.Insert(sourceLiteral.StartIndex, result);
 
@@ -124,7 +143,42 @@ namespace Jeffijoe.MessageFormat
         }
 
         /// <summary>
-        /// Unescapes the literals from the source builder, and returns a new instance with literals unescaped..
+        /// Parses the requests, using the cache if enabled and applicable.
+        /// </summary>
+        /// <param name="pattern">The pattern.</param>
+        /// <param name="sourceBuilder">The source builder.</param>
+        /// <returns></returns>
+        private IFormatterRequestCollection ParseRequests(string pattern, StringBuilder sourceBuilder)
+        {
+            // If we are not using the cache, just parse them straight away.
+            if (cache == null)
+                return _patternParser.Parse(sourceBuilder);
+
+            // If we have a cached result from this pattern, clone it and return the clone.
+            IFormatterRequestCollection cached;
+            if (cache.TryGetValue(pattern, out cached))
+            {
+                return cached.Clone();
+            }
+            var requests = _patternParser.Parse(sourceBuilder);
+            if (cache != null)
+                cache.Add(pattern, requests.Clone());
+            return requests;
+        }
+
+        /// <summary>
+        /// Formats the message, and uses reflection to create a dictionary of property values from the specified object.
+        /// </summary>
+        /// <param name="pattern">The pattern.</param>
+        /// <param name="args">The arguments.</param>
+        /// <returns></returns>
+        public string FormatMessage(string pattern, object args)
+        {
+            return FormatMessage(pattern, args.ToDictionary());
+        }
+
+        /// <summary>
+        /// Unescapes the literals from the source builder, and returns a new instance with literals unescaped.
         /// </summary>
         /// <param name="sourceBuilder">The source builder.</param>
         /// <returns></returns>
@@ -136,27 +190,33 @@ namespace Jeffijoe.MessageFormat
             const char escapeChar = '\\';
             const char openBrace = '{';
             const char closeBrace = '}';
-            int braceBalance = 0;
+            var braceBalance = 0;
             for (int i = 0; i < length; i++)
             {
                 var c = sourceBuilder[i];
-                if(c == escapeChar)
+                if (c == escapeChar)
                 {
                     if (i != length - 1)
                     {
-                        char next = sourceBuilder[i+1];
-                        if (next == openBrace)
+                        char next = sourceBuilder[i + 1];
+                        if (next == openBrace && braceBalance == 0)
                         {
-                            braceBalance++;
                             continue;
                         }
 
-                        if(next == closeBrace)
+                        if (next == closeBrace && braceBalance == 1)
                         {
-                            braceBalance--;
                             continue;
                         }
                     }
+                }
+                else if (c == openBrace)
+                {
+                    braceBalance++;
+                }
+                else if (c == closeBrace)
+                {
+                    braceBalance--;
                 }
                 dest.Append(c);
             }

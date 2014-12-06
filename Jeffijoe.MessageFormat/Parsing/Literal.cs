@@ -87,5 +87,15 @@ namespace Jeffijoe.MessageFormat.Parsing
             StartIndex = (StartIndex - offset) + resultLength;
             EndIndex = (EndIndex - offset) + resultLength;
         }
+
+        /// <summary>
+        /// Clones this instance.
+        /// </summary>
+        /// <returns></returns>
+        public Literal Clone()
+        {
+            // Assuming that InnerText will never be tampered with.
+            return new Literal(StartIndex, EndIndex, SourceLineNumber, SourceColumnNumber, InnerText);
+        }
     }
 }

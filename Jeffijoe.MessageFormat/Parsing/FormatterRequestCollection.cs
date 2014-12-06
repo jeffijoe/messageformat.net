@@ -36,5 +36,20 @@ namespace Jeffijoe.MessageFormat.Parsing
                 next.SourceLiteral.ShiftIndices(resultLength, start.SourceLiteral);
             }
         }
+
+        /// <summary>
+        /// Clones this instance and all of it's items. This lets us reuse pattern parsing result, without having to remember
+        /// the item's initial state before being modified to match the results of the formatters.
+        /// </summary>
+        /// <returns></returns>
+        public IFormatterRequestCollection Clone()
+        {
+            var result = new FormatterRequestCollection();
+            foreach (var request in this)
+            {
+                result.Add(request.Clone());
+            }
+            return result;
+        }
     }
 }

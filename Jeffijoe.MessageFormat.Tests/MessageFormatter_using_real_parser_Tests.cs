@@ -35,7 +35,7 @@ whatchu gonna do when dey come for youu?
         {
             var mockLibary = new Mock<IFormatterLibrary>();
             var dummyFormatter = new Mock<IFormatter>();
-            var subject = new MessageFormatter(new PatternParser(new LiteralParser()), mockLibary.Object, "en");
+            var subject = new MessageFormatter(new PatternParser(new LiteralParser()), mockLibary.Object, false, locale: "en");
 
             var args = new Dictionary<string, object>();
             args.Add("name", "Jeff");

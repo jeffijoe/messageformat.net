@@ -4,19 +4,17 @@
 // 
 // Author: Jeff Hansen <jeff@jeffijoe.com>
 // Copyright © 2014.
+
+using System.Collections;
+using System.Collections.Generic;
+
 namespace Jeffijoe.MessageFormat.Formatting
 {
     /// <summary>
     /// Manages formatters to use.
     /// </summary>
-    public interface IFormatterLibrary
+    public interface IFormatterLibrary : IList<IFormatter>
     {
-        /// <summary>
-        /// Adds the specified formatter, making it available to use for whoever wants to.
-        /// </summary>
-        /// <param name="formatter">The formatter.</param>
-        void Add(IFormatter formatter);
-
         /// <summary>
         /// Gets the formatter to use. If none was found, throws an exception.
         /// </summary>

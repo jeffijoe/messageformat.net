@@ -51,6 +51,7 @@
     <Compile Include="Formatting\Formatters\SelectFormatter.cs" />
     <Compile Include="Formatting\IFormatter.cs" />
     <Compile Include="Helpers\CharHelper.cs" />
+    <Compile Include="Helpers\ObjectHelper.cs" />
     <Compile Include="Helpers\StringBuilderHelper.cs" />
     <Compile Include="IMessageFormatter.cs" />
     <Compile Include="MessageFormatter.cs" />

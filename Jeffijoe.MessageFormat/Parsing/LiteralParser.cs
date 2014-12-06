@@ -37,10 +37,12 @@ namespace Jeffijoe.MessageFormat.Parsing
             var startLineNumber = 1;
             var startColumnNumber = 0;
             var columnNumber = 0;
+            var shouldCount = false;
             const char CR = '\r'; // Carriage return
             const char LF = '\n'; // Line feed
             for (var i = 0; i < sb.Length; i++)
             {
+                shouldCount = true;
                 var c = sb[i];
                 if (c == LF)
                 {
@@ -59,35 +61,55 @@ namespace Jeffijoe.MessageFormat.Parsing
                     // Don't check for escaping when we're at the first char
                     if (i != 0)
                     {
-                        // Only escape if we're not inside a brace match
                         if (sb[i - 1] == escapingBackslash)
-                            if(braceBalance == 0)
+                        {
+                            // Only escape if we're not inside a brace match
+                            if (braceBalance == 0)
+                            {
                                 continue;
+                            }
+                            // if we ARE inside, don't make it count as a brace
+                            shouldCount = false;
+                        }
                     }
-                    openBraces++;
-                    braceBalance++;
-                    // Record starting position of possible new brace match.
-                    if (braceBalance == 1)
+                    if(shouldCount)
                     {
-                        start = i;
-                        startColumnNumber = columnNumber;
-                        startLineNumber = lineNumber;
-                        matchTextBuf.Clear();
+                        openBraces++;
+                        braceBalance++;
+                        // Record starting position of possible new brace match.
+                        if (braceBalance == 1)
+                        {
+                            start = i;
+                            startColumnNumber = columnNumber;
+                            startLineNumber = lineNumber;
+                            matchTextBuf.Clear();
+                        }
                     }
                 }
-
+                shouldCount = true;
                 if (c == closeBrace)
                 {
                     // Don't check for escaping when we're at the first char.
                     if (i != 0)
                     {
-                        // Only escape if we're not inside a brace match
                         if (sb[i - 1] == escapingBackslash)
+                        {
+                            // Only escape if we're outside (or about to exit) a brace match
                             if (braceBalance <= 1)
+                            {
+                                matchTextBuf.Append(c);
                                 continue;
+                            }
+                            // If we're not outside, don't make it count as a brace.
+                            shouldCount = false;
+                        }
                     }
-                    closeBraces++;
-                    braceBalance--;
+                    if(shouldCount)
+                    {
+                        closeBraces++;
+                        braceBalance--;
+                    }
+                    
                     // Write the brace to the match buffer if it's not the closing brace
                     // we are looking for.
                     if (braceBalance > 0)

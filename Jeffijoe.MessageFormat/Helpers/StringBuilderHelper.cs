@@ -12,14 +12,14 @@ namespace Jeffijoe.MessageFormat.Helpers
     /// <summary>
     /// String Builder helper
     /// </summary>
-    public static class StringBuilderHelper
+    internal static class StringBuilderHelper
     {
         /// <summary>
         /// Trims the whitespace.
         /// </summary>
         /// <param name="src">The source.</param>
         /// <returns></returns>
-         public static StringBuilder TrimWhitespace(this StringBuilder src)
+        internal static StringBuilder TrimWhitespace(this StringBuilder src)
          {
              var length = 0;
 
@@ -61,7 +61,7 @@ namespace Jeffijoe.MessageFormat.Helpers
          /// <param name="src">The source.</param>
          /// <param name="chars">The chars.</param>
          /// <returns></returns>
-        public static bool Contains(this StringBuilder src, params char[] chars)
+        internal static bool Contains(this StringBuilder src, params char[] chars)
         {
             for (int i = 0; i < src.Length; i++)
             {
@@ -79,7 +79,7 @@ namespace Jeffijoe.MessageFormat.Helpers
         /// </summary>
         /// <param name="src">The source.</param>
         /// <returns></returns>
-        public static bool ContainsWhitespace(this StringBuilder src)
+        internal static bool ContainsWhitespace(this StringBuilder src)
         {
             return src.Contains(' ', '\r', '\n', '\t');
         }

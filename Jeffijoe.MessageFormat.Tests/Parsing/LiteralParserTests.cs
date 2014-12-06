@@ -82,7 +82,8 @@ yeeah!
         [InlineData("An ending }", 0, 1)]
         [InlineData("One { and multiple }}", 1, 2)]
         [InlineData("A few {{{{ and one }", 4, 1)]
-        [InlineData("A few {{{{ and one \\}}", 4, 2)]
+        [InlineData("A few {{{{ and one \\}}", 4, 1)]
+        [InlineData("A few \\{{{{{ and one \\}}", 4, 1)]
         public void ParseLiterals_bracket_mismatch(string source, int expectedOpenBraceCount, int expectedCloseBraceCount)
         {
             var sb = new StringBuilder(source);

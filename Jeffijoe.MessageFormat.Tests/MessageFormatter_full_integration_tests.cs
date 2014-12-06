@@ -19,7 +19,7 @@ namespace Jeffijoe.MessageFormat.Tests
         public void FormatMessage_lets_non_ascii_characters_right_through()
         {
             var input = "中test中国话不用彁字。";
-            var subject = new MessageFormatter();
+            var subject = new MessageFormatter(false);
             var actual = subject.FormatMessage(input, new Dictionary<string, object>());
             Assert.Equal(input, actual);
         }
@@ -28,7 +28,7 @@ namespace Jeffijoe.MessageFormat.Tests
         [PropertyData("Tests")]
         public void FormatMessage(string source, Dictionary<string, object> args, string expected)
         {
-            var subject = new MessageFormatter();
+            var subject = new MessageFormatter(false);
 
             // Warmup
             subject.FormatMessage(source, args);
@@ -43,7 +43,7 @@ namespace Jeffijoe.MessageFormat.Tests
         public void ReadMe_test_to_make_sure_I_dont_look_like_a_fool()
         {
             {
-                var mf = new MessageFormatter();
+                var mf = new MessageFormatter(false);
                 var str = @"You have {notifications, plural,
                               zero {no notifications}
                               one {one notification}
@@ -58,7 +58,7 @@ namespace Jeffijoe.MessageFormat.Tests
             }
 
             {
-                var mf = new MessageFormatter();
+                var mf = new MessageFormatter(false);
                 var str = @"You {NUM_ADDS, plural, offset:1
                               =0{didnt add this to your profile} 
                               zero{added this to your profile}
@@ -87,7 +87,7 @@ namespace Jeffijoe.MessageFormat.Tests
             }
 
             {
-                var mf = new MessageFormatter();
+                var mf = new MessageFormatter(false);
                 var str = @"{GENDER, select,
                                 male {He}
                               female {She}
@@ -122,7 +122,7 @@ namespace Jeffijoe.MessageFormat.Tests
             }
 
             {
-                var mf = new MessageFormatter();
+                var mf = new MessageFormatter(false);
                 var str = @"Your {NUM, plural, one{message} other{messages}} go here.";
                 var formatted = mf.FormatMessage(str, new Dictionary<string, object>{
                   {"NUM", 1}
@@ -136,7 +136,7 @@ namespace Jeffijoe.MessageFormat.Tests
             }
 
             {
-                var mf = new MessageFormatter();
+                var mf = new MessageFormatter(false);
                 var str = @"His name is {LAST_NAME}... {FIRST_NAME} {LAST_NAME}";
                 var formatted = mf.FormatMessage(str, new Dictionary<string, object>{
                   {"FIRST_NAME", "James"},
@@ -146,7 +146,7 @@ namespace Jeffijoe.MessageFormat.Tests
             }
 
             {
-                var mf = new MessageFormatter();
+                var mf = new MessageFormatter(false);
                 var str = @"{GENDER, select, male{He} female{She} other{They}} liked this.";
                 var formatted = mf.FormatMessage(str, new Dictionary<string, object>{
                   {"GENDER", "male"}
@@ -171,6 +171,66 @@ namespace Jeffijoe.MessageFormat.Tests
         }
 
         [Fact]
+        public void FormatMessage_with_reflection_overload()
+        {
+            var subject = new MessageFormatter(false);
+            var pattern = "You have {UnreadCount, plural, " +
+                              "zero {no unread messages}" +
+                               "one {just one unread message}" +
+                             "other {# unread messages}" +
+                          "} today.";
+            var actual = subject.FormatMessage(pattern, new
+            {
+                UnreadCount = 0
+            });
+            Assert.Equal("You have no unread messages today.", actual);
+            
+            // The absence of UnreadCount means it will be treated as "zero".
+            actual = subject.FormatMessage(pattern, new
+            {
+                
+            });
+            Assert.Equal("You have no unread messages today.", actual);
+
+            actual = subject.FormatMessage(pattern, new
+            {
+                UnreadCount = 1
+            });
+            Assert.Equal("You have just one unread message today.", actual);
+            actual = subject.FormatMessage(pattern, new
+            {
+                UnreadCount = 2
+            });
+            Assert.Equal("You have 2 unread messages today.", actual);
+
+            actual = subject.FormatMessage(pattern, new
+            {
+                UnreadCount = 3
+            });
+            Assert.Equal("You have 3 unread messages today.", actual);
+
+
+        }
+
+        [Fact]
+        public void FormatMessage_nesting_with_brace_escaping()
+        {
+            var subject = new MessageFormatter(false);
+            var pattern = @"{s1, select, 
+                                1 {{s2, select, 
+                                   2 {\{}
+                                }}
+                            }";
+            var actual = subject.FormatMessage(pattern, new
+            {
+                s1 = 1,
+                s2 = 2
+            });
+            Console.WriteLine(actual);
+            Assert.Equal("{", actual);
+        }
+
+        [Fact]
         public void FormatMessage_debug()
         {
             var source = @"{gender, select, 
@@ -189,7 +249,7 @@ namespace Jeffijoe.MessageFormat.Tests
                 {"gender", "male"},
                 {"count", 5}
             };
-            var subject = new MessageFormatter();
+            var subject = new MessageFormatter(false);
 
             string result = subject.FormatMessage(source, args);
             Assert.Equal(expected, result);

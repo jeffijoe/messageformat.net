@@ -57,5 +57,14 @@ namespace Jeffijoe.MessageFormat.Formatting
             FormatterName = formatterName;
             FormatterArguments = formatterArguments;
         }
+
+        /// <summary>
+        /// Clones this instance.
+        /// </summary>
+        /// <returns></returns>
+        public FormatterRequest Clone()
+        {
+            return new FormatterRequest(SourceLiteral.Clone(), Variable, FormatterName, FormatterArguments);
+        }
     }
 }

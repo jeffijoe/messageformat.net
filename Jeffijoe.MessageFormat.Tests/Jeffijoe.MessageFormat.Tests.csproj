@@ -35,6 +35,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="Moq">
       <HintPath>..\packages\Moq.4.2.1409.1722\lib\net40\Moq.dll</HintPath>
     </Reference>
@@ -60,8 +61,10 @@
     <Compile Include="Formatting\Formatters\PluralFormatterTests.cs" />
     <Compile Include="Formatting\Formatters\SelectFormatterTests.cs" />
     <Compile Include="Helpers\CharHelperTests.cs" />
+    <Compile Include="Helpers\ObjectHelperTests.cs" />
     <Compile Include="Helpers\StringBuilderHelperTests.cs" />
     <Compile Include="MessageFormatterTests.cs" />
+    <Compile Include="MessageFormatter_caching_tests.cs" />
     <Compile Include="MessageFormatter_full_integration_tests.cs" />
     <Compile Include="MessageFormatter_using_real_parser_Tests.cs" />
     <Compile Include="Parsing\FormatterRequestCollectionTests.cs" />

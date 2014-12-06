@@ -26,7 +26,7 @@ namespace Jeffijoe.MessageFormat.Tests
             var collectionMock = new Mock<IFormatterRequestCollection>();
             var formatterMock1 = new Mock<IFormatter>();
             var formatterMock2 = new Mock<IFormatter>();
-            var subject = new MessageFormatter(patternParserMock.Object, libraryMock.Object, "en");
+            var subject = new MessageFormatter(patternParserMock.Object, libraryMock.Object, false, locale: "en");
 
             // I can use a bogus plural argument. Mocks <3
             var pattern = "{name} has {messages, plural, 123}.";
@@ -85,7 +85,7 @@ namespace Jeffijoe.MessageFormat.Tests
         {
             var patternParserMock = new Mock<IPatternParser>();
             var libraryMock = new Mock<IFormatterLibrary>();
-            var subject = new MessageFormatter(patternParserMock.Object, libraryMock.Object, "en");
+            var subject = new MessageFormatter(patternParserMock.Object, libraryMock.Object, false, locale: "en");
 
             var actual = subject.UnescapeLiterals(new StringBuilder(source)).ToString();
             Assert.Equal(expected, actual);

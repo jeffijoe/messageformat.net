@@ -18,7 +18,19 @@ var formatted = mf.FormatMessage(str, new Dictionary<string, object>{
   {"name", "Jeff"}
 });
 
-// You have 4 notifications. Have a nice day, Jeff!
+//Result: You have 4 notifications. Have a nice day, Jeff!
+
+````
+
+Or, if you don't like dictionaries, and don't mind a bit of reflection..
+
+````csharp
+var formatted = mf.FormatMessage(str, new {
+  notifications = 0,
+  name = "Jeff"
+});
+
+//Result: You have no notifications. Have a nice day, Jeff!
 ````
 
 ## Features
@@ -30,12 +42,21 @@ var formatted = mf.FormatMessage(str, new Dictionary<string, object>{
 * **It's (relatively) small**. For a .NET library, ~25kb is not a lot.
 * **It's very white-space tolerant.** You can structure your blocks so they are more readable - look at the example above.
 * **Nesting is supported.** You can nest your blocks as you please, there's no special structure required to do this, just ensure your braces match.
+* **Adding your own formatters.** I don't know why you would need to, but if you want, you can add your own formatters, and
+  take advantage of the code in my base classes to help you parse patterns. Look at the source, this is how I implemented the built-in formatters.
 * **Exceptions make atleast a little sense.** When exceptions are thrown due to a bad pattern, the exception should include useful information.
-* **There's unit tests.** Run them yourself.
+* **There are unit tests.** Run them yourself if you want, they're using XUnit.
+* **Built-in cache.** If you are formatting messages in a tight loop, with different data for each iteration, 
+  and if you are reusing the same instance of `MessageFormatter`, the formatter will cache the tokens of each pattern (nested, too),
+  so it won't have to spend CPU time to parse out literals every time. I benchmarked it, and on my monster machine, 
+  it didn't make much of a difference (10000 iterations).
 
 ## Performance
 
-PerfTests coming soon..
+If you look at `MessageFormatter_caching_tests`, you will find a "with cache" and "without cache" test.
+
+My machine runs on a Core i7 3960x, and with about **100,000** iterations with random data (generated beforehand), it takes about 2 seconds (1892ms) with the cache,
+and about 3 seconds (3236ms) without it.
 
 ## Supported formats
 
@@ -98,15 +119,12 @@ be (somewhat) compatible with his.
 
 # Bugs / issues
 
-If you have issues with the library, and the exception is rather cryptic, please open an issue
+If you have issues with the library, and the exception makes no sense, please open an issue
 and include your message, as well as the data you used.
 
 # Todo
 
-* A `FormatMessage` overload that takes an object arg, using reflection to create a dictionary of the values.
 * Built-in locales (currently only `en` is added per default).
-* Optional caching when formatting the same pattern. This may improve speed (although that shouldn't be necessary), but may take up a bit more memory
-  for the `MessageFormatter`'s object lifetime (which is usually very short as well).
 
 # Author
 

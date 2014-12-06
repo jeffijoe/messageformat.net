@@ -78,7 +78,13 @@ namespace Jeffijoe.MessageFormat.Formatting.Formatters
             if (offsetExtension != null)
                 offset = Convert.ToDouble(offsetExtension.Value);
 
-            double n = Convert.ToDouble(args[request.Variable]);
+            double n = 0;
+            object varResult = null;
+            if(args.TryGetValue(request.Variable, out varResult))
+            {
+                n = Convert.ToDouble(varResult);
+            }
+            
             var pluralized = new StringBuilder(Pluralize(locale, request, arguments, args, n, offset));
             var result =  ReplaceNumberLiterals(pluralized, n - offset);
             var formatted = messageFormatter.FormatMessage(result, args);

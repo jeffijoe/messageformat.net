@@ -1,36 +1,22 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Jeffijoe.MessageFormat.Formatting.Formatters;
 
 namespace Jeffijoe.MessageFormat.Formatting
 {
     /// <summary>
     /// Manages formatters to use.
     /// </summary>
-    public class FormatterLibrary : IFormatterLibrary
+    public class FormatterLibrary : List<IFormatter>, IFormatterLibrary
     {
         /// <summary>
-        /// Gets the formatters list.
-        /// </summary>
-        /// <value>
-        /// The formatters.
-        /// </value>
-        public IList<IFormatter> Formatters { get; private set; }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="FormatterLibrary"/> class.
+        /// Initializes a new instance of the <see cref="FormatterLibrary"/> class, and adds the default formatters.
         /// </summary>
         public FormatterLibrary()
         {
-            Formatters = new List<IFormatter>();
-        }
-
-        /// <summary>
-        /// Adds the specified formatter, making it available to use for whoever wants to.
-        /// </summary>
-        /// <param name="formatter">The formatter.</param>
-        public void Add(IFormatter formatter)
-        {
-            Formatters.Add(formatter);
+            Add(new VariableFormatter());
+            Add(new SelectFormatter());
+            Add(new PluralFormatter());
         }
 
         /// <summary>
@@ -41,7 +27,7 @@ namespace Jeffijoe.MessageFormat.Formatting
         /// <exception cref="FormatterNotFoundException"></exception>
         public IFormatter GetFormatter(FormatterRequest request)
         {
-            var formatter = Formatters.FirstOrDefault(x => x.CanFormat(request));
+            var formatter = this.FirstOrDefault(x => x.CanFormat(request));
             if(formatter == null) throw new FormatterNotFoundException(request);
             return formatter;
         }

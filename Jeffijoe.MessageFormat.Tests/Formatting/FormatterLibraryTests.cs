@@ -23,7 +23,7 @@ namespace Jeffijoe.MessageFormat.Tests.Formatting
             var mock1 = new Mock<IFormatter>();
             var mock2 = new Mock<IFormatter>();
 
-            var req = new FormatterRequest(new Literal(1, 1, 1, 1, new StringBuilder()), "test", null, null);
+            var req = new FormatterRequest(new Literal(1, 1, 1, 1, new StringBuilder()), "test", "dawg", null);
             subject.Add(mock1.Object);
             subject.Add(mock2.Object);
 
