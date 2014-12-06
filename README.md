@@ -2,6 +2,14 @@
 
 This is an implementation of the ICU Message Format in .NET.
 
+## Installation
+
+Either clone this repo and build it, or install it with NuGet:
+
+```
+Install-Package MessageFormat
+```
+
 ## TL;DR:
 
 ````csharp
