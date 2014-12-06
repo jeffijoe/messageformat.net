@@ -9,9 +9,9 @@ var mf = new MessageFormatter();
 
 var str = @"You have {notifications, plural,
               zero {no notifications}
-              one {one notification}
-              =42 {a universal amount of notifications}
-              other {# notifications}
+               one {one notification}
+               =42 {a universal amount of notifications}
+             other {# notifications}
             }. Have a nice day, {name}!";
 var formatted = mf.FormatMessage(str, new Dictionary<string, object>{
   {"notifications", 4},
@@ -42,7 +42,7 @@ PerfTests coming soon..
 Basically, it should be able to do anything that [MessageFormat.js][0] can do.
 
 * Select Format: `{gender, select, male{He likes} female{She likes} other{They like}} cheeseburgers`
-* Plural Format: `There {msgCount, plural, zero {are no unread messages} one {is 1 unread message} other{are # unread messages}}.`
+* Plural Format: `There {msgCount, plural, zero {are no unread messages} one {is 1 unread message} other{are # unread messages}}.` (where `#` is the actual number, with the offset (if any) subtracted).
 * Simple variable replacement: `Your name is {name}`
  
 ## Adding your own pluralizer functions
@@ -91,8 +91,10 @@ To escape a literal, use a `\` - e.g. `\{`.
   
 # Anything else?
 
-There's not a lot - Alex Sexton of [MessageFormat.js][0] did a great job documenting his library, and like I said,
-I wrote my implementation so it would be (somewhat) compatible with his.
+There's not a lot - Alex Sexton of [MessageFormat.js][0] did a great 
+job documenting his library, and like I said,
+I wrote my implementation so it would 
+be (somewhat) compatible with his.
 
 # Bugs / issues
 
