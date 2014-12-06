@@ -2,10 +2,11 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
     <metadata>
         <id>MessageFormat</id>
-        <version>0.1.0</version>
+        <version>0.1.1</version>
         <title>MessageFormatter for .NET</title>
         <authors>Jeff Hansen</authors>
         <owners>Jeff Hansen</owners>
+        <projectUrl>https://github.com/jeffijoe/messageformat.net</projectUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <description>PHP has it. Java has it. Even JavaScript has it. It's time .NET joined in with support for the ICU Message Format.
 
@@ -13,7 +14,6 @@ How would you format "He found 1 result in 4 categories", or "She found 3 result
 
 How about something like:
 
-````csharp
 var pattern = @"{Gender, select,
   male {He}
   female {She}
@@ -34,10 +34,10 @@ var result = mf.FormatMessage(pattern, new {
   ResultsCount = 3,
   CategoriesCount = 1
 });
-````
+
 Check the README for more information.</description>
         <summary>An implementation of the ICU MessageFormatter for .NET - write contextual UI messages with proper pluralization, and more. Works with Xamarin!</summary>
-        <releaseNotes>0.1.0: First public release.</releaseNotes>
+        <releaseNotes>0.1.1: Added more tests, fixed typos and whatnot. Hoping the readme will show up.</releaseNotes>
         <copyright>Copyright © Jeff Hansen 2014 to present. All rights reserved.</copyright>
         <language>en-US</language>
         <tags>messageformat,pcl,messageformatter,xamarin,ui,messages,formatting,plural,pluralization,singular,select</tags>
@@ -45,5 +45,6 @@ Check the README for more information.</description>
     <files>
         <file src="lib\_._" target="lib\_._" />
         <file src="Jeffijoe.MessageFormat\bin\Release\Jeffijoe.MessageFormat.dll" target="Jeffijoe.MessageFormat.dll" />
+        <file src="README.md" target="readme.txt" />
     </files>
 </package>

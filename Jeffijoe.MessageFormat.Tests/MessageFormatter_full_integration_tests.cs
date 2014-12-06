@@ -168,6 +168,26 @@ namespace Jeffijoe.MessageFormat.Tests
                 });
                 Assert.Equal(formatted, "They liked this.");
             }
+
+            {
+                var mf = new MessageFormatter(true, "en");
+                mf.Pluralizers["en"] = n =>
+                {
+                    // ´n´ is the number being pluralized.
+                    if (n == 0)
+                        return "zero";
+                    if (n == 1)
+                        return "one";
+                    if (n > 1000)
+                        return "thatsalot";
+                    return "other";
+                };
+
+                var actual = mf.FormatMessage("You have {number, plural, thatsalot {a shitload of notifications} other {# notifications}}", new Dictionary<string, object>{
+                    {"number", 1001}
+                });
+                Assert.Equal("You have a shitload of notifications", actual);
+            }
         }
 
         [Fact]

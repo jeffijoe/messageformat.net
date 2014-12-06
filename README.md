@@ -68,12 +68,12 @@ Basically, it should be able to do anything that [MessageFormat.js][0] can do.
  
 ## Adding your own pluralizer functions
 
-Same thing as with [NessageFormat.js][0], you can add your own pluralizer function.
+Same thing as with [MessageFormat.js][0], you can add your own pluralizer function.
 The `Pluralizers` property is a `Dictionary<string, object>`, so you can remove the built-in
 ones if you want.
 
 ````csharp
-var mf = new MessageFormat();
+var mf = new MessageFormatter();
 mf.Pluralizers.Add("<locale>", n => {
   // ´n´ is the number being pluralized.
   if(n == 0)
@@ -88,17 +88,18 @@ There's no restrictions on what strings you may return, nor what strings
 you may use in your pluralization block.
 
 ````csharp
-var mf = new MessageFormat("en");
-mf.Pluralizers.Add("en", n => {
-  // ´n´ is the number being pluralized.
-  if(n == 0)
-    return "zero";
-  if(n == 1)
-    return "one";
-  if(n > 1000)
-    return "thatsalot";
-  return "other";
-});
+var mf = new MessageFormatter(true, "en"); // true = use cache
+mf.Pluralizers["en"] = n =>
+{
+    // ´n´ is the number being pluralized.
+    if (n == 0)
+        return "zero";
+    if (n == 1)
+        return "one";
+    if (n > 1000)
+        return "thatsalot";
+    return "other";
+};
 
 mf.FormatMessage("You have {number, plural, thatsalot {a shitload of notifications} other {# notifications}}", new Dictionary<string, object>{
   {"number", 1001}
@@ -125,6 +126,8 @@ and include your message, as well as the data you used.
 # Todo
 
 * Built-in locales (currently only `en` is added per default).
+
+Don't expect this in the near future - you're welcome to submit a PR. :)
 
 # Author
 
