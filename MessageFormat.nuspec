@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
     <metadata>
         <id>MessageFormat</id>
-        <version>0.1.3</version>
+        <version>0.1.4</version>
         <title>MessageFormatter for .NET</title>
         <authors>Jeff Hansen</authors>
         <owners>Jeff Hansen</owners>
@@ -10,37 +10,13 @@
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <description>PHP has it. Java has it. Even JavaScript has it. It's time .NET joined in with support for the ICU Message Format.
 
-How would you format "He found 1 result in 4 categories", or "She found 3 results in 1 category" without bloating your code with a billion if-statements? And when you have to translate it, then what?
-
-How about something like:
-
-var pattern = @"{Gender, select,
-  male {He}
-  female {She}
-  other {They}
-} found {ResultCount, plural,
-   zero {no results}
-   one {one result}
-   other {# results}
-} in {CategoryCount, plural,
-   zero {0 categories}
-   one {one category}
-   other {# categories}
-}.";
-
-var mf = new MessageFormatter();
-var result = mf.FormatMessage(pattern, new {
-  Gender = "male",
-  ResultsCount = 3,
-  CategoriesCount = 1
-});
-
-Check the README for more information.</description>
+Check the README on Github for more information.</description>
         <summary>An implementation of the ICU MessageFormatter for .NET - write contextual UI messages with proper pluralization, and more. Works with Xamarin!</summary>
-        <releaseNotes />
+        <releaseNotes>0.1.4: 
+- Added a static MessageFormatter.Format method.</releaseNotes>
         <copyright>Copyright © Jeff Hansen 2014 to present. All rights reserved.</copyright>
         <language>en-US</language>
-        <tags>messageformat,pcl,messageformatter,xamarin,ui,messages,formatting,plural,pluralization,singular,select</tags>
+        <tags>messageformat,pcl,messageformatter,xamarin,ui,messages,formatting,plural,pluralization,singular,select,strings,stringformat,format</tags>
     </metadata>
     <files>
         <file src="Jeffijoe.MessageFormat\bin\Release\Jeffijoe.MessageFormat.dll" target="lib\portable-net45+sl5+wp8+win8+wpa81+MonoTouch1+MonoAndroid1\Jeffijoe.MessageFormat.dll" />

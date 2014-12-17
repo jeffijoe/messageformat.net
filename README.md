@@ -41,6 +41,17 @@ var formatted = mf.FormatMessage(str, new {
 //Result: You have no notifications. Have a nice day, Jeff!
 ````
 
+You can use a static method, too:
+
+````csharp
+var formatted = MessageFormatter.Format(str, new {
+  notifications = 0,
+  name = "Jeff"
+});
+
+//Result: You have no notifications. Have a nice day, Jeff!
+````
+
 ## Features
 
 * **It's fast.** Everything is hand-written; no parser-generators, *not even regular expressions*.
