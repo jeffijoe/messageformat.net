@@ -1,13 +1,13 @@
-﻿// ObjectHelperTests.cs
-// - MessageFormat
-// -- Jeffijoe.MessageFormat.Tests
-// 
+﻿// MessageFormat for .NET
+// - ObjectHelperTests.cs
 // Author: Jeff Hansen <jeff@jeffijoe.com>
-// Copyright © 2014.
+// Copyright (C) Jeff Hansen 2014. All rights reserved.
 
 using System.Linq;
+
 using Jeffijoe.MessageFormat.Helpers;
 using Jeffijoe.MessageFormat.Tests.TestHelpers;
+
 using Xunit;
 
 namespace Jeffijoe.MessageFormat.Tests.Helpers
@@ -17,18 +17,11 @@ namespace Jeffijoe.MessageFormat.Tests.Helpers
         [Fact]
         public void GetProperties_anonymous_and_dynamic()
         {
-            var obj = new
-            {
-                Test = "wee",
-                Toast = "woo"
-            };
+            var obj = new { Test = "wee", Toast = "woo" };
             var actual = ObjectHelper.GetProperties(obj);
             Assert.Equal(2, actual.Count());
 
-            dynamic d = new
-            {
-                Cool = "sweet"
-            };
+            dynamic d = new { Cool = "sweet" };
             actual = ObjectHelper.GetProperties(d);
             Assert.Equal(1, actual.Count());
         }
@@ -46,7 +39,7 @@ namespace Jeffijoe.MessageFormat.Tests.Helpers
         [Fact]
         public void ToDictionary()
         {
-            var obj = new {name = "test", num = 1337};
+            var obj = new { name = "test", num = 1337 };
             var actual = obj.ToDictionary();
             Assert.Equal(2, actual.Count);
             Assert.Equal("test", actual["name"]);
@@ -57,6 +50,7 @@ namespace Jeffijoe.MessageFormat.Tests.Helpers
             {
                 obj.ToDictionary();
             }
+
             Benchmark.End();
         }
 

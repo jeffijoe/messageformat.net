@@ -42,6 +42,7 @@
     <Compile Include="Formatting\FormatterExtension.cs" />
     <Compile Include="Formatting\FormatterLibrary.cs" />
     <Compile Include="Formatting\Formatters\PluralFormatter.cs" />
+    <Compile Include="Formatting\Formatters\Pluralizer.cs" />
     <Compile Include="Formatting\Formatters\VariableFormatter.cs" />
     <Compile Include="Formatting\IFormatterLibrary.cs" />
     <Compile Include="Formatting\KeyedBlock.cs" />

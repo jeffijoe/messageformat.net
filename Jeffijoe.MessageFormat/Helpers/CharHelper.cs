@@ -1,32 +1,48 @@
-﻿// CharHelper.cs
-// - MessageFormat
-// -- Jeffijoe.MessageFormat
-// 
+﻿// MessageFormat for .NET
+// - CharHelper.cs
 // Author: Jeff Hansen <jeff@jeffijoe.com>
-// Copyright © 2014.
+// Copyright (C) Jeff Hansen 2014. All rights reserved.
 namespace Jeffijoe.MessageFormat.Helpers
 {
     /// <summary>
-    /// Char helper
+    ///     Char helper
     /// </summary>
     internal static class CharHelper
     {
-        private static readonly char[] Alphanumberic = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_".ToCharArray();
-        
+        #region Static Fields
 
         /// <summary>
-        /// Determines whether the specified character is alpha numeric.
+        ///     The alphanumberic.
         /// </summary>
-        /// <param name="c">The c.</param>
-        /// <returns></returns>
-         internal static bool IsAlphaNumeric(this char c)
-         {
-             foreach (var chr in Alphanumberic)
-             {
-                 if (chr == c)
-                     return true;
-             }
-             return false;
-         }
+        private static readonly char[] Alphanumberic =
+            "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_".ToCharArray();
+
+        #endregion
+
+        #region Methods
+
+        /// <summary>
+        ///     Determines whether the specified character is alpha numeric.
+        /// </summary>
+        /// <param name="c">
+        ///     The c.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="bool" />.
+        /// </returns>
+        internal static bool IsAlphaNumeric(this char c)
+        {
+            foreach (var chr in Alphanumberic)
+            {
+                if (chr == c)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        #endregion
     }
 }

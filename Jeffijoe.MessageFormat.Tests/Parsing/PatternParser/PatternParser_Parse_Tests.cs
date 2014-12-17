@@ -1,15 +1,16 @@
-﻿// PatternParser_Parse_Tests.cs
-// - MessageFormat
-// -- Jeffijoe.MessageFormat.Tests
-// 
+﻿// MessageFormat for .NET
+// - PatternParser_Parse_Tests.cs
 // Author: Jeff Hansen <jeff@jeffijoe.com>
-// Copyright © 2014.
+// Copyright (C) Jeff Hansen 2014. All rights reserved.
 
 using System.Linq;
 using System.Text;
+
 using Jeffijoe.MessageFormat.Parsing;
 using Jeffijoe.MessageFormat.Tests.TestHelpers;
+
 using Moq;
+
 using Xunit;
 using Xunit.Extensions;
 
@@ -21,18 +22,16 @@ namespace Jeffijoe.MessageFormat.Tests.Parsing
         [InlineData("test, select, args", "test", "select", "args")]
         [InlineData("test, select, stuff {dawg}", "test", "select", "stuff {dawg}")]
         [InlineData("test, select, stuff \\{{dawg}\\}", "test", "select", "stuff \\{{dawg}\\}")]
-        [InlineData("test, select, stuff {dawg, select, {name is \\{{name}\\}}}", "test", "select", "stuff {dawg, select, {name is \\{{name}\\}}}")]
+        [InlineData("test, select, stuff {dawg, select, {name is \\{{name}\\}}}", "test", "select", 
+            "stuff {dawg, select, {name is \\{{name}\\}}}")]
         public void Parse(string source, string expectedKey, string expectedFormat, string expectedArgs)
         {
             var literalParserMock = new Mock<ILiteralParser>();
             var sb = new StringBuilder(source);
             literalParserMock.Setup(x => x.ParseLiterals(sb));
             literalParserMock.Setup(x => x.ParseLiterals(sb))
-                .Returns(new[]
-                {
-                    new Literal(0, source.Length, 1, 1, new StringBuilder(source))
-                });
-            
+                             .Returns(new[] { new Literal(0, source.Length, 1, 1, new StringBuilder(source)) });
+
             var subject = new PatternParser(literalParserMock.Object);
 
             // Warm up (JIT)

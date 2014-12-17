@@ -1,13 +1,13 @@
-﻿// LiteralParserTests.cs
-// - MessageFormat
-// -- Jeffijoe.MessageFormat.Tests
-// 
+﻿// MessageFormat for .NET
+// - LiteralParserTests.cs
 // Author: Jeff Hansen <jeff@jeffijoe.com>
-// Copyright © 2014.
+// Copyright (C) Jeff Hansen 2014. All rights reserved.
 
 using System.Linq;
 using System.Text;
+
 using Jeffijoe.MessageFormat.Parsing;
+
 using Xunit;
 using Xunit.Extensions;
 
@@ -48,7 +48,7 @@ sweet
             Assert.Equal(position[1], first.EndIndex);
             string innerText = first.InnerText.ToString();
             Assert.Equal(expectedInnerText, innerText);
-            Assert.Equal(first.StartIndex+1, first.SourceColumnNumber);
+            Assert.Equal(first.StartIndex + 1, first.SourceColumnNumber);
         }
 
         [Theory]
@@ -84,7 +84,10 @@ yeeah!
         [InlineData("A few {{{{ and one }", 4, 1)]
         [InlineData("A few {{{{ and one \\}}", 4, 1)]
         [InlineData("A few \\{{{{{ and one \\}}", 4, 1)]
-        public void ParseLiterals_bracket_mismatch(string source, int expectedOpenBraceCount, int expectedCloseBraceCount)
+        public void ParseLiterals_bracket_mismatch(
+            string source, 
+            int expectedOpenBraceCount, 
+            int expectedCloseBraceCount)
         {
             var sb = new StringBuilder(source);
             var subject = new LiteralParser();

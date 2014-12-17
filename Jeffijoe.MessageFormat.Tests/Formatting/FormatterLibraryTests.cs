@@ -1,14 +1,15 @@
-﻿// FormatterLibraryTests.cs
-// - MessageFormat
-// -- Jeffijoe.MessageFormat.Tests
-// 
+﻿// MessageFormat for .NET
+// - FormatterLibraryTests.cs
 // Author: Jeff Hansen <jeff@jeffijoe.com>
-// Copyright © 2014.
+// Copyright (C) Jeff Hansen 2014. All rights reserved.
 
 using System.Text;
+
 using Jeffijoe.MessageFormat.Formatting;
 using Jeffijoe.MessageFormat.Parsing;
+
 using Moq;
+
 using Xunit;
 
 namespace Jeffijoe.MessageFormat.Tests.Formatting

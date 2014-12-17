@@ -1,14 +1,14 @@
-﻿// PatternParser_with_real_LiteralParser.cs
-// - MessageFormat
-// -- Jeffijoe.MessageFormat.Tests
-// 
+﻿// MessageFormat for .NET
+// - PatternParser_with_real_LiteralParser.cs
 // Author: Jeff Hansen <jeff@jeffijoe.com>
-// Copyright © 2014.
+// Copyright (C) Jeff Hansen 2014. All rights reserved.
 
 using System.Linq;
 using System.Text;
+
 using Jeffijoe.MessageFormat.Parsing;
 using Jeffijoe.MessageFormat.Tests.TestHelpers;
+
 using Xunit;
 
 namespace Jeffijoe.MessageFormat.Tests.Parsing

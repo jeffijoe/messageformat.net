@@ -1,17 +1,17 @@
-﻿// BaseFormatterTests.cs
-// - MessageFormat
-// -- Jeffijoe.MessageFormat.Tests
-// 
+﻿// MessageFormat for .NET
+// - BaseFormatterTests.cs
 // Author: Jeff Hansen <jeff@jeffijoe.com>
-// Copyright © 2014.
+// Copyright (C) Jeff Hansen 2014. All rights reserved.
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+
 using Jeffijoe.MessageFormat.Formatting;
 using Jeffijoe.MessageFormat.Parsing;
 using Jeffijoe.MessageFormat.Tests.TestHelpers;
+
 using Xunit;
 using Xunit.Extensions;
 
@@ -23,35 +23,19 @@ namespace Jeffijoe.MessageFormat.Tests.Formatting
         {
             get
             {
-                yield return new object[]
-                {
-                    "offset:1 test:1337 one {programmer}   other{programmers}",
-                    new []{"offset", "test"},
-                    new []{"1", "1337"},
-                    new []
+                yield return
+                    new object[]
                     {
-                        "one", "other"
-                    },
-                    new []
-                    {
-                        "programmer", "programmers"
-                    }
-                };
+                        "offset:1 test:1337 one {programmer}   other{programmers}", new[] { "offset", "test" }, 
+                        new[] { "1", "1337" }, new[] { "one", "other" }, new[] { "programmer", "programmers" }
+                    };
 
-                yield return new object[]
-                {
-                    "offset:1 test:1337 one\\123 {programmer}   other{programmers}",
-                    new []{"offset", "test"},
-                    new []{"1", "1337"},
-                    new []
+                yield return
+                    new object[]
                     {
-                        "one\\123", "other"
-                    },
-                    new []
-                    {
-                        "programmer", "programmers"
-                    }
-                };
+                        "offset:1 test:1337 one\\123 {programmer}   other{programmers}", new[] { "offset", "test" }, 
+                        new[] { "1", "1337" }, new[] { "one\\123", "other" }, new[] { "programmer", "programmers" }
+                    };
             }
         }
 
@@ -59,60 +43,31 @@ namespace Jeffijoe.MessageFormat.Tests.Formatting
         {
             get
             {
-                yield return new object[]
-                {
-                    "male {he} female {she}unknown{they}",
-                    new[]
+                yield return
+                    new object[]
                     {
-                        "male", "female", "unknown"
-                    },
-                    new []
-                    {
-                        "he","she","they"
-                    }
-                };
-                yield return new object[]
-                {
-                    @"
+                        "male {he} female {she}unknown{they}", new[] { "male", "female", "unknown" }, 
+                        new[] { "he", "she", "they" }
+                    };
+                yield return new object[] { @"
                         male {he} 
                         female {she}
 unknown
     {they}
-",
-                    new[]
-                    {
-                        "male", "female", "unknown"
-                    },
-                    new []
-                    {
-                        "he","she","they"
-                    }
-                };
-                yield return new object[]
-                {
-                    @"
+", new[] { "male", "female", "unknown" }, new[] { "he", "she", "they" } };
+                yield return new object[] { @"
                         male {he} 
                         female {she{dawg}}
 unknown
     {they\{dawg\}}
-",
-                    new[]
-                    {
-                        "male", "female", "unknown"
-                    },
-                    new []
-                    {
-                        "he","she{dawg}",@"they\{dawg\}"
-                    }
-                };
+", new[] { "male", "female", "unknown" }, new[] { "he", "she{dawg}", @"they\{dawg\}" } };
             }
         }
 
         #region Test classes
 
-        class BaseFormatterImpl : BaseFormatter
+        private class BaseFormatterImpl : BaseFormatter
         {
-
         }
 
         #endregion
@@ -135,7 +90,12 @@ unknown
 
         [Theory]
         [PropertyData("ParseArguments_tests")]
-        public void ParseArguments(string args, string[] extensionKeys, string[] extensionValues, string[] keys, string[] blocks)
+        public void ParseArguments(
+            string args, 
+            string[] extensionKeys, 
+            string[] extensionValues, 
+            string[] keys, 
+            string[] blocks)
         {
             var subject = new BaseFormatterImpl();
             var req = new FormatterRequest(new Literal(1, 1, 1, 1, new StringBuilder()), null, null, args);
@@ -176,6 +136,7 @@ unknown
             {
                 subject.ParseExtensions(req, out index);
             }
+
             Benchmark.End();
 
             var actual = subject.ParseExtensions(req, out index);
@@ -224,6 +185,7 @@ unknown
             {
                 subject.ParseKeyedBlocks(req, 0);
             }
+
             Benchmark.End();
 
             var actual = subject.ParseKeyedBlocks(req, 0);
@@ -247,10 +209,7 @@ unknown
         public void AssertVariableExists()
         {
             var subject = new BaseFormatterImpl();
-            var args = new Dictionary<string, object>
-                           {
-                               {"dawg", "wee"}
-                           };
+            var args = new Dictionary<string, object> { { "dawg", "wee" } };
             Assert.Throws<VariableNotFoundException>(() => subject.AssertVariableExists(args, "Test"));
             Assert.DoesNotThrow(() => subject.AssertVariableExists(args, "dawg"));
         }

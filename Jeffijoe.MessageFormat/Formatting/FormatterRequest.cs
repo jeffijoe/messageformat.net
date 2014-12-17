@@ -1,77 +1,97 @@
-﻿// FormatterRequest.cs
-// - MessageFormat
-// -- Jeffijoe.MessageFormat
-// 
+﻿// MessageFormat for .NET
+// - FormatterRequest.cs
 // Author: Jeff Hansen <jeff@jeffijoe.com>
-// Copyright © 2014.
+// Copyright (C) Jeff Hansen 2014. All rights reserved.
 
 using Jeffijoe.MessageFormat.Parsing;
 
 namespace Jeffijoe.MessageFormat.Formatting
 {
     /// <summary>
-    /// Formatter request.
+    ///     Formatter request.
     /// </summary>
     public class FormatterRequest
     {
+        #region Constructors and Destructors
+
         /// <summary>
-        /// Initializes a new instance of the <see cref="FormatterRequest"/> class.
+        ///     Initializes a new instance of the <see cref="FormatterRequest" /> class.
         /// </summary>
-        /// <param name="sourceLiteral"></param>
-        /// <param name="variable">The variable.</param>
-        /// <param name="formatterName">Name of the formatter.</param>
-        /// <param name="formatterArguments">The formatter arguments.</param>
-        public FormatterRequest(
-            Literal sourceLiteral,
-            string variable, 
-            string formatterName, 
-            string formatterArguments)
+        /// <param name="sourceLiteral">
+        ///     The source literal.
+        /// </param>
+        /// <param name="variable">
+        ///     The variable.
+        /// </param>
+        /// <param name="formatterName">
+        ///     Name of the formatter.
+        /// </param>
+        /// <param name="formatterArguments">
+        ///     The formatter arguments.
+        /// </param>
+        public FormatterRequest(Literal sourceLiteral, string variable, string formatterName, string formatterArguments)
         {
-            SourceLiteral = sourceLiteral;
-            Variable = variable;
-            FormatterName = formatterName;
-            FormatterArguments = formatterArguments;
+            this.SourceLiteral = sourceLiteral;
+            this.Variable = variable;
+            this.FormatterName = formatterName;
+            this.FormatterArguments = formatterArguments;
         }
 
-        /// <summary>
-        /// Gets the source literal.
-        /// </summary>
-        /// <value>
-        /// The source literal.
-        /// </value>
-        public Literal SourceLiteral { get; private set; }
+        #endregion
+
+        #region Public Properties
 
         /// <summary>
-        /// Gets the variable name. Never null.
+        ///     Gets the formatter arguments that the formatter implementation will parse. Can be null.
         /// </summary>
         /// <value>
-        /// The variable.
-        /// </value>
-        public string Variable { get; private set; }
-
-        /// <summary>
-        /// Gets the name of the formatter to use . e.g. 'select', 'plural'. Can be null.
-        /// </summary>
-        /// <value>
-        /// The name of the formatter.
-        /// </value>
-        public string FormatterName { get; private set; }
-
-        /// <summary>
-        /// Gets the formatter arguments that the formatter implementation will parse. Can be null.
-        /// </summary>
-        /// <value>
-        /// The formatter arguments.
+        ///     The formatter arguments.
         /// </value>
         public string FormatterArguments { get; private set; }
 
         /// <summary>
-        /// Clones this instance.
+        ///     Gets the name of the formatter to use . e.g. 'select', 'plural'. Can be null.
         /// </summary>
-        /// <returns></returns>
+        /// <value>
+        ///     The name of the formatter.
+        /// </value>
+        public string FormatterName { get; private set; }
+
+        /// <summary>
+        ///     Gets the source literal.
+        /// </summary>
+        /// <value>
+        ///     The source literal.
+        /// </value>
+        public Literal SourceLiteral { get; private set; }
+
+        /// <summary>
+        ///     Gets the variable name. Never null.
+        /// </summary>
+        /// <value>
+        ///     The variable.
+        /// </value>
+        public string Variable { get; private set; }
+
+        #endregion
+
+        #region Public Methods and Operators
+
+        /// <summary>
+        ///     Clones this instance.
+        /// </summary>
+        /// <returns>
+        ///     The <see cref="FormatterRequest" />.
+        /// </returns>
         public FormatterRequest Clone()
         {
-            return new FormatterRequest(SourceLiteral.Clone(), Variable, FormatterName, FormatterArguments);
+            return new FormatterRequest(
+                this.SourceLiteral.Clone(), 
+                this.Variable, 
+                this.FormatterName, 
+                this.FormatterArguments);
         }
+
+        #endregion
     }
 }

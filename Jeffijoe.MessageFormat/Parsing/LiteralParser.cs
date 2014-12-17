@@ -1,9 +1,7 @@
-﻿// LiteralParser.cs
-// - MessageFormat
-// -- Jeffijoe.MessageFormat
-// 
+﻿// MessageFormat for .NET
+// - LiteralParser.cs
 // Author: Jeff Hansen <jeff@jeffijoe.com>
-// Copyright © 2014.
+// Copyright (C) Jeff Hansen 2014. All rights reserved.
 
 using System.Collections.Generic;
 using System.Text;
@@ -11,21 +9,26 @@ using System.Text;
 namespace Jeffijoe.MessageFormat.Parsing
 {
     /// <summary>
-    /// Parser for extracting brace matches from a string builder.
+    ///     Parser for extracting brace matches from a string builder.
     /// </summary>
     public class LiteralParser : ILiteralParser
     {
+        #region Public Methods and Operators
+
         /// <summary>
-        /// Finds the brace matches.
+        ///     Finds the brace matches.
         /// </summary>
-        /// <param name="sb">The sb.</param>
-        /// <returns></returns>
-        /// <exception cref="UnbalancedBracesException"></exception>
+        /// <param name="sb">
+        ///     The sb.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="IEnumerable" />.
+        /// </returns>
         public IEnumerable<Literal> ParseLiterals(StringBuilder sb)
         {
-            const char openBrace = '{';
-            const char closeBrace = '}';
-            const char escapingBackslash = '\\'; // It's just a single \
+            const char OpenBrace = '{';
+            const char CloseBrace = '}';
+            const char EscapingBackslash = '\\'; // It's just a single \
 
             var result = new List<Literal>();
             var openBraces = 0;
@@ -50,32 +53,37 @@ namespace Jeffijoe.MessageFormat.Parsing
                     columnNumber = 0;
                     continue;
                 }
-                if(c == CR)
+
+                if (c == CR)
                 {
                     continue;
                 }
+
                 columnNumber++;
 
-                if(c == openBrace)
+                if (c == OpenBrace)
                 {
                     // Don't check for escaping when we're at the first char
                     if (i != 0)
                     {
-                        if (sb[i - 1] == escapingBackslash)
+                        if (sb[i - 1] == EscapingBackslash)
                         {
                             // Only escape if we're not inside a brace match
                             if (braceBalance == 0)
                             {
                                 continue;
                             }
+
                             // if we ARE inside, don't make it count as a brace
                             shouldCount = false;
                         }
                     }
-                    if(shouldCount)
+
+                    if (shouldCount)
                     {
                         openBraces++;
                         braceBalance++;
+
                         // Record starting position of possible new brace match.
                         if (braceBalance == 1)
                         {
@@ -86,13 +94,14 @@ namespace Jeffijoe.MessageFormat.Parsing
                         }
                     }
                 }
+
                 shouldCount = true;
-                if (c == closeBrace)
+                if (c == CloseBrace)
                 {
                     // Don't check for escaping when we're at the first char.
                     if (i != 0)
                     {
-                        if (sb[i - 1] == escapingBackslash)
+                        if (sb[i - 1] == EscapingBackslash)
                         {
                             // Only escape if we're outside (or about to exit) a brace match
                             if (braceBalance <= 1)
@@ -100,40 +109,54 @@ namespace Jeffijoe.MessageFormat.Parsing
                                 matchTextBuf.Append(c);
                                 continue;
                             }
+
                             // If we're not outside, don't make it count as a brace.
                             shouldCount = false;
                         }
                     }
-                    if(shouldCount)
+
+                    if (shouldCount)
                     {
                         closeBraces++;
                         braceBalance--;
                     }
-                    
+
                     // Write the brace to the match buffer if it's not the closing brace
                     // we are looking for.
                     if (braceBalance > 0)
+                    {
                         matchTextBuf.Append(c);
-                } 
+                    }
+                }
                 else
                 {
                     if (i > start && braceBalance > 0)
                     {
                         matchTextBuf.Append(c);
                     }
+
                     continue;
                 }
 
+                if (openBraces != closeBraces)
+                {
+                    continue;
+                }
 
-                if (openBraces != closeBraces) continue;
                 // Passing in the text buffer instead of the actual string to avoid allocating a new string.
                 result.Add(new Literal(start, i, startLineNumber, startColumnNumber, matchTextBuf));
                 matchTextBuf = new StringBuilder();
                 start = 0;
             }
-            if(openBraces != closeBraces)
+
+            if (openBraces != closeBraces)
+            {
                 throw new UnbalancedBracesException(openBraces, closeBraces);
+            }
+
             return result;
         }
+
+        #endregion
     }
 }

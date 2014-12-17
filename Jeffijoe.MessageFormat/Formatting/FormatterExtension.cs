@@ -1,42 +1,52 @@
-// FormatterExtension.cs
-// - MessageFormat
-// -- Jeffijoe.MessageFormat
-// 
+// MessageFormat for .NET
+// - FormatterExtension.cs
 // Author: Jeff Hansen <jeff@jeffijoe.com>
-// Copyright © 2014.
+// Copyright (C) Jeff Hansen 2014. All rights reserved.
 namespace Jeffijoe.MessageFormat.Formatting
 {
     /// <summary>
-    /// Contains extensions to be used by formatters.
-    /// Example, the offset extension for the Plural Format.
+    ///     Contains extensions to be used by formatters.
+    ///     Example, the offset extension for the Plural Format.
     /// </summary>
     public class FormatterExtension
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="FormatterExtension"/> class.
-        /// </summary>
-        /// <param name="extension">The extension.</param>
-        /// <param name="value">The value.</param>
-        public FormatterExtension(string extension, string value)
-        {
-            Extension = extension;
-            Value = value;
-        }
+        #region Constructors and Destructors
 
         /// <summary>
-        /// Gets the extension.
+        ///     Initializes a new instance of the <see cref="FormatterExtension" /> class.
+        /// </summary>
+        /// <param name="extension">
+        ///     The extension.
+        /// </param>
+        /// <param name="value">
+        ///     The value.
+        /// </param>
+        public FormatterExtension(string extension, string value)
+        {
+            this.Extension = extension;
+            this.Value = value;
+        }
+
+        #endregion
+
+        #region Public Properties
+
+        /// <summary>
+        ///     Gets the extension.
         /// </summary>
         /// <value>
-        /// The extension.
+        ///     The extension.
         /// </value>
         public string Extension { get; private set; }
 
         /// <summary>
-        /// Gets the value.
+        ///     Gets the value.
         /// </summary>
         /// <value>
-        /// The value.
+        ///     The value.
         /// </value>
         public string Value { get; private set; }
+
+        #endregion
     }
 }

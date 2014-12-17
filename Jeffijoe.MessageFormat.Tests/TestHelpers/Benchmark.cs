@@ -1,9 +1,7 @@
-﻿// Benchmark.cs
-// - MessageFormat
-// -- Jeffijoe.MessageFormat.Tests
-// 
+﻿// MessageFormat for .NET
+// - Benchmark.cs
 // Author: Jeff Hansen <jeff@jeffijoe.com>
-// Copyright © 2014.
+// Copyright (C) Jeff Hansen 2014. All rights reserved.
 
 using System;
 using System.Diagnostics;
@@ -11,14 +9,14 @@ using System.Diagnostics;
 namespace Jeffijoe.MessageFormat.Tests.TestHelpers
 {
     /// <summary>
-    /// Benchmark helper.
+    ///     Benchmark helper.
     /// </summary>
     public static class Benchmark
     {
         private static Stopwatch _sw = new Stopwatch();
 
         /// <summary>
-        /// Starts the benchmark, and writes the passed message to the console.
+        ///     Starts the benchmark, and writes the passed message to the console.
         /// </summary>
         /// <param name="messageForConsole">The message for console.</param>
         public static void Start(string messageForConsole)
@@ -28,7 +26,7 @@ namespace Jeffijoe.MessageFormat.Tests.TestHelpers
         }
 
         /// <summary>
-        /// Ends the benchmark and prints the elapsed time to the console.
+        ///     Ends the benchmark and prints the elapsed time to the console.
         /// </summary>
         public static void End()
         {

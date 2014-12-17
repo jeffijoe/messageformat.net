@@ -1,15 +1,16 @@
-﻿// MessageFormatter_using_real_parser_Tests.cs
-// - MessageFormat
-// -- Jeffijoe.MessageFormat.Tests
-// 
+﻿// MessageFormat for .NET
+// - MessageFormatter_using_real_parser_Tests.cs
 // Author: Jeff Hansen <jeff@jeffijoe.com>
-// Copyright © 2014.
+// Copyright (C) Jeff Hansen 2014. All rights reserved.
 
 using System.Collections.Generic;
+
 using Jeffijoe.MessageFormat.Formatting;
 using Jeffijoe.MessageFormat.Parsing;
 using Jeffijoe.MessageFormat.Tests.TestHelpers;
+
 using Moq;
+
 using Xunit;
 using Xunit.Extensions;
 
@@ -35,13 +36,16 @@ whatchu gonna do when dey come for youu?
         {
             var mockLibary = new Mock<IFormatterLibrary>();
             var dummyFormatter = new Mock<IFormatter>();
-            var subject = new MessageFormatter(new PatternParser(new LiteralParser()), mockLibary.Object, false, locale: "en");
+            var subject = new MessageFormatter(
+                new PatternParser(new LiteralParser()), 
+                mockLibary.Object, 
+                false, 
+                locale: "en");
 
             var args = new Dictionary<string, object>();
             args.Add("name", "Jeff");
             dummyFormatter.Setup(x => x.Format("en", It.IsAny<FormatterRequest>(), args, subject)).Returns("Jeff");
             mockLibary.Setup(x => x.GetFormatter(It.IsAny<FormatterRequest>())).Returns(dummyFormatter.Object);
-
 
             // Warm up
             Benchmark.Start("Warm-up");
@@ -53,6 +57,7 @@ whatchu gonna do when dey come for youu?
             {
                 subject.FormatMessage(source, args);
             }
+
             Benchmark.End();
 
             Assert.Equal(expected, subject.FormatMessage(source, args));

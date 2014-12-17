@@ -1,9 +1,7 @@
-﻿// AssemblyInfo.cs
-// - MessageFormat
-// -- Jeffijoe.MessageFormat.Tests
-// 
+﻿// MessageFormat for .NET
+// - AssemblyInfo.cs
 // Author: Jeff Hansen <jeff@jeffijoe.com>
-// Copyright © 2014.
+// Copyright (C) Jeff Hansen 2014. All rights reserved.
 
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -29,12 +27,10 @@ using System.Runtime.InteropServices;
 [assembly: Guid("1f34c9fb-42dc-432f-8719-689679fce52b")]
 
 // Version information for an assembly consists of the following four values:
-//
 //      Major Version
 //      Minor Version 
 //      Build Number
 //      Revision
-//
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]

@@ -1,12 +1,12 @@
-﻿// StringBuilderHelperTests.cs
-// - MessageFormat
-// -- Jeffijoe.MessageFormat.Tests
-// 
+﻿// MessageFormat for .NET
+// - StringBuilderHelperTests.cs
 // Author: Jeff Hansen <jeff@jeffijoe.com>
-// Copyright © 2014.
+// Copyright (C) Jeff Hansen 2014. All rights reserved.
 
 using System.Text;
+
 using Jeffijoe.MessageFormat.Helpers;
+
 using Xunit;
 using Xunit.Extensions;
 
