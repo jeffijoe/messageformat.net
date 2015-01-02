@@ -33,18 +33,17 @@ namespace Jeffijoe.MessageFormat.Tests
             var pattern = "Hi {gender, select, male {Sir} female {Ma'am}}!";
             var actual = subject.FormatMessage(pattern, new { gender = "male" });
             Assert.Equal("Hi Sir!", actual);
+            // '2' because it did not format "Ma'am" yet.
             parserMock.Verify(x => x.Parse(It.IsAny<StringBuilder>()), Times.Exactly(2));
 
             actual = subject.FormatMessage(pattern, new { gender = "female" });
             Assert.Equal("Hi Ma'am!", actual);
             parserMock.Verify(x => x.Parse(It.IsAny<StringBuilder>()), Times.Exactly(3));
                 
-                // '3' because it did not format "Ma'am" yet.
+            // '3' because it has cached all options
             actual = subject.FormatMessage(pattern, new { gender = "female" });
             Assert.Equal("Hi Ma'am!", actual);
             parserMock.Verify(x => x.Parse(It.IsAny<StringBuilder>()), Times.Exactly(3));
-                
-                // '3' because it has cached all options
         }
 
         [Fact]
