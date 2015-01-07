@@ -1,4 +1,4 @@
-# MessageFormatter for .NET - 
+# MessageFormatter for .NET
 
 #### - better UI strings.
 
