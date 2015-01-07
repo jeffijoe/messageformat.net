@@ -3,14 +3,6 @@
 This is an implementation of the ICU Message Format in .NET. For official information about the format, go to:
 http://userguide.icu-project.org/formatparse/messages
 
-## Installation
-
-Either clone this repo and build it, or install it with NuGet:
-
-```
-Install-Package MessageFormat
-```
-
 ## TL;DR:
 
 ````csharp
@@ -52,6 +44,14 @@ var formatted = MessageFormatter.Format(str, new {
 
 //Result: You have no notifications. Have a nice day, Jeff!
 ````
+
+## Installation
+
+Either clone this repo and build it, or install it with NuGet:
+
+```
+Install-Package MessageFormat
+```
 
 ## Features
 
