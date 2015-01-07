@@ -1,4 +1,6 @@
-# ICU MessageFormatter for .NET
+# MessageFormatter for .NET - 
+
+#### - better UI strings.
 
 This is an implementation of the ICU Message Format in .NET. For official information about the format, go to:
 http://userguide.icu-project.org/formatparse/messages
