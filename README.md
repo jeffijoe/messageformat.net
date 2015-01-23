@@ -57,12 +57,12 @@ Install-Package MessageFormat
 
 ## Features
 
-* **It's fast.** Everything is hand-written; no parser-generators, *not even regular expressions*.
-* **It's portable.** The library is a PCL, and has no dependencies - the only reference is the standard `.NET` in PCL's.
-* **It's compatible with other implementations.** I've been peeking a bit at the [MessageFormat.js][0] library to make sure
+* **Its fast.** Everything is hand-written; no parser-generators, *not even regular expressions*.
+* **Its portable.** The library is a PCL, and has no dependencies - the only reference is the standard `.NET` in PCL's.
+* **Its compatible with other implementations.** I've been peeking a bit at the [MessageFormat.js][0] library to make sure
   the results would be the same.
-* **It's (relatively) small**. For a .NET library, ~25kb is not a lot.
-* **It's very white-space tolerant.** You can structure your blocks so they are more readable - look at the example above.
+* **Its (relatively) small**. For a .NET library, ~25kb is not a lot.
+* **Its very white-space tolerant.** You can structure your blocks so they are more readable - look at the example above.
 * **Nesting is supported.** You can nest your blocks as you please, there's no special structure required to do this, just ensure your braces match.
 * **Adding your own formatters.** I don't know why you would need to, but if you want, you can add your own formatters, and
   take advantage of the code in my base classes to help you parse patterns. Look at the source, this is how I implemented the built-in formatters.
@@ -78,7 +78,7 @@ Install-Package MessageFormat
 If you look at `MessageFormatter_caching_tests`, you will find a "with cache" and "without cache" test.
 
 My machine runs on a Core i7 3960x, and with about **100,000** iterations with random data (generated beforehand), it takes about 2 seconds (1892ms) with the cache,
-and about 3 seconds (3236ms) without it. **These results are with a debug build, when it's in release mode the time taken is reduced by about 40%! :)**
+and about 3 seconds (3236ms) without it. **These results are with a debug build, when it is in release mode the time taken is reduced by about 40%! :)**
 
 ## Supported formats
 
@@ -153,7 +153,7 @@ Don't expect this in the near future - you're welcome to submit a PR. :)
 
 # Author
 
-I'm Jeff Hansen, a software developer who likes to fiddle with string parsing when it's not too difficult.
+I'm Jeff Hansen, a software developer who likes to fiddle with string parsing when it is not too difficult.
 I also do a lot of ASP.NET Web API back-end development, and quite a bit of web front-end stuff.
 
 You can find me on Twitter: [@jeffijoe][1].
