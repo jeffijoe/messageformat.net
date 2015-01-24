@@ -57,12 +57,12 @@ Install-Package MessageFormat
 
 ## Features
 
-* **Its fast.** Everything is hand-written; no parser-generators, *not even regular expressions*.
-* **Its portable.** The library is a PCL, and has no dependencies - the only reference is the standard `.NET` in PCL's.
-* **Its compatible with other implementations.** I've been peeking a bit at the [MessageFormat.js][0] library to make sure
+* **It's fast.** Everything is hand-written; no parser-generators, *not even regular expressions*.
+* **It's portable.** The library is a PCL, and has no dependencies - the only reference is the standard `.NET` in PCL's.
+* **It's compatible with other implementations.** I've been peeking a bit at the [MessageFormat.js][0] library to make sure
   the results would be the same.
-* **Its (relatively) small**. For a .NET library, ~25kb is not a lot.
-* **Its very white-space tolerant.** You can structure your blocks so they are more readable - look at the example above.
+* **It's (relatively) small**. For a .NET library, ~25kb is not a lot.
+* **It's very white-space tolerant.** You can structure your blocks so they are more readable - look at the example above.
 * **Nesting is supported.** You can nest your blocks as you please, there's no special structure required to do this, just ensure your braces match.
 * **Adding your own formatters.** I don't know why you would need to, but if you want, you can add your own formatters, and
   take advantage of the code in my base classes to help you parse patterns. Look at the source, this is how I implemented the built-in formatters.
