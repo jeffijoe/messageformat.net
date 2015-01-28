@@ -33,21 +33,21 @@ namespace Jeffijoe.MessageFormat.Tests.Parsing
         [InlineData(@"{
 sweet
 
-}, right?", new[] { 0, 12 }, @"sweet")]
+}, right?", new[] { 0, 9 }, @"sweet")]
         [InlineData(@"{
 \{sweet\}
 
-}, right?", new[] { 0, 16 }, @"\{sweet\}")]
+}, right?", new[] { 0, 13 }, @"\{sweet\}")]
         public void ParseLiterals_position_and_inner_text(string source, int[] position, string expectedInnerText)
         {
             var sb = new StringBuilder(source);
             var subject = new LiteralParser();
             var actual = subject.ParseLiterals(sb);
             var first = actual.First();
-            Assert.Equal(position[0], first.StartIndex);
-            Assert.Equal(position[1], first.EndIndex);
             string innerText = first.InnerText.ToString();
             Assert.Equal(expectedInnerText, innerText);
+            Assert.Equal(position[0], first.StartIndex);
+            Assert.Equal(position[1], first.EndIndex);
             Assert.Equal(first.StartIndex + 1, first.SourceColumnNumber);
         }
 
