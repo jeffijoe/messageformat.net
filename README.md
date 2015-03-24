@@ -1,4 +1,4 @@
-# MessageFormatter for .NET
+# MessageFormatter for .NET [![Build status](https://ci.appveyor.com/api/projects/status/9g7dplst1vyibc3e?svg=true)](https://ci.appveyor.com/project/jeffijoe/messageformat-net)
 
 #### - better UI strings.
 
