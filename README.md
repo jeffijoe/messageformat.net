@@ -1,6 +1,6 @@
-# MessageFormatter for .NET [![Build status](https://ci.appveyor.com/api/projects/status/9g7dplst1vyibc3e?svg=true)](https://ci.appveyor.com/project/jeffijoe/messageformat-net)
+# MessageFormatter for .NET [![Build status](https://ci.appveyor.com/api/projects/status/9g7dplst1vyibc3e?svg=true)](https://ci.appveyor.com/project/jeffijoe/messageformat-net) [![Join the chat at https://gitter.im/jeffijoe/messageformat.net](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/jeffijoe/messageformat.net?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-[![Join the chat at https://gitter.im/jeffijoe/messageformat.net](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/jeffijoe/messageformat.net?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 
 #### - better UI strings.
 
