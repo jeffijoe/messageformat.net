@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jeffijoe.MessageFormat", "J
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jeffijoe.MessageFormat.Tests", "Jeffijoe.MessageFormat.Tests\Jeffijoe.MessageFormat.Tests.csproj", "{B1D8C0CB-2B7D-449F-9AD7-EDF69BD59712}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{C61BD9C9-9916-4E3C-8654-4EAACC35044F}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{938BF7EF-948B-4EC5-B133-B1674A165411}"
 	ProjectSection(SolutionItems) = preProject
 		.nuget\NuGet.Config = .nuget\NuGet.Config
 		.nuget\NuGet.exe = .nuget\NuGet.exe
