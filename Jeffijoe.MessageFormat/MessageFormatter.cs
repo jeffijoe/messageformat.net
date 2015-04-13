@@ -301,6 +301,12 @@ namespace Jeffijoe.MessageFormat
         /// </returns>
         protected internal StringBuilder UnescapeLiterals(StringBuilder sourceBuilder)
         {
+            // If the block is empty, do nothing.
+            if (sourceBuilder.Length == 0)
+            {
+                return new StringBuilder();
+            }
+
             var dest = new StringBuilder(sourceBuilder.Length, sourceBuilder.Length);
             int length = sourceBuilder.Length;
             const char EscapeChar = '\\';
