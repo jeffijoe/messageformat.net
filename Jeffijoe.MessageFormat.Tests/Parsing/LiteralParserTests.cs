@@ -47,8 +47,13 @@ sweet
             string innerText = first.InnerText.ToString();
             Assert.Equal(expectedInnerText, innerText);
             Assert.Equal(position[0], first.StartIndex);
-            Assert.Equal(position[1], first.EndIndex);
-            Assert.Equal(first.StartIndex + 1, first.SourceColumnNumber);
+
+            // Makes up for line-ending differences due to Git.
+            var expectedEndIndex = position[1] + source.Count(c => c == '\r');
+            var expectedSourceColumnNumber = first.StartIndex + 1;
+            Assert.Equal(expectedEndIndex, first.EndIndex);
+            
+            Assert.Equal(expectedSourceColumnNumber, first.SourceColumnNumber);
         }
 
         [Theory]
