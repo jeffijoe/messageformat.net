@@ -49,6 +49,12 @@ namespace Jeffijoe.MessageFormat.Tests.Formatting
                         "male {he} female {she}unknown{they}", new[] { "male", "female", "unknown" }, 
                         new[] { "he", "she", "they" }
                     };
+                yield return
+                    new object[]
+                    {
+                        "zero {} other {wee}", new[] { "zero", "other" }, 
+                        new[] { string.Empty, "wee" }
+                    };
                 yield return new object[] { @"
                         male {he} 
                         female {she}

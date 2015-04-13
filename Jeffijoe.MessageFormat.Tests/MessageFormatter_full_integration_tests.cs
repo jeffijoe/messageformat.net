@@ -157,6 +157,15 @@ namespace Jeffijoe.MessageFormat.Tests
                         new Dictionary<string, object> { { "count", 1 }, { "gender", "male" }, { "genitals", 102 } }, 
                         "He (who has the insane amount of 102 testicles) said: You have just one notification. Have a nice day!"
                     };
+
+                // Case from https://github.com/jeffijoe/messageformat.net/issues/2
+                yield return
+                    new object[]
+                    {
+                        "{nbrAttachments, plural, zero {} one {{nbrAttachmentsFmt} attachment} other {{nbrAttachmentsFmt} attachments}}", 
+                        new Dictionary<string, object> { { "nbrAttachments", 0 }, {"nbrAttachmentsFmt", "wut"} }, 
+                        string.Empty
+                    };
             }
         }
 
