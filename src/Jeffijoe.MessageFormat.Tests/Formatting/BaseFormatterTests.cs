@@ -13,12 +13,20 @@ using Jeffijoe.MessageFormat.Parsing;
 using Jeffijoe.MessageFormat.Tests.TestHelpers;
 
 using Xunit;
+using Xunit.Abstractions;
 using Xunit.Extensions;
 
 namespace Jeffijoe.MessageFormat.Tests.Formatting
 {
     public class BaseFormatterTests
     {
+        private readonly ITestOutputHelper outputHelper;
+
+        public BaseFormatterTests(ITestOutputHelper outputHelper)
+        {
+            this.outputHelper = outputHelper;
+        }
+
         public static IEnumerable<object[]> ParseArguments_tests
         {
             get
@@ -91,11 +99,11 @@ unknown
             var subject = new BaseFormatterImpl();
             var req = new FormatterRequest(new Literal(1, 1, 1, 1, new StringBuilder()), null, null, args);
             var ex = Assert.Throws<MalformedLiteralException>(() => subject.ParseArguments(req));
-            Console.WriteLine(ex.Message);
+            this.outputHelper.WriteLine(ex.Message);
         }
 
         [Theory]
-        [PropertyData("ParseArguments_tests")]
+        [MemberData("ParseArguments_tests")]
         public void ParseArguments(
             string args, 
             string[] extensionKeys, 
@@ -137,13 +145,13 @@ unknown
             // Warmup
             subject.ParseExtensions(req, out index);
 
-            Benchmark.Start("Parsing extensions a few times (warmed up)");
+            Benchmark.Start("Parsing extensions a few times (warmed up)", this.outputHelper);
             for (int i = 0; i < 1000; i++)
             {
                 subject.ParseExtensions(req, out index);
             }
 
-            Benchmark.End();
+            Benchmark.End(this.outputHelper);
 
             var actual = subject.ParseExtensions(req, out index);
             Assert.NotEmpty(actual);
@@ -177,7 +185,7 @@ unknown
         }
 
         [Theory]
-        [PropertyData("ParseKeyedBlocks_tests")]
+        [MemberData("ParseKeyedBlocks_tests")]
         public void ParseKeyedBlocks(string args, string[] keys, string[] values)
         {
             var subject = new BaseFormatterImpl();
@@ -186,18 +194,18 @@ unknown
             // Warm-up
             subject.ParseKeyedBlocks(req, 0);
 
-            Benchmark.Start("Parsing keyed blocks..");
+            Benchmark.Start("Parsing keyed blocks..", this.outputHelper);
             for (int i = 0; i < 10000; i++)
             {
                 subject.ParseKeyedBlocks(req, 0);
             }
 
-            Benchmark.End();
+            Benchmark.End(this.outputHelper);
 
             var actual = subject.ParseKeyedBlocks(req, 0);
             Assert.Equal(keys.Length, actual.Count());
-            Console.WriteLine("Input: " + args);
-            Console.WriteLine("-----");
+            this.outputHelper.WriteLine("Input: " + args);
+            this.outputHelper.WriteLine("-----");
             for (int index = 0; index < actual.ToArray().Length; index++)
             {
                 var keyedBlock = actual.ToArray()[index];
@@ -206,8 +214,8 @@ unknown
                 Assert.Equal(expectedKey, keyedBlock.Key);
                 Assert.Equal(expectedValue, keyedBlock.BlockText);
 
-                Console.WriteLine("Key: " + keyedBlock.Key);
-                Console.WriteLine("Block: " + keyedBlock.BlockText);
+                this.outputHelper.WriteLine("Key: " + keyedBlock.Key);
+                this.outputHelper.WriteLine("Block: " + keyedBlock.BlockText);
             }
         }
 
@@ -217,7 +225,7 @@ unknown
             var subject = new BaseFormatterImpl();
             var args = new Dictionary<string, object> { { "dawg", "wee" } };
             Assert.Throws<VariableNotFoundException>(() => subject.AssertVariableExists(args, "Test"));
-            Assert.DoesNotThrow(() => subject.AssertVariableExists(args, "dawg"));
+            subject.AssertVariableExists(args, "dawg");
         }
     }
 }

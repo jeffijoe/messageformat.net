@@ -6,6 +6,8 @@
 using System;
 using System.Diagnostics;
 
+using Xunit.Abstractions;
+
 namespace Jeffijoe.MessageFormat.Tests.TestHelpers
 {
     /// <summary>
@@ -13,25 +15,30 @@ namespace Jeffijoe.MessageFormat.Tests.TestHelpers
     /// </summary>
     public static class Benchmark
     {
-        private static Stopwatch _sw = new Stopwatch();
+        /// <summary>
+        /// The stopwatch.
+        /// </summary>
+        private static readonly Stopwatch Sw = new Stopwatch();
 
         /// <summary>
-        ///     Starts the benchmark, and writes the passed message to the console.
+        /// Starts the benchmark, and writes the passed message to the output helper.
         /// </summary>
         /// <param name="messageForConsole">The message for console.</param>
-        public static void Start(string messageForConsole)
+        /// <param name="outputHelper">The output helper.</param>
+        public static void Start(string messageForConsole, ITestOutputHelper outputHelper)
         {
-            Console.WriteLine(messageForConsole);
-            _sw.Restart();
+            outputHelper.WriteLine(messageForConsole);
+            Sw.Restart();
         }
 
         /// <summary>
-        ///     Ends the benchmark and prints the elapsed time to the console.
+        /// Ends the benchmark and prints the elapsed time to the console.
         /// </summary>
-        public static void End()
+        /// <param name="outputHelper">The output helper.</param>
+        public static void End(ITestOutputHelper outputHelper)
         {
-            _sw.Stop();
-            Console.WriteLine("Result: {0}ms ({1} ticks)", _sw.ElapsedMilliseconds, _sw.ElapsedTicks);
+            Sw.Stop();
+            outputHelper.WriteLine("Result: {0}ms ({1} ticks)", Sw.ElapsedMilliseconds, Sw.ElapsedTicks);
         }
     }
 }

@@ -14,11 +14,19 @@ using Jeffijoe.MessageFormat.Parsing;
 using Moq;
 
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Jeffijoe.MessageFormat.Tests
 {
     public class MessageFormatter_caching_tests
     {
+        private readonly ITestOutputHelper outputHelper;
+
+        public MessageFormatter_caching_tests(ITestOutputHelper outputHelper)
+        {
+            this.outputHelper = outputHelper;
+        }
+
         [Fact]
         public void FormatMessage_caches_reused_pattern()
         {
@@ -60,7 +68,7 @@ namespace Jeffijoe.MessageFormat.Tests
             Benchmark(subject);
         }
 
-        private static void Benchmark(MessageFormatter subject)
+        private void Benchmark(MessageFormatter subject)
         {
             var pattern = "\r\n----\r\nOh {name}? And if we were " + "to surround {gender, select, " + "male {his} "
                           + "female {her}" + "} name with \\{ and \\}, it would look "
@@ -83,15 +91,15 @@ namespace Jeffijoe.MessageFormat.Tests
                     }.ToDictionary();
             }
 
-            TestHelpers.Benchmark.Start("Formatting message " + iterations + " times, no warm-up.");
+            TestHelpers.Benchmark.Start("Formatting message " + iterations + " times, no warm-up.", this.outputHelper);
             var output = new StringBuilder();
             for (int i = 0; i < iterations; i++)
             {
                 output.AppendLine(subject.FormatMessage(pattern, args[i]));
             }
 
-            TestHelpers.Benchmark.End();
-            Console.WriteLine(output.ToString());
+            TestHelpers.Benchmark.End(this.outputHelper);
+            this.outputHelper.WriteLine(output.ToString());
         }
     }
 }

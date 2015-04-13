@@ -12,12 +12,20 @@ using Jeffijoe.MessageFormat.Tests.TestHelpers;
 using Moq;
 
 using Xunit;
+using Xunit.Abstractions;
 using Xunit.Extensions;
 
 namespace Jeffijoe.MessageFormat.Tests
 {
     public class MessageFormatter_using_real_parser_Tests
     {
+        private ITestOutputHelper outputHelper;
+
+        public MessageFormatter_using_real_parser_Tests(ITestOutputHelper outputHelper)
+        {
+            this.outputHelper = outputHelper;
+        }
+
         [Theory]
         [InlineData(@"Hi, I'm {name}, and it's still {name, plural, whatever
 
@@ -48,17 +56,17 @@ whatchu gonna do when dey come for youu?
             mockLibary.Setup(x => x.GetFormatter(It.IsAny<FormatterRequest>())).Returns(dummyFormatter.Object);
 
             // Warm up
-            Benchmark.Start("Warm-up");
+            Benchmark.Start("Warm-up", this.outputHelper);
             subject.FormatMessage(source, args);
-            Benchmark.End();
+            Benchmark.End(this.outputHelper);
 
-            Benchmark.Start("Aaaand a few after warm-up");
+            Benchmark.Start("Aaaand a few after warm-up", this.outputHelper);
             for (int i = 0; i < 1000; i++)
             {
                 subject.FormatMessage(source, args);
             }
 
-            Benchmark.End();
+            Benchmark.End(this.outputHelper);
 
             Assert.Equal(expected, subject.FormatMessage(source, args));
         }

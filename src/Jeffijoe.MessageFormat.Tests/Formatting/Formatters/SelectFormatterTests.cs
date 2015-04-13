@@ -32,7 +32,7 @@ namespace Jeffijoe.MessageFormat.Tests.Formatting.Formatters
         }
 
         [Theory]
-        [PropertyData("Format_tests")]
+        [MemberData("Format_tests")]
         public void Format(string formatterArgs, string keyToUse, string expectedBlock)
         {
             var subject = new SelectFormatter();

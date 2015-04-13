@@ -9,12 +9,20 @@ using System.Collections.Generic;
 using Jeffijoe.MessageFormat.Tests.TestHelpers;
 
 using Xunit;
+using Xunit.Abstractions;
 using Xunit.Extensions;
 
 namespace Jeffijoe.MessageFormat.Tests
 {
     public class MessageFormatter_full_integration_tests
     {
+        private readonly ITestOutputHelper outputHelper;
+
+        public MessageFormatter_full_integration_tests(ITestOutputHelper outputHelper)
+        {
+            this.outputHelper = outputHelper;
+        }
+
         public static IEnumerable<object[]> Tests
         {
             get
@@ -179,18 +187,18 @@ namespace Jeffijoe.MessageFormat.Tests
         }
 
         [Theory]
-        [PropertyData("Tests")]
+        [MemberData("Tests")]
         public void FormatMessage(string source, Dictionary<string, object> args, string expected)
         {
             var subject = new MessageFormatter(false);
 
             // Warmup
             subject.FormatMessage(source, args);
-            Benchmark.Start("Formatting");
+            Benchmark.Start("Formatting", this.outputHelper);
             string result = subject.FormatMessage(source, args);
-            Benchmark.End();
+            Benchmark.End(this.outputHelper);
             Assert.Equal(expected, result);
-            Console.WriteLine(result);
+            this.outputHelper.WriteLine(result);
         }
 
         [Fact]
@@ -366,7 +374,7 @@ namespace Jeffijoe.MessageFormat.Tests
                                 }}
                             }";
             var actual = subject.FormatMessage(pattern, new { s1 = 1, s2 = 2 });
-            Console.WriteLine(actual);
+            this.outputHelper.WriteLine(actual);
             Assert.Equal("{", actual);
         }
 

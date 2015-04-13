@@ -10,12 +10,20 @@ using System.Text;
 using Jeffijoe.MessageFormat.Parsing;
 
 using Xunit;
+using Xunit.Abstractions;
 using Xunit.Extensions;
 
 namespace Jeffijoe.MessageFormat.Tests.Parsing
 {
     public class PatternParser_GetKey_Tests
     {
+        private ITestOutputHelper outputHelper;
+
+        public PatternParser_GetKey_Tests(ITestOutputHelper outputHelper)
+        {
+            this.outputHelper = outputHelper;
+        }
+
         public static IEnumerable<object[]> GetKey_throws_with_invalid_characters_Case
         {
             get
@@ -30,7 +38,7 @@ namespace Jeffijoe.MessageFormat.Tests.Parsing
         }
 
         [Theory]
-        [PropertyData("GetKey_throws_with_invalid_characters_Case")]
+        [MemberData("GetKey_throws_with_invalid_characters_Case")]
         public void ReadLiteralSection_throws_with_invalid_characters(
             Literal literal, 
             int expectedLine, 
@@ -42,7 +50,7 @@ namespace Jeffijoe.MessageFormat.Tests.Parsing
                     () => PatternParser.ReadLiteralSection(literal, 0, false, out lastIndex));
             Assert.Equal(expectedLine, ex.LineNumber);
             Assert.Equal(expectedColumn, ex.ColumnNumber);
-            Console.WriteLine(ex.Message);
+            this.outputHelper.WriteLine(ex.Message);
         }
 
         [Theory]

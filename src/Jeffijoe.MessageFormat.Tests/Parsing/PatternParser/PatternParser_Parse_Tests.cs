@@ -12,12 +12,20 @@ using Jeffijoe.MessageFormat.Tests.TestHelpers;
 using Moq;
 
 using Xunit;
+using Xunit.Abstractions;
 using Xunit.Extensions;
 
 namespace Jeffijoe.MessageFormat.Tests.Parsing
 {
     public class PatternParser_Parse_Tests
     {
+        private readonly ITestOutputHelper outputHelper;
+
+        public PatternParser_Parse_Tests(ITestOutputHelper outputHelper)
+        {
+            this.outputHelper = outputHelper;
+        }
+
         [Theory]
         [InlineData("test, select, args", "test", "select", "args")]
         [InlineData("test, select, stuff {dawg}", "test", "select", "stuff {dawg}")]
@@ -35,12 +43,12 @@ namespace Jeffijoe.MessageFormat.Tests.Parsing
             var subject = new PatternParser(literalParserMock.Object);
 
             // Warm up (JIT)
-            Benchmark.Start("Parsing formatter patterns (first time before JIT)");
+            Benchmark.Start("Parsing formatter patterns (first time before JIT)", this.outputHelper);
             subject.Parse(sb);
-            Benchmark.End();
-            Benchmark.Start("Parsing formatter patterns (after warm-up)");
+            Benchmark.End(this.outputHelper);
+            Benchmark.Start("Parsing formatter patterns (after warm-up)", this.outputHelper);
             var actual = subject.Parse(sb);
-            Benchmark.End();
+            Benchmark.End(this.outputHelper);
             Assert.Equal(1, actual.Count());
             var first = actual.First();
             Assert.Equal(expectedKey, first.Variable);

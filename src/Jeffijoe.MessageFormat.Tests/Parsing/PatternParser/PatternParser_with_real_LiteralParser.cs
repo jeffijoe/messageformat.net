@@ -10,11 +10,19 @@ using Jeffijoe.MessageFormat.Parsing;
 using Jeffijoe.MessageFormat.Tests.TestHelpers;
 
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Jeffijoe.MessageFormat.Tests.Parsing
 {
     public class PatternParser_with_real_LiteralParser
     {
+        private readonly ITestOutputHelper outputHelper;
+
+        public PatternParser_with_real_LiteralParser(ITestOutputHelper outputHelper)
+        {
+            this.outputHelper = outputHelper;
+        }
+
         [Fact]
         public void Parse()
         {
@@ -24,13 +32,13 @@ namespace Jeffijoe.MessageFormat.Tests.Parsing
                                 male={guy} female={gal}}, you have {count, plural, 
                                 zero {no friends}, other {# friends}
                                 }";
-            Benchmark.Start("First run (warm-up)");
+            Benchmark.Start("First run (warm-up)", this.outputHelper);
             subject.Parse(new StringBuilder(source));
-            Benchmark.End();
+            Benchmark.End(this.outputHelper);
 
-            Benchmark.Start("Next one (warmed up)");
+            Benchmark.Start("Next one (warmed up)", this.outputHelper);
             var actual = subject.Parse(new StringBuilder(source));
-            Benchmark.End();
+            Benchmark.End(this.outputHelper);
             Assert.Equal(2, actual.Count());
             var formatterParam = actual.First();
             Assert.Equal("Name", formatterParam.Variable);

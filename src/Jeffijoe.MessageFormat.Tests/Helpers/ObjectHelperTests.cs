@@ -9,11 +9,19 @@ using Jeffijoe.MessageFormat.Helpers;
 using Jeffijoe.MessageFormat.Tests.TestHelpers;
 
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Jeffijoe.MessageFormat.Tests.Helpers
 {
     public class ObjectHelperTests
     {
+        private readonly ITestOutputHelper outputHelper;
+
+        public ObjectHelperTests(ITestOutputHelper outputHelper)
+        {
+            this.outputHelper = outputHelper;
+        }
+
         [Fact]
         public void GetProperties_anonymous_and_dynamic()
         {
@@ -45,13 +53,13 @@ namespace Jeffijoe.MessageFormat.Tests.Helpers
             Assert.Equal("test", actual["name"]);
             Assert.Equal(1337, actual["num"]);
 
-            Benchmark.Start("Converting object to dictionary..");
+            Benchmark.Start("Converting object to dictionary..", this.outputHelper);
             for (int i = 0; i < 10000; i++)
             {
                 obj.ToDictionary();
             }
 
-            Benchmark.End();
+            Benchmark.End(this.outputHelper);
         }
 
         #region Test classes
