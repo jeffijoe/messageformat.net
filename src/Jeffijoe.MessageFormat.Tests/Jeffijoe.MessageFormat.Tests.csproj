@@ -38,6 +38,12 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>MessageFormat.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Moq, Version=4.2.1502.911, Culture=neutral, PublicKeyToken=69f491c39445e920, processorArchitecture=MSIL">
@@ -86,6 +92,7 @@
     <Compile Include="TestHelpers\Benchmark.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="MessageFormat.snk" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
