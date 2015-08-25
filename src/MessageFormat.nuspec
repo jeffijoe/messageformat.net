@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
     <metadata>
         <id>MessageFormat</id>
-        <version>0.1.7</version>
+        <version>1.0.0</version>
         <title>MessageFormatter for .NET</title>
         <authors>Jeff Hansen</authors>
         <owners>Jeff Hansen</owners>
@@ -12,7 +12,11 @@
 
 Check the README on Github for more information.</description>
         <summary>An implementation of the ICU MessageFormatter for .NET - write contextual UI messages with proper pluralization, and more. Works with Xamarin!</summary>
-        <releaseNotes>Fixed issue #4: passing null-values (or no value at all) to VariableFormatter threw a NullRef.</releaseNotes>
+        <releaseNotes>
+            Fix issue #5: Variables used in the string will be checked for existence upon usage.
+
+            Version 1 released!
+        </releaseNotes>
         <copyright>Copyright © Jeff Hansen 2014 to present. All rights reserved.</copyright>
         <language>en-US</language>
         <tags>messageformat,pcl,messageformatter,xamarin,ui,messages,formatting,plural,pluralization,singular,select,strings,stringformat,format</tags>
