@@ -55,7 +55,13 @@ namespace Jeffijoe.MessageFormat.Formatting.Formatters
             Dictionary<string, object> args, 
             IMessageFormatter messageFormatter)
         {
-            return args[request.Variable].ToString();
+            object value;
+            if (!args.TryGetValue(request.Variable, out value))
+            {
+                return string.Empty;
+            }
+
+            return value != null ? value.ToString() : string.Empty;
         }
 
         #endregion

@@ -174,6 +174,22 @@ namespace Jeffijoe.MessageFormat.Tests
                         new Dictionary<string, object> { { "nbrAttachments", 0 }, {"nbrAttachmentsFmt", "wut"} }, 
                         string.Empty
                     };
+
+                // Following 2 cases from https://github.com/jeffijoe/messageformat.net/issues/4
+                yield return
+                    new object[]
+                    {
+                        "{maybeCount}", 
+                        new Dictionary<string, object> { { "maybeCount", (int?)null } }, 
+                        string.Empty
+                    };
+                yield return
+                    new object[]
+                    {
+                        "{maybeCount}", 
+                        new Dictionary<string, object> { { "maybeCount", (int?)2 } }, 
+                        "2"
+                    };
             }
         }
 

@@ -74,6 +74,7 @@
     <Compile Include="Formatting\BaseFormatterTests.cs" />
     <Compile Include="Formatting\Formatters\PluralFormatterTests.cs" />
     <Compile Include="Formatting\Formatters\SelectFormatterTests.cs" />
+    <Compile Include="Formatting\Formatters\VariableFormatterTests.cs" />
     <Compile Include="Helpers\CharHelperTests.cs" />
     <Compile Include="Helpers\ObjectHelperTests.cs" />
     <Compile Include="Helpers\StringBuilderHelperTests.cs" />
