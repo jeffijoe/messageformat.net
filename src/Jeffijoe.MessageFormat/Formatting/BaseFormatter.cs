@@ -27,23 +27,6 @@ namespace Jeffijoe.MessageFormat.Formatting
         #region Methods
 
         /// <summary>
-        ///     Asserts the variable exists.
-        /// </summary>
-        /// <param name="args">
-        ///     The arguments.
-        /// </param>
-        /// <param name="variableName">
-        ///     Name of the variable.
-        /// </param>
-        protected internal void AssertVariableExists(Dictionary<string, object> args, string variableName)
-        {
-            if (args.ContainsKey(variableName) == false)
-            {
-                throw new VariableNotFoundException(variableName);
-            }
-        }
-
-        /// <summary>
         ///     Parses the arguments.
         /// </summary>
         /// <param name="request">

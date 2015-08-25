@@ -1,7 +1,8 @@
 ﻿// MessageFormat for .NET
 // - MessageFormatterStringExtensionTests.cs
+// 
 // Author: Jeff Hansen <jeff@jeffijoe.com>
-// Copyright (C) Jeff Hansen 2014. All rights reserved.
+// Copyright (C) Jeff Hansen 2015. All rights reserved.
 
 using System.Threading.Tasks;
 
@@ -9,8 +10,19 @@ using Xunit;
 
 namespace Jeffijoe.MessageFormat.Tests
 {
+    /// <summary>
+    /// The message formatter string extension tests.
+    /// </summary>
     public class MessageFormatterStringExtensionTests
     {
+        #region Public Methods and Operators
+
+        /// <summary>
+        /// The format message_with_multiple_tasks.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="Task"/>.
+        /// </returns>
         [Fact]
         public async Task FormatMessage_with_multiple_tasks()
         {
@@ -26,5 +38,7 @@ namespace Jeffijoe.MessageFormat.Tests
             Assert.Equal("Copying one file.", t2.Result);
             Assert.Equal("Copying 5 files.", t3.Result);
         }
+
+        #endregion
     }
 }

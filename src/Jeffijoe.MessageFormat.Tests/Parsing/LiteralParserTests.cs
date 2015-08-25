@@ -1,7 +1,8 @@
 ﻿// MessageFormat for .NET
 // - LiteralParserTests.cs
+// 
 // Author: Jeff Hansen <jeff@jeffijoe.com>
-// Copyright (C) Jeff Hansen 2014. All rights reserved.
+// Copyright (C) Jeff Hansen 2015. All rights reserved.
 
 using System.Linq;
 using System.Text;
@@ -9,12 +10,58 @@ using System.Text;
 using Jeffijoe.MessageFormat.Parsing;
 
 using Xunit;
-using Xunit.Extensions;
 
 namespace Jeffijoe.MessageFormat.Tests.Parsing
 {
+    /// <summary>
+    /// The literal parser tests.
+    /// </summary>
     public class LiteralParserTests
     {
+        #region Public Methods and Operators
+
+        /// <summary>
+        /// The parse literals_bracket_mismatch.
+        /// </summary>
+        /// <param name="source">
+        /// The source.
+        /// </param>
+        /// <param name="expectedOpenBraceCount">
+        /// The expected open brace count.
+        /// </param>
+        /// <param name="expectedCloseBraceCount">
+        /// The expected close brace count.
+        /// </param>
+        [Theory]
+        [InlineData("{", 1, 0)]
+        [InlineData("}", 0, 1)]
+        [InlineData("A beginning {", 1, 0)]
+        [InlineData("An ending }", 0, 1)]
+        [InlineData("One { and multiple }}", 1, 2)]
+        [InlineData("A few {{{{ and one }", 4, 1)]
+        [InlineData("A few {{{{ and one \\}}", 4, 1)]
+        [InlineData("A few \\{{{{{ and one \\}}", 4, 1)]
+        public void ParseLiterals_bracket_mismatch(
+            string source, 
+            int expectedOpenBraceCount, 
+            int expectedCloseBraceCount)
+        {
+            var sb = new StringBuilder(source);
+            var subject = new LiteralParser();
+            var ex = Assert.Throws<UnbalancedBracesException>(() => subject.ParseLiterals(sb));
+            Assert.Equal(expectedOpenBraceCount, ex.OpenBraceCount);
+            Assert.Equal(expectedCloseBraceCount, ex.CloseBraceCount);
+        }
+
+        /// <summary>
+        /// The parse literals_count.
+        /// </summary>
+        /// <param name="source">
+        /// The source.
+        /// </param>
+        /// <param name="expectedMatchCount">
+        /// The expected match count.
+        /// </param>
         [Theory]
         [InlineData("Hello, {something smells {really} weird.}", 1)]
         [InlineData("Hello, {something smells {really} weird.}, {Hi}", 2)]
@@ -27,6 +74,18 @@ namespace Jeffijoe.MessageFormat.Tests.Parsing
             Assert.Equal(expectedMatchCount, actual.Count());
         }
 
+        /// <summary>
+        /// The parse literals_position_and_inner_text.
+        /// </summary>
+        /// <param name="source">
+        /// The source.
+        /// </param>
+        /// <param name="position">
+        /// The position.
+        /// </param>
+        /// <param name="expectedInnerText">
+        /// The expected inner text.
+        /// </param>
         [Theory]
         [InlineData("Hello, {something smells {really} weird.}", new[] { 7, 40 }, "something smells {really} weird.")]
         [InlineData("Pretty {sweet}, right?", new[] { 7, 13 }, "sweet")]
@@ -52,10 +111,22 @@ sweet
             var expectedEndIndex = position[1] + source.Count(c => c == '\r');
             var expectedSourceColumnNumber = first.StartIndex + 1;
             Assert.Equal(expectedEndIndex, first.EndIndex);
-            
+
             Assert.Equal(expectedSourceColumnNumber, first.SourceColumnNumber);
         }
 
+        /// <summary>
+        /// The parse literals_source_line_and_column_number.
+        /// </summary>
+        /// <param name="source">
+        /// The source.
+        /// </param>
+        /// <param name="lineNumber">
+        /// The line number.
+        /// </param>
+        /// <param name="columnNumber">
+        /// The column number.
+        /// </param>
         [Theory]
         [InlineData(@"Hi, this is
 
@@ -80,25 +151,6 @@ yeeah!
             Assert.Equal(columnNumber, first.SourceColumnNumber);
         }
 
-        [Theory]
-        [InlineData("{", 1, 0)]
-        [InlineData("}", 0, 1)]
-        [InlineData("A beginning {", 1, 0)]
-        [InlineData("An ending }", 0, 1)]
-        [InlineData("One { and multiple }}", 1, 2)]
-        [InlineData("A few {{{{ and one }", 4, 1)]
-        [InlineData("A few {{{{ and one \\}}", 4, 1)]
-        [InlineData("A few \\{{{{{ and one \\}}", 4, 1)]
-        public void ParseLiterals_bracket_mismatch(
-            string source, 
-            int expectedOpenBraceCount, 
-            int expectedCloseBraceCount)
-        {
-            var sb = new StringBuilder(source);
-            var subject = new LiteralParser();
-            var ex = Assert.Throws<UnbalancedBracesException>(() => subject.ParseLiterals(sb));
-            Assert.Equal(expectedOpenBraceCount, ex.OpenBraceCount);
-            Assert.Equal(expectedCloseBraceCount, ex.CloseBraceCount);
-        }
+        #endregion
     }
 }

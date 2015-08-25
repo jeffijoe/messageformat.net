@@ -1,7 +1,8 @@
 ﻿// MessageFormat for .NET
 // - FormatterLibraryTests.cs
+// 
 // Author: Jeff Hansen <jeff@jeffijoe.com>
-// Copyright (C) Jeff Hansen 2014. All rights reserved.
+// Copyright (C) Jeff Hansen 2015. All rights reserved.
 
 using System.Text;
 
@@ -14,8 +15,16 @@ using Xunit;
 
 namespace Jeffijoe.MessageFormat.Tests.Formatting
 {
+    /// <summary>
+    /// The formatter library tests.
+    /// </summary>
     public class FormatterLibraryTests
     {
+        #region Public Methods and Operators
+
+        /// <summary>
+        /// The get formatter.
+        /// </summary>
         [Fact]
         public void GetFormatter()
         {
@@ -37,5 +46,7 @@ namespace Jeffijoe.MessageFormat.Tests.Formatting
             actual = subject.GetFormatter(req);
             Assert.Same(mock1.Object, actual);
         }
+
+        #endregion
     }
 }

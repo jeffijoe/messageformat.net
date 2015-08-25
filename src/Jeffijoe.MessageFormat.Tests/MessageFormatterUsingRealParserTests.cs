@@ -1,7 +1,8 @@
 ﻿// MessageFormat for .NET
 // - MessageFormatter_using_real_parser_Tests.cs
+// 
 // Author: Jeff Hansen <jeff@jeffijoe.com>
-// Copyright (C) Jeff Hansen 2014. All rights reserved.
+// Copyright (C) Jeff Hansen 2015. All rights reserved.
 
 using System.Collections.Generic;
 
@@ -13,19 +14,49 @@ using Moq;
 
 using Xunit;
 using Xunit.Abstractions;
-using Xunit.Extensions;
 
 namespace Jeffijoe.MessageFormat.Tests
 {
-    public class MessageFormatter_using_real_parser_Tests
+    /// <summary>
+    /// The message formatter_using_real_parser_ tests.
+    /// </summary>
+    public class MessageFormatterUsingRealParserTests
     {
+        #region Fields
+
+        /// <summary>
+        /// The output helper.
+        /// </summary>
         private ITestOutputHelper outputHelper;
 
-        public MessageFormatter_using_real_parser_Tests(ITestOutputHelper outputHelper)
+        #endregion
+
+        #region Constructors and Destructors
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MessageFormatterUsingRealParserTests"/> class.
+        /// </summary>
+        /// <param name="outputHelper">
+        /// The output helper.
+        /// </param>
+        public MessageFormatterUsingRealParserTests(ITestOutputHelper outputHelper)
         {
             this.outputHelper = outputHelper;
         }
 
+        #endregion
+
+        #region Public Methods and Operators
+
+        /// <summary>
+        /// The format message_using_real_parser_and_library_mock.
+        /// </summary>
+        /// <param name="source">
+        /// The source.
+        /// </param>
+        /// <param name="expected">
+        /// The expected.
+        /// </param>
         [Theory]
         [InlineData(@"Hi, I'm {name}, and it's still {name, plural, whatever
 
@@ -47,12 +78,12 @@ whatchu gonna do when dey come for youu?
             var subject = new MessageFormatter(
                 new PatternParser(new LiteralParser()), 
                 mockLibary.Object, 
-                false, 
-                locale: "en");
+                false);
 
             var args = new Dictionary<string, object>();
             args.Add("name", "Jeff");
-            dummyFormatter.Setup(x => x.Format("en", It.IsAny<FormatterRequest>(), args, subject)).Returns("Jeff");
+            dummyFormatter.Setup(x => x.Format("en", It.IsAny<FormatterRequest>(), args, "Jeff", subject))
+                          .Returns("Jeff");
             mockLibary.Setup(x => x.GetFormatter(It.IsAny<FormatterRequest>())).Returns(dummyFormatter.Object);
 
             // Warm up
@@ -70,5 +101,7 @@ whatchu gonna do when dey come for youu?
 
             Assert.Equal(expected, subject.FormatMessage(source, args));
         }
+
+        #endregion
     }
 }

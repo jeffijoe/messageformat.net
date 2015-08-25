@@ -1,7 +1,8 @@
 ﻿// MessageFormat for .NET
 // - MessageFormatter_caching_tests.cs
+// 
 // Author: Jeff Hansen <jeff@jeffijoe.com>
-// Copyright (C) Jeff Hansen 2014. All rights reserved.
+// Copyright (C) Jeff Hansen 2015. All rights reserved.
 
 using System;
 using System.Collections.Generic;
@@ -18,15 +19,40 @@ using Xunit.Abstractions;
 
 namespace Jeffijoe.MessageFormat.Tests
 {
-    public class MessageFormatter_caching_tests
+    /// <summary>
+    /// The message formatter_caching_tests.
+    /// </summary>
+    public class MessageFormatterCachingTests
     {
+        #region Fields
+
+        /// <summary>
+        /// The output helper.
+        /// </summary>
         private readonly ITestOutputHelper outputHelper;
 
-        public MessageFormatter_caching_tests(ITestOutputHelper outputHelper)
+        #endregion
+
+        #region Constructors and Destructors
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MessageFormatterCachingTests"/> class.
+        /// </summary>
+        /// <param name="outputHelper">
+        /// The output helper.
+        /// </param>
+        public MessageFormatterCachingTests(ITestOutputHelper outputHelper)
         {
             this.outputHelper = outputHelper;
         }
 
+        #endregion
+
+        #region Public Methods and Operators
+
+        /// <summary>
+        /// The format message_caches_reused_pattern.
+        /// </summary>
         [Fact]
         public void FormatMessage_caches_reused_pattern()
         {
@@ -41,33 +67,50 @@ namespace Jeffijoe.MessageFormat.Tests
             var pattern = "Hi {gender, select, male {Sir} female {Ma'am}}!";
             var actual = subject.FormatMessage(pattern, new { gender = "male" });
             Assert.Equal("Hi Sir!", actual);
+
             // '2' because it did not format "Ma'am" yet.
             parserMock.Verify(x => x.Parse(It.IsAny<StringBuilder>()), Times.Exactly(2));
 
             actual = subject.FormatMessage(pattern, new { gender = "female" });
             Assert.Equal("Hi Ma'am!", actual);
             parserMock.Verify(x => x.Parse(It.IsAny<StringBuilder>()), Times.Exactly(3));
-                
+
             // '3' because it has cached all options
             actual = subject.FormatMessage(pattern, new { gender = "female" });
             Assert.Equal("Hi Ma'am!", actual);
             parserMock.Verify(x => x.Parse(It.IsAny<StringBuilder>()), Times.Exactly(3));
         }
 
+        /// <summary>
+        /// The format message_with_cache_benchmark.
+        /// </summary>
         [Fact]
         public void FormatMessage_with_cache_benchmark()
         {
             var subject = new MessageFormatter(true);
-            Benchmark(subject);
+            this.Benchmark(subject);
         }
 
+        /// <summary>
+        /// The format message_without_cache_benchmark.
+        /// </summary>
         [Fact]
         public void FormatMessage_without_cache_benchmark()
         {
             var subject = new MessageFormatter(false);
-            Benchmark(subject);
+            this.Benchmark(subject);
         }
 
+        #endregion
+
+        #region Methods
+
+        /// <summary>
+        /// The benchmark.
+        /// </summary>
+        /// <param name="subject">
+        /// The subject.
+        /// </param>
         private void Benchmark(MessageFormatter subject)
         {
             var pattern = "\r\n----\r\nOh {name}? And if we were " + "to surround {gender, select, " + "male {his} "
@@ -101,5 +144,7 @@ namespace Jeffijoe.MessageFormat.Tests
             TestHelpers.Benchmark.End(this.outputHelper);
             this.outputHelper.WriteLine(output.ToString());
         }
+
+        #endregion
     }
 }

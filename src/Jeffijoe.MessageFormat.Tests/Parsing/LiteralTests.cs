@@ -1,7 +1,8 @@
 ﻿// MessageFormat for .NET
 // - LiteralTests.cs
+// 
 // Author: Jeff Hansen <jeff@jeffijoe.com>
-// Copyright (C) Jeff Hansen 2014. All rights reserved.
+// Copyright (C) Jeff Hansen 2015. All rights reserved.
 
 using System.Text;
 
@@ -11,8 +12,16 @@ using Xunit;
 
 namespace Jeffijoe.MessageFormat.Tests.Parsing
 {
+    /// <summary>
+    /// The literal tests.
+    /// </summary>
     public class LiteralTests
     {
+        #region Public Methods and Operators
+
+        /// <summary>
+        /// The shift indices.
+        /// </summary>
         [Fact]
         public void ShiftIndices()
         {
@@ -25,5 +34,7 @@ namespace Jeffijoe.MessageFormat.Tests.Parsing
             Assert.Equal(18, subject.StartIndex);
             Assert.Equal(27, subject.EndIndex);
         }
+
+        #endregion
     }
 }

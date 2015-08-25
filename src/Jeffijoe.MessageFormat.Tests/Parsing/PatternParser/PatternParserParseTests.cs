@@ -1,7 +1,8 @@
 ﻿// MessageFormat for .NET
 // - PatternParser_Parse_Tests.cs
+// 
 // Author: Jeff Hansen <jeff@jeffijoe.com>
-// Copyright (C) Jeff Hansen 2014. All rights reserved.
+// Copyright (C) Jeff Hansen 2015. All rights reserved.
 
 using System.Linq;
 using System.Text;
@@ -13,19 +14,55 @@ using Moq;
 
 using Xunit;
 using Xunit.Abstractions;
-using Xunit.Extensions;
 
 namespace Jeffijoe.MessageFormat.Tests.Parsing
 {
-    public class PatternParser_Parse_Tests
+    /// <summary>
+    /// The pattern parser_ parse_ tests.
+    /// </summary>
+    public class PatternParserParseTests
     {
+        #region Fields
+
+        /// <summary>
+        /// The output helper.
+        /// </summary>
         private readonly ITestOutputHelper outputHelper;
 
-        public PatternParser_Parse_Tests(ITestOutputHelper outputHelper)
+        #endregion
+
+        #region Constructors and Destructors
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PatternParserParseTests"/> class.
+        /// </summary>
+        /// <param name="outputHelper">
+        /// The output helper.
+        /// </param>
+        public PatternParserParseTests(ITestOutputHelper outputHelper)
         {
             this.outputHelper = outputHelper;
         }
 
+        #endregion
+
+        #region Public Methods and Operators
+
+        /// <summary>
+        /// The parse.
+        /// </summary>
+        /// <param name="source">
+        /// The source.
+        /// </param>
+        /// <param name="expectedKey">
+        /// The expected key.
+        /// </param>
+        /// <param name="expectedFormat">
+        /// The expected format.
+        /// </param>
+        /// <param name="expectedArgs">
+        /// The expected args.
+        /// </param>
         [Theory]
         [InlineData("test, select, args", "test", "select", "args")]
         [InlineData("test, select, stuff {dawg}", "test", "select", "stuff {dawg}")]
@@ -56,6 +93,9 @@ namespace Jeffijoe.MessageFormat.Tests.Parsing
             Assert.Equal(expectedArgs, first.FormatterArguments);
         }
 
+        /// <summary>
+        /// The parse_exits_early_when_no_literals_have_been_found.
+        /// </summary>
         [Fact]
         public void Parse_exits_early_when_no_literals_have_been_found()
         {
@@ -64,5 +104,7 @@ namespace Jeffijoe.MessageFormat.Tests.Parsing
             literalParserMock.Setup(x => x.ParseLiterals(It.IsAny<StringBuilder>())).Returns(new Literal[0]);
             Assert.Empty(subject.Parse(new StringBuilder()));
         }
+
+        #endregion
     }
 }

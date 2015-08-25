@@ -80,15 +80,15 @@
     <Compile Include="Helpers\StringBuilderHelperTests.cs" />
     <Compile Include="MessageFormatterStringExtensionTests.cs" />
     <Compile Include="MessageFormatterTests.cs" />
-    <Compile Include="MessageFormatter_caching_tests.cs" />
-    <Compile Include="MessageFormatter_full_integration_tests.cs" />
-    <Compile Include="MessageFormatter_using_real_parser_Tests.cs" />
+    <Compile Include="MessageFormatterCachingTests.cs" />
+    <Compile Include="MessageFormatterFullIntegrationTests.cs" />
+    <Compile Include="MessageFormatterUsingRealParserTests.cs" />
     <Compile Include="Parsing\FormatterRequestCollectionTests.cs" />
     <Compile Include="Parsing\LiteralParserTests.cs" />
     <Compile Include="Parsing\LiteralTests.cs" />
-    <Compile Include="Parsing\PatternParser\PatternParser_GetKey_Tests.cs" />
-    <Compile Include="Parsing\PatternParser\PatternParser_Parse_Tests.cs" />
-    <Compile Include="Parsing\PatternParser\PatternParser_with_real_LiteralParser.cs" />
+    <Compile Include="Parsing\PatternParser\PatternParserGetKeyTests.cs" />
+    <Compile Include="Parsing\PatternParser\PatternParserParseTests.cs" />
+    <Compile Include="Parsing\PatternParser\PatternParserWithRealLiteralParser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestHelpers\Benchmark.cs" />
   </ItemGroup>

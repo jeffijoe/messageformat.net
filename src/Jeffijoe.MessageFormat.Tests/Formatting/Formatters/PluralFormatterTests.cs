@@ -1,7 +1,8 @@
 ﻿// MessageFormat for .NET
 // - PluralFormatterTests.cs
+// 
 // Author: Jeff Hansen <jeff@jeffijoe.com>
-// Copyright (C) Jeff Hansen 2014. All rights reserved.
+// Copyright (C) Jeff Hansen 2015. All rights reserved.
 
 using System;
 using System.Collections.Generic;
@@ -12,12 +13,25 @@ using Jeffijoe.MessageFormat.Formatting.Formatters;
 using Jeffijoe.MessageFormat.Parsing;
 
 using Xunit;
-using Xunit.Extensions;
 
 namespace Jeffijoe.MessageFormat.Tests.Formatting.Formatters
 {
+    /// <summary>
+    /// The plural formatter tests.
+    /// </summary>
     public class PluralFormatterTests
     {
+        #region Public Methods and Operators
+
+        /// <summary>
+        /// The pluralize.
+        /// </summary>
+        /// <param name="n">
+        /// The n.
+        /// </param>
+        /// <param name="expected">
+        /// The expected.
+        /// </param>
         [Theory]
         [InlineData(0, "nothing")]
         [InlineData(1, "just one")]
@@ -30,7 +44,8 @@ namespace Jeffijoe.MessageFormat.Tests.Formatting.Formatters
                 new ParsedArguments(
                     new[]
                     {
-                        new KeyedBlock("zero", "nothing"), new KeyedBlock("one", "just one"), 
+                        new KeyedBlock("zero", "nothing"), 
+                        new KeyedBlock("one", "just one"), 
                         new KeyedBlock("other", "wow")
                     }, 
                     new FormatterExtension[0]);
@@ -39,6 +54,15 @@ namespace Jeffijoe.MessageFormat.Tests.Formatting.Formatters
             Assert.Equal(expected, actual);
         }
 
+        /// <summary>
+        /// The replace number literals.
+        /// </summary>
+        /// <param name="input">
+        /// The input.
+        /// </param>
+        /// <param name="expected">
+        /// The expected.
+        /// </param>
         [Theory]
         [InlineData(@"Number \#1 has # results", "Number #1 has 1337 results")]
         [InlineData(@"# results", "1337 results")]
@@ -48,5 +72,7 @@ namespace Jeffijoe.MessageFormat.Tests.Formatting.Formatters
             var actual = subject.ReplaceNumberLiterals(new StringBuilder(input), 1337);
             Assert.Equal(expected, actual);
         }
+
+        #endregion
     }
 }

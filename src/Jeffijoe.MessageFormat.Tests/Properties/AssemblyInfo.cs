@@ -1,7 +1,8 @@
 ﻿// MessageFormat for .NET
 // - AssemblyInfo.cs
+// 
 // Author: Jeff Hansen <jeff@jeffijoe.com>
-// Copyright (C) Jeff Hansen 2014. All rights reserved.
+// Copyright (C) Jeff Hansen 2015. All rights reserved.
 
 using System.Reflection;
 using System.Runtime.InteropServices;

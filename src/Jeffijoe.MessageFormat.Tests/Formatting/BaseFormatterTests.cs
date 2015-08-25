@@ -1,9 +1,9 @@
 ﻿// MessageFormat for .NET
 // - BaseFormatterTests.cs
+// 
 // Author: Jeff Hansen <jeff@jeffijoe.com>
-// Copyright (C) Jeff Hansen 2014. All rights reserved.
+// Copyright (C) Jeff Hansen 2015. All rights reserved.
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,19 +14,43 @@ using Jeffijoe.MessageFormat.Tests.TestHelpers;
 
 using Xunit;
 using Xunit.Abstractions;
-using Xunit.Extensions;
 
 namespace Jeffijoe.MessageFormat.Tests.Formatting
 {
+    /// <summary>
+    ///     The base formatter tests.
+    /// </summary>
     public class BaseFormatterTests
     {
+        #region Fields
+
+        /// <summary>
+        ///     The output helper.
+        /// </summary>
         private readonly ITestOutputHelper outputHelper;
 
+        #endregion
+
+        #region Constructors and Destructors
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BaseFormatterTests"/> class.
+        /// </summary>
+        /// <param name="outputHelper">
+        /// The output helper.
+        /// </param>
         public BaseFormatterTests(ITestOutputHelper outputHelper)
         {
             this.outputHelper = outputHelper;
         }
 
+        #endregion
+
+        #region Public Properties
+
+        /// <summary>
+        ///     Gets the parse arguments_tests.
+        /// </summary>
         public static IEnumerable<object[]> ParseArguments_tests
         {
             get
@@ -34,19 +58,28 @@ namespace Jeffijoe.MessageFormat.Tests.Formatting
                 yield return
                     new object[]
                     {
-                        "offset:1 test:1337 one {programmer}   other{programmers}", new[] { "offset", "test" }, 
-                        new[] { "1", "1337" }, new[] { "one", "other" }, new[] { "programmer", "programmers" }
+                        "offset:1 test:1337 one {programmer}   other{programmers}", 
+                        new[] { "offset", "test" }, 
+                        new[] { "1", "1337" }, 
+                        new[] { "one", "other" }, 
+                        new[] { "programmer", "programmers" }
                     };
 
                 yield return
                     new object[]
                     {
-                        "offset:1 test:1337 one\\123 {programmer}   other{programmers}", new[] { "offset", "test" }, 
-                        new[] { "1", "1337" }, new[] { "one\\123", "other" }, new[] { "programmer", "programmers" }
+                        "offset:1 test:1337 one\\123 {programmer}   other{programmers}", 
+                        new[] { "offset", "test" }, 
+                        new[] { "1", "1337" }, 
+                        new[] { "one\\123", "other" }, 
+                        new[] { "programmer", "programmers" }
                     };
             }
         }
 
+        /// <summary>
+        ///     Gets the parse keyed blocks_tests.
+        /// </summary>
         public static IEnumerable<object[]> ParseKeyedBlocks_tests
         {
             get
@@ -54,13 +87,15 @@ namespace Jeffijoe.MessageFormat.Tests.Formatting
                 yield return
                     new object[]
                     {
-                        "male {he} female {she}unknown{they}", new[] { "male", "female", "unknown" }, 
+                        "male {he} female {she}unknown{they}", 
+                        new[] { "male", "female", "unknown" }, 
                         new[] { "he", "she", "they" }
                     };
                 yield return
                     new object[]
                     {
-                        "zero {} other {wee}", new[] { "zero", "other" }, 
+                        "zero {} other {wee}", 
+                        new[] { "zero", "other" }, 
                         new[] { string.Empty, "wee" }
                     };
                 yield return new object[] { @"
@@ -78,30 +113,28 @@ unknown
             }
         }
 
-        #region Test classes
-
-        private class BaseFormatterImpl : BaseFormatter
-        {
-        }
-
         #endregion
 
-        [Theory]
-        [InlineData("hello {{dawg}")]
-        [InlineData("hello {dawg}}")]
-        [InlineData("hello \\{dawg}")]
-        [InlineData("hello {dawg\\}")]
-        [InlineData("hello {dawg} {sweet}")]
-        [InlineData("hello {dawg} test{sweet}}")]
-        [InlineData("hello \\{{dawg\\}} test{sweet}")]
-        public void ParseArguments_invalid(string args)
-        {
-            var subject = new BaseFormatterImpl();
-            var req = new FormatterRequest(new Literal(1, 1, 1, 1, new StringBuilder()), null, null, args);
-            var ex = Assert.Throws<MalformedLiteralException>(() => subject.ParseArguments(req));
-            this.outputHelper.WriteLine(ex.Message);
-        }
+        #region Public Methods and Operators
 
+        /// <summary>
+        /// The parse arguments.
+        /// </summary>
+        /// <param name="args">
+        /// The args.
+        /// </param>
+        /// <param name="extensionKeys">
+        /// The extension keys.
+        /// </param>
+        /// <param name="extensionValues">
+        /// The extension values.
+        /// </param>
+        /// <param name="keys">
+        /// The keys.
+        /// </param>
+        /// <param name="blocks">
+        /// The blocks.
+        /// </param>
         [Theory]
         [MemberData("ParseArguments_tests")]
         public void ParseArguments(
@@ -133,6 +166,43 @@ unknown
             }
         }
 
+        /// <summary>
+        /// The parse arguments_invalid.
+        /// </summary>
+        /// <param name="args">
+        /// The args.
+        /// </param>
+        [Theory]
+        [InlineData("hello {{dawg}")]
+        [InlineData("hello {dawg}}")]
+        [InlineData("hello \\{dawg}")]
+        [InlineData("hello {dawg\\}")]
+        [InlineData("hello {dawg} {sweet}")]
+        [InlineData("hello {dawg} test{sweet}}")]
+        [InlineData("hello \\{{dawg\\}} test{sweet}")]
+        public void ParseArguments_invalid(string args)
+        {
+            var subject = new BaseFormatterImpl();
+            var req = new FormatterRequest(new Literal(1, 1, 1, 1, new StringBuilder()), null, null, args);
+            var ex = Assert.Throws<MalformedLiteralException>(() => subject.ParseArguments(req));
+            this.outputHelper.WriteLine(ex.Message);
+        }
+
+        /// <summary>
+        /// The parse extensions.
+        /// </summary>
+        /// <param name="args">
+        /// The args.
+        /// </param>
+        /// <param name="extension">
+        /// The extension.
+        /// </param>
+        /// <param name="value">
+        /// The value.
+        /// </param>
+        /// <param name="expectedIndex">
+        /// The expected index.
+        /// </param>
         [Theory]
         [InlineData(" offset:3 boom", "offset", "3", 9)]
         [InlineData("testie:dawg lel", "testie", "dawg", 11)]
@@ -161,6 +231,9 @@ unknown
             Assert.Equal(expectedIndex, index);
         }
 
+        /// <summary>
+        ///     The parse extensions_multiple.
+        /// </summary>
         [Fact]
         public void ParseExtensions_multiple()
         {
@@ -184,6 +257,18 @@ unknown
             Assert.Equal(expectedIndex, index);
         }
 
+        /// <summary>
+        /// The parse keyed blocks.
+        /// </summary>
+        /// <param name="args">
+        /// The args.
+        /// </param>
+        /// <param name="keys">
+        /// The keys.
+        /// </param>
+        /// <param name="values">
+        /// The values.
+        /// </param>
         [Theory]
         [MemberData("ParseKeyedBlocks_tests")]
         public void ParseKeyedBlocks(string args, string[] keys, string[] values)
@@ -219,13 +304,13 @@ unknown
             }
         }
 
-        [Fact]
-        public void AssertVariableExists()
+        #endregion
+
+        /// <summary>
+        ///     The base formatter impl.
+        /// </summary>
+        private class BaseFormatterImpl : BaseFormatter
         {
-            var subject = new BaseFormatterImpl();
-            var args = new Dictionary<string, object> { { "dawg", "wee" } };
-            Assert.Throws<VariableNotFoundException>(() => subject.AssertVariableExists(args, "Test"));
-            subject.AssertVariableExists(args, "dawg");
         }
     }
 }

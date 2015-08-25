@@ -1,38 +1,63 @@
 ﻿// MessageFormat for .NET
 // - MessageFormatter_full_integration_tests.cs
+// 
 // Author: Jeff Hansen <jeff@jeffijoe.com>
-// Copyright (C) Jeff Hansen 2014. All rights reserved.
+// Copyright (C) Jeff Hansen 2015. All rights reserved.
 
-using System;
 using System.Collections.Generic;
 
+using Jeffijoe.MessageFormat.Formatting;
 using Jeffijoe.MessageFormat.Tests.TestHelpers;
 
 using Xunit;
 using Xunit.Abstractions;
-using Xunit.Extensions;
 
 namespace Jeffijoe.MessageFormat.Tests
 {
-    public class MessageFormatter_full_integration_tests
+    /// <summary>
+    /// The message formatter_full_integration_tests.
+    /// </summary>
+    public class MessageFormatterFullIntegrationTests
     {
+        #region Fields
+
+        /// <summary>
+        /// The output helper.
+        /// </summary>
         private readonly ITestOutputHelper outputHelper;
 
-        public MessageFormatter_full_integration_tests(ITestOutputHelper outputHelper)
+        #endregion
+
+        #region Constructors and Destructors
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MessageFormatterFullIntegrationTests"/> class.
+        /// </summary>
+        /// <param name="outputHelper">
+        /// The output helper.
+        /// </param>
+        public MessageFormatterFullIntegrationTests(ITestOutputHelper outputHelper)
         {
             this.outputHelper = outputHelper;
         }
 
+        #endregion
+
+        #region Public Properties
+
+        /// <summary>
+        /// Gets the tests.
+        /// </summary>
         public static IEnumerable<object[]> Tests
         {
             get
             {
-                string case1 = @"{gender, select, 
+                const string Case1 = @"{gender, select, 
                            male {He - \{{name}\} -}
                            female {She - \{{name}\} -}
                            other {They}
                       } said: You're pretty cool!";
-                string case2 = @"{gender, select, 
+                const string Case2 = @"{gender, select, 
                            male {He - \{{name}\} -}
                            female {She - \{{name}\} -}
                            other {They}
@@ -42,13 +67,13 @@ namespace Jeffijoe.MessageFormat.Tests
                             =42 {a universal amount of notifications}
                             other {# notifications}
                       }. Have a nice day!";
-                string case3 = @"You have {count, plural, 
+                const string Case3 = @"You have {count, plural, 
                             zero {no notifications}
                             one {just one notification}
                             =42 {a universal amount of notifications}
                             other {# notifications}
                       }. Have a nice day!";
-                string case4 = @"{gender, select, 
+                const string Case4 = @"{gender, select, 
                            male {He}
                            female {She}
                            other {They}
@@ -60,7 +85,7 @@ namespace Jeffijoe.MessageFormat.Tests
                       }. Have a nice day!";
 
                 // Please take the following sample in the spirit it was intended. :)
-                string case5 = @"{gender, select, 
+                const string Case5 = @"{gender, select, 
                            male {He (who has {genitals, plural, 
                                     zero {no testicles}
                                     one {just one testicle}
@@ -83,85 +108,91 @@ namespace Jeffijoe.MessageFormat.Tests
                 yield return
                     new object[]
                     {
-                        case1, new Dictionary<string, object> { { "gender", "male" }, { "name", "Jeff" } }, 
+                        Case1, 
+                        new Dictionary<string, object> { { "gender", "male" }, { "name", "Jeff" } }, 
                         "He - {Jeff} - said: You're pretty cool!"
                     };
                 yield return
                     new object[]
                     {
-                        case2, new Dictionary<string, object> { { "gender", "male" }, { "name", "Jeff" }, { "count", 0 } }, 
+                        Case2, 
+                        new Dictionary<string, object> { { "gender", "male" }, { "name", "Jeff" }, { "count", 0 } }, 
                         "He - {Jeff} - said: You have no notifications. Have a nice day!"
                     };
                 yield return
                     new object[]
                     {
-                        case2, 
+                        Case2, 
                         new Dictionary<string, object> { { "gender", "female" }, { "name", "Amanda" }, { "count", 1 } }, 
                         "She - {Amanda} - said: You have just one notification. Have a nice day!"
                     };
                 yield return
                     new object[]
                     {
-                        case2, new Dictionary<string, object> { { "gender", "uni" }, { "count", 42 } }, 
+                        Case2, 
+                        new Dictionary<string, object> { { "gender", "uni" }, { "count", 42 } }, 
                         "They said: You have a universal amount of notifications. Have a nice day!"
                     };
                 yield return
                     new object[]
                     {
-                        case3, new Dictionary<string, object> { { "count", 5 } }, 
+                        Case3, 
+                        new Dictionary<string, object> { { "count", 5 } }, 
                         "You have 5 notifications. Have a nice day!"
                     };
                 yield return
                     new object[]
                     {
-                        case4, new Dictionary<string, object> { { "count", 5 }, { "gender", "male" } }, 
+                        Case4, 
+                        new Dictionary<string, object> { { "count", 5 }, { "gender", "male" } }, 
                         "He said: You have 5 notifications. Have a nice day!"
                     };
                 yield return
                     new object[]
                     {
-                        case5, new Dictionary<string, object> { { "count", 5 }, { "gender", "male" }, { "genitals", 0 } }, 
+                        Case5, 
+                        new Dictionary<string, object> { { "count", 5 }, { "gender", "male" }, { "genitals", 0 } }, 
                         "He (who has no testicles) said: You have 5 notifications. Have a nice day!"
                     };
                 yield return
                     new object[]
                     {
-                        case5, 
+                        Case5, 
                         new Dictionary<string, object> { { "count", 5 }, { "gender", "female" }, { "genitals", 0 } }, 
                         "She (who has no boobies) said: You have 5 notifications. Have a nice day!"
                     };
                 yield return
                     new object[]
                     {
-                        case5, 
+                        Case5, 
                         new Dictionary<string, object> { { "count", 0 }, { "gender", "female" }, { "genitals", 1 } }, 
                         "She (who has just one boob) said: You have no notifications. Have a nice day!"
                     };
                 yield return
                     new object[]
                     {
-                        case5, 
+                        Case5, 
                         new Dictionary<string, object> { { "count", 0 }, { "gender", "female" }, { "genitals", 2 } }, 
                         "She (who has a pair of lovelies) said: You have no notifications. Have a nice day!"
                     };
                 yield return
                     new object[]
                     {
-                        case5, 
+                        Case5, 
                         new Dictionary<string, object> { { "count", 0 }, { "gender", "female" }, { "genitals", 102 } }, 
                         "She (who has the freakish amount of 102 boobies) said: You have no notifications. Have a nice day!"
                     };
                 yield return
                     new object[]
                     {
-                        case5, 
+                        Case5, 
                         new Dictionary<string, object> { { "count", 42 }, { "gender", "female" }, { "genitals", 102 } }, 
                         "She (who has the freakish amount of 102 boobies) said: You have a universal amount of notifications. Have a nice day!"
                     };
                 yield return
                     new object[]
                     {
-                        case5, 
+                        Case5, 
                         new Dictionary<string, object> { { "count", 1 }, { "gender", "male" }, { "genitals", 102 } }, 
                         "He (who has the insane amount of 102 testicles) said: You have just one notification. Have a nice day!"
                     };
@@ -171,7 +202,7 @@ namespace Jeffijoe.MessageFormat.Tests
                     new object[]
                     {
                         "{nbrAttachments, plural, zero {} one {{nbrAttachmentsFmt} attachment} other {{nbrAttachmentsFmt} attachments}}", 
-                        new Dictionary<string, object> { { "nbrAttachments", 0 }, {"nbrAttachmentsFmt", "wut"} }, 
+                        new Dictionary<string, object> { { "nbrAttachments", 0 }, { "nbrAttachmentsFmt", "wut" } }, 
                         string.Empty
                     };
 
@@ -180,7 +211,7 @@ namespace Jeffijoe.MessageFormat.Tests
                     new object[]
                     {
                         "{maybeCount}", 
-                        new Dictionary<string, object> { { "maybeCount", (int?)null } }, 
+                        new Dictionary<string, object> { { "maybeCount", null } }, 
                         string.Empty
                     };
                 yield return
@@ -193,15 +224,22 @@ namespace Jeffijoe.MessageFormat.Tests
             }
         }
 
-        [Fact]
-        public void FormatMessage_lets_non_ascii_characters_right_through()
-        {
-            var input = "中test中国话不用彁字。";
-            var subject = new MessageFormatter(false);
-            var actual = subject.FormatMessage(input, new Dictionary<string, object>());
-            Assert.Equal(input, actual);
-        }
+        #endregion
 
+        #region Public Methods and Operators
+
+        /// <summary>
+        /// The format message.
+        /// </summary>
+        /// <param name="source">
+        /// The source.
+        /// </param>
+        /// <param name="args">
+        /// The args.
+        /// </param>
+        /// <param name="expected">
+        /// The expected.
+        /// </param>
         [Theory]
         [MemberData("Tests")]
         public void FormatMessage(string source, Dictionary<string, object> args, string expected)
@@ -217,45 +255,129 @@ namespace Jeffijoe.MessageFormat.Tests
             this.outputHelper.WriteLine(result);
         }
 
+        /// <summary>
+        /// The format message_debug.
+        /// </summary>
+        [Fact]
+        public void FormatMessage_debug()
+        {
+            const string Source = @"{gender, select, 
+                           male {He}
+                           female {She}
+                           other {They}
+                      } said: You have {count, plural, 
+                            zero {no notifications}
+                            one {just one notification}
+                            =42 {a universal amount of notifications}
+                            other {# notifications}
+                      }. Have a nice day!";
+            const string Expected = "He said: You have 5 notifications. Have a nice day!";
+            var args = new Dictionary<string, object> { { "gender", "male" }, { "count", 5 } };
+            var subject = new MessageFormatter(false);
+
+            string result = subject.FormatMessage(Source, args);
+            Assert.Equal(Expected, result);
+        }
+
+        /// <summary>
+        /// The format message_lets_non_ascii_characters_right_through.
+        /// </summary>
+        [Fact]
+        public void FormatMessage_lets_non_ascii_characters_right_through()
+        {
+            const string Input = "中test中国话不用彁字。";
+            var subject = new MessageFormatter(false);
+            var actual = subject.FormatMessage(Input, new Dictionary<string, object>());
+            Assert.Equal(Input, actual);
+        }
+
+        /// <summary>
+        /// The format message_nesting_with_brace_escaping.
+        /// </summary>
+        [Fact]
+        public void FormatMessage_nesting_with_brace_escaping()
+        {
+            var subject = new MessageFormatter(false);
+            const string Pattern = @"{s1, select, 
+                                1 {{s2, select, 
+                                   2 {\{}
+                                }}
+                            }";
+            var actual = subject.FormatMessage(Pattern, new { s1 = 1, s2 = 2 });
+            this.outputHelper.WriteLine(actual);
+            Assert.Equal("{", actual);
+        }
+
+        /// <summary>
+        /// The format message_with_reflection_overload.
+        /// </summary>
+        [Fact]
+        public void FormatMessage_with_reflection_overload()
+        {
+            var subject = new MessageFormatter(false);
+            const string Pattern = "You have {UnreadCount, plural, "
+                                   + "zero {no unread messages}"
+                                   + "one {just one unread message}" + "other {# unread messages}" + "} today.";
+            var actual = subject.FormatMessage(Pattern, new { UnreadCount = 0 });
+            Assert.Equal("You have no unread messages today.", actual);
+
+            // The absence of UnreadCount should make it throw.
+            var ex = Assert.Throws<VariableNotFoundException>(() => subject.FormatMessage(Pattern, new { }));
+            Assert.Equal("UnreadCount", ex.MissingVariable);
+
+            actual = subject.FormatMessage(Pattern, new { UnreadCount = 1 });
+            Assert.Equal("You have just one unread message today.", actual);
+            actual = subject.FormatMessage(Pattern, new { UnreadCount = 2 });
+            Assert.Equal("You have 2 unread messages today.", actual);
+
+            actual = subject.FormatMessage(Pattern, new { UnreadCount = 3 });
+            Assert.Equal("You have 3 unread messages today.", actual);
+        }
+
+        /// <summary>
+        /// The read me_test_to_make_sure_ i_dont_look_like_a_fool.
+        /// </summary>
         [Fact]
         public void ReadMe_test_to_make_sure_I_dont_look_like_a_fool()
         {
             {
                 var mf = new MessageFormatter(false);
-                var str = @"You have {notifications, plural,
+                const string Str = @"You have {notifications, plural,
                               zero {no notifications}
                               one {one notification}
                               =42 {a universal amount of notifications}
                               other {# notifications}
                             }. Have a nice day, {name}!";
                 var formatted = mf.FormatMessage(
-                    str, 
+                    Str, 
                     new Dictionary<string, object> { { "notifications", 4 }, { "name", "Jeff" } });
                 Assert.Equal("You have 4 notifications. Have a nice day, Jeff!", formatted);
             }
+
             {
                 var mf = new MessageFormatter(false);
-                var str = @"You {NUM_ADDS, plural, offset:1
+                const string Str = @"You {NUM_ADDS, plural, offset:1
                               =0{didnt add this to your profile} 
                               zero{added this to your profile}
                               one{and one other person added this to their profile}
                               other{and # others added this to their profiles}
                           }.";
-                var formatted = mf.FormatMessage(str, new Dictionary<string, object> { { "NUM_ADDS", 0 } });
+                var formatted = mf.FormatMessage(Str, new Dictionary<string, object> { { "NUM_ADDS", 0 } });
                 Assert.Equal("You didnt add this to your profile.", formatted);
 
-                formatted = mf.FormatMessage(str, new Dictionary<string, object> { { "NUM_ADDS", 1 } });
+                formatted = mf.FormatMessage(Str, new Dictionary<string, object> { { "NUM_ADDS", 1 } });
                 Assert.Equal("You added this to your profile.", formatted);
 
-                formatted = mf.FormatMessage(str, new Dictionary<string, object> { { "NUM_ADDS", 2 } });
+                formatted = mf.FormatMessage(Str, new Dictionary<string, object> { { "NUM_ADDS", 2 } });
                 Assert.Equal("You and one other person added this to their profile.", formatted);
 
-                formatted = mf.FormatMessage(str, new Dictionary<string, object> { { "NUM_ADDS", 3 } });
+                formatted = mf.FormatMessage(Str, new Dictionary<string, object> { { "NUM_ADDS", 3 } });
                 Assert.Equal("You and 2 others added this to their profiles.", formatted);
             }
+
             {
                 var mf = new MessageFormatter(false);
-                var str = @"{GENDER, select,
+                const string Str = @"{GENDER, select,
                                 male {He}
                               female {She}
                                other {They}
@@ -267,7 +389,7 @@ namespace Jeffijoe.MessageFormat.Tests
                                             other {# categories}
                                          }.";
                 var formatted = mf.FormatMessage(
-                    str, 
+                    Str, 
                     new Dictionary<string, object>
                     {
                         { "GENDER", "male" }, 
@@ -277,7 +399,7 @@ namespace Jeffijoe.MessageFormat.Tests
                 Assert.Equal(formatted, "He found 1 result in 2 categories.");
 
                 formatted = mf.FormatMessage(
-                    str, 
+                    Str, 
                     new Dictionary<string, object>
                     {
                         { "GENDER", "male" }, 
@@ -287,7 +409,7 @@ namespace Jeffijoe.MessageFormat.Tests
                 Assert.Equal(formatted, "He found 1 result in 1 category.");
 
                 formatted = mf.FormatMessage(
-                    str, 
+                    Str, 
                     new Dictionary<string, object>
                     {
                         { "GENDER", "female" }, 
@@ -296,42 +418,47 @@ namespace Jeffijoe.MessageFormat.Tests
                     });
                 Assert.Equal(formatted, "She found 2 results in 1 category.");
             }
+
             {
                 var mf = new MessageFormatter(false);
-                var str = @"Your {NUM, plural, one{message} other{messages}} go here.";
-                var formatted = mf.FormatMessage(str, new Dictionary<string, object> { { "NUM", 1 } });
+                const string Str = @"Your {NUM, plural, one{message} other{messages}} go here.";
+                var formatted = mf.FormatMessage(Str, new Dictionary<string, object> { { "NUM", 1 } });
                 Assert.Equal(formatted, "Your message go here.");
 
-                formatted = mf.FormatMessage(str, new Dictionary<string, object> { { "NUM", 3 } });
+                formatted = mf.FormatMessage(Str, new Dictionary<string, object> { { "NUM", 3 } });
                 Assert.Equal(formatted, "Your messages go here.");
             }
+
             {
                 var mf = new MessageFormatter(false);
-                var str = @"His name is {LAST_NAME}... {FIRST_NAME} {LAST_NAME}";
+                const string Str = @"His name is {LAST_NAME}... {FIRST_NAME} {LAST_NAME}";
                 var formatted = mf.FormatMessage(
-                    str, 
+                    Str, 
                     new Dictionary<string, object> { { "FIRST_NAME", "James" }, { "LAST_NAME", "Bond" } });
                 Assert.Equal(formatted, "His name is Bond... James Bond");
             }
+
             {
                 var mf = new MessageFormatter(false);
-                var str = @"{GENDER, select, male{He} female{She} other{They}} liked this.";
-                var formatted = mf.FormatMessage(str, new Dictionary<string, object> { { "GENDER", "male" } });
+                const string Str = @"{GENDER, select, male{He} female{She} other{They}} liked this.";
+                var formatted = mf.FormatMessage(Str, new Dictionary<string, object> { { "GENDER", "male" } });
                 Assert.Equal(formatted, "He liked this.");
 
-                formatted = mf.FormatMessage(str, new Dictionary<string, object> { { "GENDER", "female" } });
+                formatted = mf.FormatMessage(Str, new Dictionary<string, object> { { "GENDER", "female" } });
                 Assert.Equal(formatted, "She liked this.");
 
-                formatted = mf.FormatMessage(str, new Dictionary<string, object> { { "GENDER", "somethingelse" } });
+                formatted = mf.FormatMessage(Str, new Dictionary<string, object> { { "GENDER", "somethingelse" } });
                 Assert.Equal(formatted, "They liked this.");
 
-                formatted = mf.FormatMessage(str, new Dictionary<string, object> { });
+                formatted = mf.FormatMessage(Str, new Dictionary<string, object> { { "GENDER", null } });
                 Assert.Equal(formatted, "They liked this.");
             }
+
             {
                 var mf = new MessageFormatter(true, "en");
                 mf.Pluralizers["en"] = n => {
                     // ´n´ is the number being pluralized.
+                    // ReSharper disable once CompareOfFloatsByEqualityOperator
                     if (n == 0)
                     {
                         return "zero";
@@ -358,61 +485,6 @@ namespace Jeffijoe.MessageFormat.Tests
             }
         }
 
-        [Fact]
-        public void FormatMessage_with_reflection_overload()
-        {
-            var subject = new MessageFormatter(false);
-            var pattern = "You have {UnreadCount, plural, " + "zero {no unread messages}"
-                          + "one {just one unread message}" + "other {# unread messages}" + "} today.";
-            var actual = subject.FormatMessage(pattern, new { UnreadCount = 0 });
-            Assert.Equal("You have no unread messages today.", actual);
-
-            // The absence of UnreadCount means it will be treated as "zero".
-            actual = subject.FormatMessage(pattern, new { });
-            Assert.Equal("You have no unread messages today.", actual);
-
-            actual = subject.FormatMessage(pattern, new { UnreadCount = 1 });
-            Assert.Equal("You have just one unread message today.", actual);
-            actual = subject.FormatMessage(pattern, new { UnreadCount = 2 });
-            Assert.Equal("You have 2 unread messages today.", actual);
-
-            actual = subject.FormatMessage(pattern, new { UnreadCount = 3 });
-            Assert.Equal("You have 3 unread messages today.", actual);
-        }
-
-        [Fact]
-        public void FormatMessage_nesting_with_brace_escaping()
-        {
-            var subject = new MessageFormatter(false);
-            var pattern = @"{s1, select, 
-                                1 {{s2, select, 
-                                   2 {\{}
-                                }}
-                            }";
-            var actual = subject.FormatMessage(pattern, new { s1 = 1, s2 = 2 });
-            this.outputHelper.WriteLine(actual);
-            Assert.Equal("{", actual);
-        }
-
-        [Fact]
-        public void FormatMessage_debug()
-        {
-            var source = @"{gender, select, 
-                           male {He}
-                           female {She}
-                           other {They}
-                      } said: You have {count, plural, 
-                            zero {no notifications}
-                            one {just one notification}
-                            =42 {a universal amount of notifications}
-                            other {# notifications}
-                      }. Have a nice day!";
-            var expected = "He said: You have 5 notifications. Have a nice day!";
-            var args = new Dictionary<string, object> { { "gender", "male" }, { "count", 5 } };
-            var subject = new MessageFormatter(false);
-
-            string result = subject.FormatMessage(source, args);
-            Assert.Equal(expected, result);
-        }
+        #endregion
     }
 }

@@ -240,6 +240,13 @@ namespace Jeffijoe.MessageFormat
             for (int i = 0; i < requestsEnumerated.Length; i++)
             {
                 var request = requestsEnumerated[i];
+
+                object value;
+                if (args.TryGetValue(request.Variable, out value) == false)
+                {
+                    throw new VariableNotFoundException(request.Variable);
+                }
+                
                 var formatter = this.Formatters.GetFormatter(request);
                 if (formatter == null)
                 {
@@ -247,7 +254,7 @@ namespace Jeffijoe.MessageFormat
                 }
 
                 // Double dispatch, yeah!
-                var result = formatter.Format(this.Locale, request, args, this);
+                var result = formatter.Format(this.Locale, request, args, value, this);
 
                 // First, we remove the literal from the source.
                 Literal sourceLiteral = request.SourceLiteral;

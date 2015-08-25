@@ -1,7 +1,8 @@
 ﻿// MessageFormat for .NET
 // - CharHelperTests.cs
+// 
 // Author: Jeff Hansen <jeff@jeffijoe.com>
-// Copyright (C) Jeff Hansen 2014. All rights reserved.
+// Copyright (C) Jeff Hansen 2015. All rights reserved.
 
 using Jeffijoe.MessageFormat.Helpers;
 
@@ -9,8 +10,16 @@ using Xunit;
 
 namespace Jeffijoe.MessageFormat.Tests.Helpers
 {
+    /// <summary>
+    /// The char helper tests.
+    /// </summary>
     public class CharHelperTests
     {
+        #region Public Methods and Operators
+
+        /// <summary>
+        /// The is alpha numeric.
+        /// </summary>
         [Fact]
         public void IsAlphaNumeric()
         {
@@ -23,5 +32,7 @@ namespace Jeffijoe.MessageFormat.Tests.Helpers
             Assert.False('æ'.IsAlphaNumeric());
             Assert.False('å'.IsAlphaNumeric());
         }
+
+        #endregion
     }
 }

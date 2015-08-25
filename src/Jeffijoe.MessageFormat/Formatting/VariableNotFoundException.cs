@@ -1,7 +1,8 @@
 ﻿// MessageFormat for .NET
 // - VariableNotFoundException.cs
+// 
 // Author: Jeff Hansen <jeff@jeffijoe.com>
-// Copyright (C) Jeff Hansen 2014. All rights reserved.
+// Copyright (C) Jeff Hansen 2015. All rights reserved.
 namespace Jeffijoe.MessageFormat.Formatting
 {
     /// <summary>
@@ -12,28 +13,41 @@ namespace Jeffijoe.MessageFormat.Formatting
         #region Constructors and Destructors
 
         /// <summary>
-        ///     Initializes a new instance of the <see cref="VariableNotFoundException" /> class.
+        /// Initializes a new instance of the <see cref="VariableNotFoundException"/> class.
         /// </summary>
-        /// <param name="variable">
-        ///     The variable.
+        /// <param name="missingVariable">
+        /// The variable.
         /// </param>
-        public VariableNotFoundException(string variable)
-            : base(BuildMessage(variable))
+        public VariableNotFoundException(string missingVariable)
+            : base(BuildMessage(missingVariable))
         {
+            this.MissingVariable = missingVariable;
         }
+
+        #endregion
+
+        #region Public Properties
+
+        /// <summary>
+        ///     Gets the name of the missing variable.
+        /// </summary>
+        /// <value>
+        ///     The missing variable.
+        /// </value>
+        public string MissingVariable { get; private set; }
 
         #endregion
 
         #region Methods
 
         /// <summary>
-        ///     Builds the message.
+        /// Builds the message.
         /// </summary>
         /// <param name="variable">
-        ///     The variable.
+        /// The variable.
         /// </param>
         /// <returns>
-        ///     The <see cref="string" />.
+        /// The <see cref="string"/>.
         /// </returns>
         private static string BuildMessage(string variable)
         {

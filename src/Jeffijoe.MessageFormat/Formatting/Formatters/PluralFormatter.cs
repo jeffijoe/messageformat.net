@@ -72,6 +72,7 @@ namespace Jeffijoe.MessageFormat.Formatting.Formatters
         /// <param name="args">
         ///     The arguments.
         /// </param>
+        /// <param name="value">The value of <see cref="FormatterRequest.Variable"/> from the given <see cref="args"/> dictionary. Can be null.</param>
         /// <param name="messageFormatter">
         ///     The message formatter.
         /// </param>
@@ -82,6 +83,7 @@ namespace Jeffijoe.MessageFormat.Formatting.Formatters
             string locale, 
             FormatterRequest request, 
             Dictionary<string, object> args, 
+            object value,
             IMessageFormatter messageFormatter)
         {
             var arguments = this.ParseArguments(request);
@@ -92,13 +94,7 @@ namespace Jeffijoe.MessageFormat.Formatting.Formatters
                 offset = Convert.ToDouble(offsetExtension.Value);
             }
 
-            double n = 0;
-            object varResult = null;
-            if (args.TryGetValue(request.Variable, out varResult))
-            {
-                n = Convert.ToDouble(varResult);
-            }
-
+            var n = Convert.ToDouble(value);
             var pluralized = new StringBuilder(this.Pluralize(locale, arguments, n, offset));
             var result = this.ReplaceNumberLiterals(pluralized, n - offset);
             var formatted = messageFormatter.FormatMessage(result, args);

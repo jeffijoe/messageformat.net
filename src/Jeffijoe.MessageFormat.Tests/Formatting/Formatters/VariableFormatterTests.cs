@@ -52,18 +52,15 @@ namespace Jeffijoe.MessageFormat.Tests.Formatting.Formatters
         #region Public Methods and Operators
 
         /// <summary>
-        ///     Verifies that an empty string is returned when the argument is null or does not exist.
+        ///     Verifies that an empty string is returned when the argument is null.
         /// </summary>
         [Fact]
-        public void VerifyAnEmptyStringIsReturnedWhenTheArgumentIsNullOrDoesNotExist()
+        public void VerifyAnEmptyStringIsReturnedWhenTheArgumentIsNull()
         {
             var req = CreateRequest();
             var args = new Dictionary<string, object>();
 
-            Assert.Equal(string.Empty, this.subject.Format("en", req, args, this.formatterMock.Object));
-
-            args.Add("test", null);
-            Assert.Equal(string.Empty, this.subject.Format("en", req, args, this.formatterMock.Object));
+            Assert.Equal(string.Empty, this.subject.Format("en", req, args, null, this.formatterMock.Object));
         }
 
         /// <summary>
@@ -73,12 +70,9 @@ namespace Jeffijoe.MessageFormat.Tests.Formatting.Formatters
         public void VerifyTheValueFromTheGivenArgumentsIsReturnedAsAString()
         {
             var req = CreateRequest();
-            var args = new Dictionary<string, object>
-            {
-                { "test", "is good" }
-            };
+            var args = new Dictionary<string, object>();
 
-            Assert.Equal("is good", this.subject.Format("en", req, args, this.formatterMock.Object));
+            Assert.Equal("is good", this.subject.Format("en", req, args, "is good", this.formatterMock.Object));
         }
 
         #endregion
@@ -86,10 +80,10 @@ namespace Jeffijoe.MessageFormat.Tests.Formatting.Formatters
         #region Methods
 
         /// <summary>
-        /// Creates the request.
+        ///     Creates the request.
         /// </summary>
         /// <returns>
-        /// The <see cref="FormatterRequest"/>.
+        ///     The <see cref="FormatterRequest" />.
         /// </returns>
         private static FormatterRequest CreateRequest()
         {
