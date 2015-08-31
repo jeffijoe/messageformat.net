@@ -7,7 +7,7 @@
 This is an implementation of the ICU Message Format in .NET. For official information about the format, go to:
 http://userguide.icu-project.org/formatparse/messages
 
-## TL;DR:
+## Quickstart
 
 ````csharp
 var mf = new MessageFormatter();
