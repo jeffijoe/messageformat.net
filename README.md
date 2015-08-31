@@ -77,7 +77,7 @@ Install-Package MessageFormat
 
 ## Performance
 
-If you look at `MessageFormatter_caching_tests`, you will find a "with cache" and "without cache" test.
+If you look at `MessageFormatterCachingTests`, you will find a "with cache" and "without cache" test.
 
 My machine runs on a Core i7 3960x, and with about **100,000** iterations with random data (generated beforehand), it takes about 2 seconds (1892ms) with the cache,
 and about 3 seconds (3236ms) without it. **These results are with a debug build, when it is in release mode the time taken is reduced by about 40%! :)**
