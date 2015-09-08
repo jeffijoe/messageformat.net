@@ -20,13 +20,13 @@ namespace Jeffijoe.MessageFormat
         /// <param name="pattern">
         ///     The pattern.
         /// </param>
-        /// <param name="args">
+        /// <param name="argsMap">
         ///     The arguments.
         /// </param>
         /// <returns>
         ///     The <see cref="string" />.
         /// </returns>
-        string FormatMessage(string pattern, Dictionary<string, object> args);
+        string FormatMessage(string pattern, IDictionary<string, object> argsMap);
 
         /// <summary>
         ///     Formats the message, and uses reflection to create a dictionary of property values from the specified object.

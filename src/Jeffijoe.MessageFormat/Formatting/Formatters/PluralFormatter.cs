@@ -37,7 +37,7 @@ namespace Jeffijoe.MessageFormat.Formatting.Formatters
         /// <value>
         ///     The pluralizers.
         /// </value>
-        public Dictionary<string, Pluralizer> Pluralizers { get; private set; }
+        public IDictionary<string, Pluralizer> Pluralizers { get; private set; }
 
         #endregion
 
@@ -82,7 +82,7 @@ namespace Jeffijoe.MessageFormat.Formatting.Formatters
         public string Format(
             string locale, 
             FormatterRequest request, 
-            Dictionary<string, object> args, 
+            IDictionary<string, object> args, 
             object value,
             IMessageFormatter messageFormatter)
         {
