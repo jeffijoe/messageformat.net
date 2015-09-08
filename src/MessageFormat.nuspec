@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
     <metadata>
         <id>MessageFormat</id>
-        <version>1.0.0</version>
+        <version>1.0.1</version>
         <title>MessageFormatter for .NET</title>
         <authors>Jeff Hansen</authors>
         <owners>Jeff Hansen</owners>
@@ -13,9 +13,7 @@
 Check the README on Github for more information.</description>
         <summary>An implementation of the ICU MessageFormatter for .NET - write contextual UI messages with proper pluralization, and more. Works with Xamarin!</summary>
         <releaseNotes>
-            Fix issue #5: Variables used in the string will be checked for existence upon usage.
-
-            Version 1 released!
+            Usages of Dictionary has been changed to IDictionary.
         </releaseNotes>
         <copyright>Copyright © Jeff Hansen 2014 to present. All rights reserved.</copyright>
         <language>en-US</language>
