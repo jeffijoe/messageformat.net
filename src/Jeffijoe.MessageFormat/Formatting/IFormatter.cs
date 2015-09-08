@@ -41,8 +41,8 @@ namespace Jeffijoe.MessageFormat.Formatting
         /// </returns>
         string Format(
             string locale, 
-            FormatterRequest request, 
-            Dictionary<string, object> args,
+            FormatterRequest request,
+            IDictionary<string, object> args,
             object value,
             IMessageFormatter messageFormatter);
 

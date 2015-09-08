@@ -142,7 +142,7 @@ namespace Jeffijoe.MessageFormat
         /// <value>
         ///     The pluralizers, or <c>null</c> if the plural formatter has not been added.
         /// </value>
-        public Dictionary<string, Pluralizer> Pluralizers
+        public IDictionary<string, Pluralizer> Pluralizers
         {
             get
             {
@@ -177,7 +177,7 @@ namespace Jeffijoe.MessageFormat
         /// <returns>
         ///     The formatted message.
         /// </returns>
-        public static string Format(string pattern, Dictionary<string, object> data)
+        public static string Format(string pattern, IDictionary<string, object> data)
         {
             lock (Lock)
             {
@@ -221,7 +221,7 @@ namespace Jeffijoe.MessageFormat
         /// <returns>
         ///     The <see cref="string" />.
         /// </returns>
-        public string FormatMessage(string pattern, Dictionary<string, object> args)
+        public string FormatMessage(string pattern, IDictionary<string, object> args)
         {
             /*
              * We are asuming the formatters are ordered correctly

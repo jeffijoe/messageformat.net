@@ -26,7 +26,7 @@ namespace Jeffijoe.MessageFormat
         /// <returns>
         ///     The <see cref="string" />.
         /// </returns>
-        string FormatMessage(string pattern, Dictionary<string, object> args);
+        string FormatMessage(string pattern, IDictionary<string, object> args);
 
         /// <summary>
         ///     Formats the message, and uses reflection to create a dictionary of property values from the specified object.
