@@ -148,7 +148,9 @@ namespace Jeffijoe.MessageFormat.Formatting.Formatters
                 if (keyedBlock.Key.StartsWith("="))
                 {
                     var numberLiteral = Convert.ToDouble(keyedBlock.Key.Substring(1));
-                    if (Math.Abs(numberLiteral - n) < double.Epsilon)
+
+                    // ReSharper disable once CompareOfFloatsByEqualityOperator
+                    if (numberLiteral == n)
                     {
                         return keyedBlock.BlockText;
                     }
@@ -257,16 +259,18 @@ namespace Jeffijoe.MessageFormat.Formatting.Formatters
             this.Pluralizers.Add(
                 "en", 
                 n => {
-                    if (Math.Abs(n) < double.Epsilon)
+                    // ReSharper disable CompareOfFloatsByEqualityOperator
+                    if (n == 0)
                     {
                         return "zero";
                     }
 
-                    if (Math.Abs(n - 1) < double.Epsilon)
+                    if (n == 1)
                     {
                         return "one";
                     }
 
+                    // ReSharper restore CompareOfFloatsByEqualityOperator
                     return "other";
                 });
         }
