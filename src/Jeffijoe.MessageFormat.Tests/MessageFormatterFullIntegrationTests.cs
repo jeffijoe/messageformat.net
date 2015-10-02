@@ -105,6 +105,14 @@ namespace Jeffijoe.MessageFormat.Tests
                             =42 {a universal amount of notifications}
                             other {# notifications}
                       }. Have a nice day!";
+
+                const string Case6 = @"You {count, plural, offset:1,
+                                        =0{didn't add this to your profile}
+                                        =1{added this to your profile}
+                                        one {and one other person added this to their profile}
+                                        other {and # others added this to their profiles}
+                                        }.";
+
                 yield return
                     new object[]
                     {
@@ -220,6 +228,34 @@ namespace Jeffijoe.MessageFormat.Tests
                         "{maybeCount}", 
                         new Dictionary<string, object> { { "maybeCount", (int?)2 } }, 
                         "2"
+                    };
+                yield return
+                    new object[]
+                    {
+                        Case6, 
+                        new Dictionary<string, object> { { "count", 0 } }, 
+                        "You didn't add this to your profile."
+                    };
+                yield return
+                    new object[]
+                    {
+                        Case6, 
+                        new Dictionary<string, object> { { "count", 1 } }, 
+                        "You added this to your profile."
+                    };
+                yield return
+                    new object[]
+                    {
+                        Case6, 
+                        new Dictionary<string, object> { { "count", 2 } }, 
+                        "You and one other person added this to their profile."
+                    };
+                yield return
+                    new object[]
+                    {
+                        Case6, 
+                        new Dictionary<string, object> { { "count", 3 } }, 
+                        "You and 2 others added this to their profiles."
                     };
             }
         }
