@@ -42,11 +42,11 @@ You can use a static method, too:
 
 ````csharp
 var formatted = MessageFormatter.Format(str, new {
-  notifications = 0,
+  notifications = 1,
   name = "Jeff"
 });
 
-//Result: You have no notifications. Have a nice day, Jeff!
+//Result: You have one notification. Have a nice day, Jeff!
 ````
 
 ## Installation
@@ -93,7 +93,7 @@ Basically, it should be able to do anything that [MessageFormat.js][0] can do.
 ## Adding your own pluralizer functions
 
 Same thing as with [MessageFormat.js][0], you can add your own pluralizer function.
-The `Pluralizers` property is a `Dictionary<string, object>`, so you can remove the built-in
+The `Pluralizers` property is a `IDictionary<string, Pluralizer>`, so you can remove the built-in
 ones if you want.
 
 ````csharp
