@@ -74,6 +74,12 @@
   <ItemGroup>
     <None Include="MessageFormat.snk" />
   </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Portable.ConcurrentDictionary, Version=1.0.3.0, Culture=neutral, PublicKeyToken=8b3524163ea7a2b3, processorArchitecture=MSIL">
+      <HintPath>..\packages\Portable.ConcurrentDictionary.1.0.3\lib\portable45-net45+win8+wp8+wpa81\Portable.ConcurrentDictionary.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+  </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
