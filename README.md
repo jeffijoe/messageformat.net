@@ -60,7 +60,7 @@ Install-Package MessageFormat
 ## Features
 
 * **It's fast.** Everything is hand-written; no parser-generators, *not even regular expressions*.
-* **It's portable.** The library is a PCL, and has no dependencies - the only reference is the standard `.NET` in PCL's.
+* **It's portable.** The library is a PCL, and has just a single dependency ([Portable.ConcurrentDictionary](https://www.nuget.org/packages/Portable.ConcurrentDictionary/) for thread safety) - other than that the only reference is the standard `.NET` in PCL's.
 * **It's compatible with other implementations.** I've been peeking a bit at the [MessageFormat.js][0] library to make sure
   the results would be the same.
 * **It's (relatively) small**. For a .NET library, ~25kb is not a lot.
