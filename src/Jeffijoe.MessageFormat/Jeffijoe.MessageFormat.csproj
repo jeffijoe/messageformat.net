@@ -73,6 +73,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="MessageFormat.snk" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Portable.ConcurrentDictionary, Version=1.0.3.0, Culture=neutral, PublicKeyToken=8b3524163ea7a2b3, processorArchitecture=MSIL">
