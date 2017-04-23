@@ -20,7 +20,7 @@ Check the README on Github for more information.</description>
         <tags>messageformat,pcl,messageformatter,xamarin,ui,messages,formatting,plural,pluralization,singular,select,strings,stringformat,format</tags>
     </metadata>
     <files>
-        <file src="Jeffijoe.MessageFormat\bin\Release\Jeffijoe.MessageFormat.dll" target="lib\portable-net45+sl5+wp8+win8+wpa81+MonoTouch1+MonoAndroid1\Jeffijoe.MessageFormat.dll" />
-        <file src="Jeffijoe.MessageFormat\bin\Release\Jeffijoe.MessageFormat.pdb" target="lib\portable-net45+sl5+wp8+win8+wpa81+MonoTouch1+MonoAndroid1\Jeffijoe.MessageFormat.pdb" />
+        <file src="Jeffijoe.MessageFormat\bin\Release\netstandard1.1\Jeffijoe.MessageFormat.dll" target="lib\netstandard1.1\Jeffijoe.MessageFormat.dll" />
+        <file src="Jeffijoe.MessageFormat\bin\Release\netstandard1.1\Jeffijoe.MessageFormat.pdb" target="lib\netstandard1.1\Jeffijoe.MessageFormat.pdb" />
     </files>
 </package>

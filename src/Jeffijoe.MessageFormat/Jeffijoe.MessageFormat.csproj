@@ -1,92 +1,11 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <MinimumVisualStudioVersion>10.0</MinimumVisualStudioVersion>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{1D71E97E-9A49-4336-8B8E-242736F44399}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Jeffijoe.MessageFormat</RootNamespace>
-    <AssemblyName>Jeffijoe.MessageFormat</AssemblyName>
-    <DefaultLanguage>en-US</DefaultLanguage>
-    <FileAlignment>512</FileAlignment>
-    <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <TargetFrameworkProfile>Profile259</TargetFrameworkProfile>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup>
-    <SignAssembly>true</SignAssembly>
-  </PropertyGroup>
-  <PropertyGroup>
+    <TargetFramework>netstandard1.1</TargetFramework>
+    <SignAssembly>True</SignAssembly>
     <AssemblyOriginatorKeyFile>MessageFormat.snk</AssemblyOriginatorKeyFile>
+    <PackageId>Jeffijoe.MessageFormat</PackageId>
+	<GenerateAssemblyInfo>False</GenerateAssemblyInfo>
   </PropertyGroup>
-  <ItemGroup>
-    <Compile Include="FormatterNotFoundException.cs" />
-    <Compile Include="Formatting\BaseFormatter.cs" />
-    <Compile Include="Formatting\FormatterExtension.cs" />
-    <Compile Include="Formatting\FormatterLibrary.cs" />
-    <Compile Include="Formatting\Formatters\PluralFormatter.cs" />
-    <Compile Include="Formatting\Formatters\Pluralizer.cs" />
-    <Compile Include="Formatting\Formatters\VariableFormatter.cs" />
-    <Compile Include="Formatting\IFormatterLibrary.cs" />
-    <Compile Include="Formatting\KeyedBlock.cs" />
-    <Compile Include="Formatting\ParsedArguments.cs" />
-    <Compile Include="Formatting\VariableNotFoundException.cs" />
-    <Compile Include="Formatting\FormatterRequest.cs" />
-    <Compile Include="Formatting\Formatters\SelectFormatter.cs" />
-    <Compile Include="Formatting\IFormatter.cs" />
-    <Compile Include="Helpers\CharHelper.cs" />
-    <Compile Include="Helpers\ObjectHelper.cs" />
-    <Compile Include="Helpers\StringBuilderHelper.cs" />
-    <Compile Include="IMessageFormatter.cs" />
-    <Compile Include="MessageFormatter.cs" />
-    <Compile Include="MessageFormatterException.cs" />
-    <Compile Include="Parsing\FormatterRequestCollection.cs" />
-    <Compile Include="Parsing\IFormatterRequestCollection.cs" />
-    <Compile Include="Parsing\MalformedLiteralException.cs" />
-    <Compile Include="Parsing\Literal.cs" />
-    <Compile Include="Parsing\UnbalancedBracesException.cs" />
-    <Compile Include="Parsing\LiteralParser.cs" />
-    <Compile Include="Parsing\ILiteralParser.cs" />
-    <Compile Include="Parsing\IPatternParser.cs" />
-    <Compile Include="Parsing\PatternParser.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="MessageFormat.snk" />
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="Portable.ConcurrentDictionary, Version=1.0.3.0, Culture=neutral, PublicKeyToken=8b3524163ea7a2b3, processorArchitecture=MSIL">
-      <HintPath>..\packages\Portable.ConcurrentDictionary.1.0.3\lib\portable45-net45+win8+wp8+wpa81\Portable.ConcurrentDictionary.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-  </ItemGroup>
-  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+
 </Project>
