@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
     <metadata>
         <id>MessageFormat</id>
-        <version>2.0.0</version>
+        <version>2.0.1</version>
         <title>MessageFormatter for .NET</title>
         <authors>Jeff Hansen</authors>
         <owners>Jeff Hansen</owners>
@@ -13,9 +13,9 @@
 Check the README on Github for more information.</description>
         <summary>An implementation of the ICU MessageFormatter for .NET - write contextual UI messages with proper pluralization, and more. Works with Xamarin!</summary>
         <releaseNotes>
-            Implemented https://github.com/jeffijoe/messageformat.net/issues/11 (thanks @apjones6)
+            Fixed https://github.com/jeffijoe/messageformat.net/issues/13
         </releaseNotes>
-        <copyright>Copyright © Jeff Hansen 2015 to present. All rights reserved.</copyright>
+        <copyright>Copyright © Jeff Hansen 2017 to present. All rights reserved.</copyright>
         <language>en-US</language>
         <tags>messageformat,pcl,messageformatter,xamarin,ui,messages,formatting,plural,pluralization,singular,select,strings,stringformat,format</tags>
     </metadata>

@@ -197,22 +197,16 @@ namespace Jeffijoe.MessageFormat.Formatting.Formatters
 
                 if (c == OpenBrace)
                 {
-                    if (i != 0)
+                    if (i == 0 || pluralized[i - 1] != EscapeChar)
                     {
-                        if (pluralized[i - 1] != EscapeChar)
-                        {
-                            braceBalance++;
-                        }
+                        braceBalance++;
                     }
                 }
                 else if (c == CloseBrace)
                 {
-                    if (i != 0)
+                    if (i == 0 || pluralized[i - 1] != EscapeChar)
                     {
-                        if (pluralized[i - 1] != EscapeChar)
-                        {
-                            braceBalance--;
-                        }
+                        braceBalance--;
                     }
                 }
                 else if (c == Pound)
