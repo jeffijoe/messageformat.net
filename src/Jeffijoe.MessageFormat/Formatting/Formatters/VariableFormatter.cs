@@ -3,7 +3,10 @@
 // Author: Jeff Hansen <jeff@jeffijoe.com>
 // Copyright (C) Jeff Hansen 2014. All rights reserved.
 
+using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace Jeffijoe.MessageFormat.Formatting.Formatters
 {
@@ -12,6 +15,12 @@ namespace Jeffijoe.MessageFormat.Formatting.Formatters
     /// </summary>
     public class VariableFormatter : IFormatter
     {
+        #region Fields
+
+        private ConcurrentDictionary<string, CultureInfo> cultures = new ConcurrentDictionary<string, CultureInfo>();
+
+        #endregion
+
         #region Public Methods and Operators
 
         /// <summary>
@@ -49,7 +58,31 @@ namespace Jeffijoe.MessageFormat.Formatting.Formatters
             object value,
             IMessageFormatter messageFormatter)
         {
-            return value != null ? value.ToString() : string.Empty;
+            switch (value)
+            {
+                case null:
+                    return string.Empty;
+                case IFormattable formattable:
+                    return formattable.ToString(null, GetCultureInfo(locale));
+                default:
+                    return value.ToString();
+            }
+        }
+
+        /// <summary>
+        /// Get and cache the culture for a locale.
+        /// </summary>
+        /// <param name="locale">Locale for which to get the culture.</param>
+        /// <returns>
+        /// Culture of locale.
+        /// </returns>
+        private CultureInfo GetCultureInfo(string locale)
+        {
+            if (!this.cultures.ContainsKey(locale))
+            {
+                this.cultures[locale] = new CultureInfo(locale);
+            }
+            return this.cultures[locale];
         }
 
         #endregion
