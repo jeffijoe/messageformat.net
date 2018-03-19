@@ -4,8 +4,17 @@
     <TargetFramework>netstandard1.1</TargetFramework>
     <SignAssembly>True</SignAssembly>
     <AssemblyOriginatorKeyFile>MessageFormat.snk</AssemblyOriginatorKeyFile>
-    <PackageId>Jeffijoe.MessageFormat</PackageId>
+    <PackageId>MessageFormat</PackageId>
 	<GenerateAssemblyInfo>False</GenerateAssemblyInfo>
+	<GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+	<Authors>Jeff Hansen</Authors>
+	<PackageReleaseNotes>Use culture to format all IFormattables in VariableFormatter (meoblast001, #14)</PackageReleaseNotes>
+	<PackageTags>messageformat,pcl,messageformatter,xamarin,ui,messages,formatting,plural,pluralization,singular,select,strings,stringformat,format</PackageTags>
+	<RepositoryUrl>https://github.com/jeffijoe/messageformat.net</RepositoryUrl>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DocumentationFile>bin\Release\netstandard1.1\Jeffijoe.MessageFormat.xml</DocumentationFile>
   </PropertyGroup>
 
 </Project>

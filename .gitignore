@@ -26,7 +26,4 @@ packages
 obj
 bin
 imagecache
-/Source/MemberLinkTeam.Apps/Components/googleplayservices-19.0.0.2/samples
-/Source/MemberLinkTeam.Apps/Libraries/googleplayservices-19.0.0.2/lib/android/19/content/google-play-services
-/Source/MemberLinkTeam.Apps/Libraries/googleplayservices-19.0.0.2/samples
-/Source/MemberLinkTeam.Apps/Components/googleplayservices-19.0.0.2/lib/android/19/content/google-play-services
+/src/.vs
