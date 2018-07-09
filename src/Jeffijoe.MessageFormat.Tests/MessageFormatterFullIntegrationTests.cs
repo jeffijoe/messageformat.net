@@ -98,6 +98,13 @@ namespace Jeffijoe.MessageFormat.Tests
                         new Dictionary<string, object> { { "NUM_COWS", 5 } },
                         "a'5'b"
                     };
+                yield return
+                    new object[]
+                    {
+                        "a'{NUM_COWS}'b'",
+                        new Dictionary<string, object> { { "NUM_COWS", 5 } },
+                        "a{NUM_COWS}b'"
+                    };
             }
         }
 

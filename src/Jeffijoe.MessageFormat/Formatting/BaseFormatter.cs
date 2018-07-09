@@ -151,7 +151,11 @@ namespace Jeffijoe.MessageFormat.Formatting
                         if (!insideEscapeSequence)
                             block.Append(EscapingChar);
 
-                        insideEscapeSequence = !insideEscapeSequence; // TODO: throw if insideEscapeSequence == true at the end
+                        // The last char can't open a new escape sequence, it can only close one
+                        if (insideEscapeSequence)
+                        {
+                            insideEscapeSequence = false;
+                        }
                         continue;
                     }
 
@@ -276,6 +280,15 @@ namespace Jeffijoe.MessageFormat.Formatting
                 {
                     foundWhitespaceAfterKey = true;
                 }
+            }
+
+            if (insideEscapeSequence)
+            {
+                throw new MalformedLiteralException(
+                    "There is an unclosed escape sequence.",
+                    0,
+                    0,
+                    request.FormatterArguments);
             }
 
             if (braceBalance > 0)

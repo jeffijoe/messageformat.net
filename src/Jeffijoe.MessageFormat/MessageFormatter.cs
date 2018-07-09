@@ -335,8 +335,6 @@ namespace Jeffijoe.MessageFormat
                         {
                             if (!insideEscapeSequence)
                                 dest.Append(EscapingChar);
-
-                            insideEscapeSequence = !insideEscapeSequence; // TODO: throw if insideEscapeSequence == true at the end
                             continue;
                         }
 

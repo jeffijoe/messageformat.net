@@ -41,6 +41,8 @@ namespace Jeffijoe.MessageFormat.Parsing
             var startColumnNumber = 0;
             var columnNumber = 0;
             var insideEscapeSequence = false;
+            var currentEscapeSequenceLineNumber = 0;
+            var currentEscapeSequenceColumnNumber = 0;
             const char CR = '\r'; // Carriage return
             const char LF = '\n'; // Line feed
             for (var i = 0; i < sb.Length; i++)
@@ -67,7 +69,11 @@ namespace Jeffijoe.MessageFormat.Parsing
                         if (!insideEscapeSequence)
                             matchTextBuf.Append(EscapingChar);
 
-                        insideEscapeSequence = !insideEscapeSequence; // TODO: throw if insideEscapeSequence == true at the end
+                        // The last char can't open a new escape sequence, it can only close one
+                        if (insideEscapeSequence)
+                        {
+                            insideEscapeSequence = false;
+                        }
                         continue;
                     }
 
@@ -91,6 +97,8 @@ namespace Jeffijoe.MessageFormat.Parsing
                     {
                         matchTextBuf.Append(nextChar);
                         insideEscapeSequence = true;
+                        currentEscapeSequenceLineNumber = lineNumber;
+                        currentEscapeSequenceColumnNumber = columnNumber;
                         ++i;
                         continue;
                     }
@@ -150,6 +158,15 @@ namespace Jeffijoe.MessageFormat.Parsing
                 result.Add(new Literal(start, i, startLineNumber, startColumnNumber, matchTextBuf));
                 matchTextBuf = new StringBuilder();
                 start = 0;
+            }
+
+            if (insideEscapeSequence)
+            {
+                throw new MalformedLiteralException(
+                    "There is an unclosed escape sequence.",
+                    currentEscapeSequenceLineNumber,
+                    currentEscapeSequenceColumnNumber,
+                    matchTextBuf.ToString());
             }
 
             if (openBraces != closeBraces)

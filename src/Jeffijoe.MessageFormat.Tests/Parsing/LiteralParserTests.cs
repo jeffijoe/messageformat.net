@@ -75,6 +75,36 @@ namespace Jeffijoe.MessageFormat.Tests.Parsing
         }
 
         /// <summary>
+        /// The parse unclosed_escape_sequence.
+        /// </summary>
+        /// <param name="source">
+        /// The source.
+        /// </param>
+        /// <param name="expectedLineNumber">
+        /// The expected line number.
+        /// </param>
+        /// <param name="expectedColumnNumber">
+        /// The expected column number.
+        /// </param>
+        [Theory]
+        [InlineData("'{", 1, 1)]
+        [InlineData("'}", 1, 1)]
+        [InlineData("a {b {c} d}, '{open escape sequence}", 1, 14)]
+        [InlineData(@"Hello,
+'{World}", 2, 1)]
+        public void ParseLiterals_unclosed_escape_sequence(
+            string source,
+            int expectedLineNumber,
+            int expectedColumnNumber)
+        {
+            var sb = new StringBuilder(source);
+            var subject = new LiteralParser();
+            var ex = Assert.Throws<MalformedLiteralException>(() => subject.ParseLiterals(sb));
+            Assert.Equal(expectedLineNumber, ex.LineNumber);
+            Assert.Equal(expectedColumnNumber, ex.ColumnNumber);
+        }
+
+        /// <summary>
         /// The parse literals_position_and_inner_text.
         /// </summary>
         /// <param name="source">

@@ -304,6 +304,23 @@ unknown
             }
         }
 
+        /// <summary>
+        /// The parse keyed blocks unclosed_escape_sequence.
+        /// </summary>
+        /// <param name="args">
+        /// The args.
+        /// </param>
+        [Theory]
+        [InlineData("male {he} other {'{they}")]
+        [InlineData("male {he} other {'# they}")]
+        public void ParseKeyedBlocks_unclosed_escape_sequence(string args)
+        {
+            var subject = new BaseFormatterImpl();
+            var req = new FormatterRequest(new Literal(1, 1, 1, 1, new StringBuilder()), null, null, args);
+
+            Assert.Throws<MalformedLiteralException>(() => subject.ParseKeyedBlocks(req, 0));
+        }
+
         #endregion
 
         /// <summary>
