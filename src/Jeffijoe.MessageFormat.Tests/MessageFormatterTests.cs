@@ -1,6 +1,6 @@
 ﻿// MessageFormat for .NET
 // - MessageFormatterTests.cs
-// 
+//
 // Author: Jeff Hansen <jeff@jeffijoe.com>
 // Copyright (C) Jeff Hansen 2015. All rights reserved.
 
@@ -87,14 +87,14 @@ namespace Jeffijoe.MessageFormat.Tests
             var requests = new[]
             {
                 new FormatterRequest(
-                    new Literal(0, 5, 1, 7, new StringBuilder("name")), 
-                    "name", 
-                    null, 
-                    null), 
+                    new Literal(0, 5, 1, 7, new StringBuilder("name")),
+                    "name",
+                    null,
+                    null),
                 new FormatterRequest(
-                    new Literal(11, 33, 1, 7, new StringBuilder("messages, plural, 123")), 
-                    "messages", 
-                    "plural", 
+                    new Literal(11, 33, 1, 7, new StringBuilder("messages, plural, 123")),
+                    "messages",
+                    "plural",
                     " 123")
             };
 
@@ -130,8 +130,8 @@ namespace Jeffijoe.MessageFormat.Tests
         /// The expected.
         /// </param>
         [Theory]
-        [InlineData(@"Hello \{buddy\}, how are you \{doing\}?", "Hello {buddy}, how are you {doing}?")]
-        [InlineData(@"Hello \\{buddy\\}, how are you \{doing\}?", @"Hello \{buddy\}, how are you {doing}?")]
+        [InlineData(@"Hello '{buddy}', how are you '{doing}'?", "Hello {buddy}, how are you {doing}?")]
+        [InlineData(@"Hello ''{buddy}'', how are you '{doing}'?", @"Hello '{buddy}', how are you {doing}?")]
         public void UnescapeLiterals(string source, string expected)
         {
             var actual = this.subject.UnescapeLiterals(new StringBuilder(source)).ToString();
@@ -151,14 +151,14 @@ namespace Jeffijoe.MessageFormat.Tests
             var requests = new[]
             {
                 new FormatterRequest(
-                    new Literal(0, 5, 1, 7, new StringBuilder("name")), 
-                    "name", 
-                    null, 
-                    null), 
+                    new Literal(0, 5, 1, 7, new StringBuilder("name")),
+                    "name",
+                    null,
+                    null),
                 new FormatterRequest(
-                    new Literal(11, 33, 1, 7, new StringBuilder("messages, plural, 123")), 
-                    "messages", 
-                    "plural", 
+                    new Literal(11, 33, 1, 7, new StringBuilder("messages, plural, 123")),
+                    "messages",
+                    "plural",
                     " 123")
             };
 
@@ -172,7 +172,7 @@ namespace Jeffijoe.MessageFormat.Tests
                 (int index, int length) => requests[1].SourceLiteral.ShiftIndices(length - 2, requests[0].SourceLiteral));
 
             var ex = Assert.Throws<VariableNotFoundException>(() => this.subject.FormatMessage(Pattern, args));
-            Assert.Equal("name", ex.MissingVariable);    
+            Assert.Equal("name", ex.MissingVariable);
         }
 
         #endregion

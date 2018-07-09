@@ -70,9 +70,9 @@ Install-Package MessageFormat
   take advantage of the code in my base classes to help you parse patterns. Look at the source, this is how I implemented the built-in formatters.
 * **Exceptions make atleast a little sense.** When exceptions are thrown due to a bad pattern, the exception should include useful information.
 * **There are unit tests.** Run them yourself if you want, they're using XUnit.
-* **Built-in cache.** If you are formatting messages in a tight loop, with different data for each iteration, 
+* **Built-in cache.** If you are formatting messages in a tight loop, with different data for each iteration,
   and if you are reusing the same instance of `MessageFormatter`, the formatter will cache the tokens of each pattern (nested, too),
-  so it won't have to spend CPU time to parse out literals every time. I benchmarked it, and on my monster machine, 
+  so it won't have to spend CPU time to parse out literals every time. I benchmarked it, and on my monster machine,
   it didn't make much of a difference (10000 iterations).
 
 ## Performance
@@ -89,7 +89,7 @@ Basically, it should be able to do anything that [MessageFormat.js][0] can do.
 * Select Format: `{gender, select, male{He likes} female{She likes} other{They like}} cheeseburgers`
 * Plural Format: `There {msgCount, plural, zero {are no unread messages} one {is 1 unread message} other{are # unread messages}}.` (where `#` is the actual number, with the offset (if any) subtracted).
 * Simple variable replacement: `Your name is {name}`
- 
+
 ## Adding your own pluralizer functions
 
 Same thing as with [MessageFormat.js][0], you can add your own pluralizer function.
@@ -132,14 +132,16 @@ mf.FormatMessage("You have {number, plural, thatsalot {a shitload of notificatio
 
 ## Escaping literals
 
-Simple - the literals are `{`, `}` and `#` (in a plural block). 
-To escape a literal, use a `\` - e.g. `\{`.
-  
+Simple - the literals are `{`, `}` and `#` (in a plural block).
+If literals occur in the text portions, then they need to be quoted by enclosing them in pairs of single quotes (`'`).
+A pair of single quotes always represents one single quote (`''` -> `'`), which still applies inside quoted text.
+(`This '{isn''t}' obvious` → `This {isn't} obvious`)
+
 # Anything else?
 
-There's not a lot - Alex Sexton of [MessageFormat.js][0] did a great 
+There's not a lot - Alex Sexton of [MessageFormat.js][0] did a great
 job documenting his library, and like I said,
-I wrote my implementation so it would 
+I wrote my implementation so it would
 be (somewhat) compatible with his.
 
 # Bugs / issues

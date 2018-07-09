@@ -122,33 +122,83 @@ namespace Jeffijoe.MessageFormat.Formatting
         {
             const char OpenBrace = '{';
             const char CloseBrace = '}';
-            const char EscapingChar = '\\';
+            const char EscapingChar = '\'';
 
             var result = new List<KeyedBlock>();
             var key = new StringBuilder();
             var block = new StringBuilder();
             var braceBalance = 0;
             var foundWhitespaceAfterKey = false;
+            var insideEscapeSequence = false;
             for (int i = startIndex; i < request.FormatterArguments.Length; i++)
             {
                 var c = request.FormatterArguments[i];
                 var isWhitespace = char.IsWhiteSpace(c);
+
+                if (c == EscapingChar)
+                {
+                    if (braceBalance == 0)
+                    {
+                        throw new MalformedLiteralException(
+                            "Expected a key, but found start of a escape sequence.",
+                            0,
+                            0,
+                            request.FormatterArguments);
+                    }
+
+                    if (i == request.FormatterArguments.Length - 1)
+                    {
+                        if (!insideEscapeSequence)
+                            block.Append(EscapingChar);
+
+                        insideEscapeSequence = !insideEscapeSequence; // TODO: throw if insideEscapeSequence == true at the end
+                        continue;
+                    }
+
+                    var nextChar = request.FormatterArguments[i + 1];
+                    if (nextChar == EscapingChar)
+                    {
+                        block.Append(EscapingChar);
+                        block.Append(EscapingChar);
+                        ++i;
+                        continue;
+                    }
+
+                    if (insideEscapeSequence)
+                    {
+                        block.Append(EscapingChar);
+                        insideEscapeSequence = false;
+                        continue;
+                    }
+
+                    if (nextChar == '{' || nextChar == '}' || nextChar == '#')
+                    {
+                        block.Append(EscapingChar);
+                        block.Append(nextChar);
+                        insideEscapeSequence = true;
+                        ++i;
+                        continue;
+                    }
+
+                    block.Append(EscapingChar);
+                    continue;
+                }
+
+                if (insideEscapeSequence)
+                {
+                    block.Append(c);
+                    continue;
+                }
 
                 if (c == OpenBrace)
                 {
                     if (key.Length == 0)
                     {
                         throw new MalformedLiteralException(
-                            "Expected a key, but found start of a new block.", 
-                            0, 
-                            0, 
+                            "Expected a key, but found start of a new block.",
+                            0,
+                            0,
                             request.FormatterArguments);
-                    }
-
-                    if (i != 0 && request.FormatterArguments[i - 1] == EscapingChar)
-                    {
-                        block.Append(c);
-                        continue;
                     }
 
                     braceBalance++;
@@ -165,25 +215,19 @@ namespace Jeffijoe.MessageFormat.Formatting
                     if (key.Length == 0)
                     {
                         throw new MalformedLiteralException(
-                            "Expected a key, but found end of a block.", 
-                            0, 
-                            0, 
+                            "Expected a key, but found end of a block.",
+                            0,
+                            0,
                             request.FormatterArguments);
-                    }
-
-                    if (i != 0 && request.FormatterArguments[i - 1] == EscapingChar)
-                    {
-                        block.Append(c);
-                        continue;
                     }
 
                     if (braceBalance == 0)
                     {
                         throw new MalformedLiteralException(
                             "Found end of a block, but no block has been started, or the"
-                            + " block has already been closed. " + "This could indicate an unescaped brace somewhere.", 
-                            0, 
-                            0, 
+                            + " block has already been closed. " + "This could indicate an unescaped brace somewhere.",
+                            0,
+                            0,
                             request.FormatterArguments);
                     }
 
@@ -200,9 +244,9 @@ namespace Jeffijoe.MessageFormat.Formatting
                     if (braceBalance < 0)
                     {
                         throw new MalformedLiteralException(
-                            "Expected '{', but found '}' - essentially this means there are more close braces than there are open braces.", 
-                            0, 
-                            0, 
+                            "Expected '{', but found '}' - essentially this means there are more close braces than there are open braces.",
+                            0,
+                            0,
                             request.FormatterArguments);
                     }
                 }
@@ -220,9 +264,9 @@ namespace Jeffijoe.MessageFormat.Formatting
                     if (foundWhitespaceAfterKey)
                     {
                         throw new MalformedLiteralException(
-                            "Any whitespace after a key should be followed by the beginning of a block.", 
-                            0, 
-                            0, 
+                            "Any whitespace after a key should be followed by the beginning of a block.",
+                            0,
+                            0,
                             request.FormatterArguments);
                     }
 
@@ -237,9 +281,9 @@ namespace Jeffijoe.MessageFormat.Formatting
             if (braceBalance > 0)
             {
                 throw new MalformedLiteralException(
-                    "There are more open braces than there are close braces.", 
-                    0, 
-                    0, 
+                    "There are more open braces than there are close braces.",
+                    0,
+                    0,
                     request.FormatterArguments);
             }
 

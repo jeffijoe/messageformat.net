@@ -87,9 +87,9 @@ namespace Jeffijoe.MessageFormat
         ///     The locale to use. Formatters may need this.
         /// </param>
         internal MessageFormatter(
-            IPatternParser patternParser, 
-            IFormatterLibrary library, 
-            bool useCache, 
+            IPatternParser patternParser,
+            IFormatterLibrary library,
+            bool useCache,
             string locale = "en")
         {
             if (patternParser == null)
@@ -232,10 +232,11 @@ namespace Jeffijoe.MessageFormat
             var requests = this.ParseRequests(pattern, sourceBuilder);
             var requestsEnumerated = requests.ToArray();
 
-            // If we got no formatters, then we're done here.
+            // If we got no formatters, then we only need to unescape the literals.
             if (requestsEnumerated.Length == 0)
             {
-                return pattern;
+                sourceBuilder = this.UnescapeLiterals(sourceBuilder);
+                return sourceBuilder.ToString();
             }
 
             for (int i = 0; i < requestsEnumerated.Length; i++)
@@ -247,7 +248,7 @@ namespace Jeffijoe.MessageFormat
                 {
                     throw new VariableNotFoundException(request.Variable);
                 }
-                
+
                 var formatter = this.Formatters.GetFormatter(request);
                 if (formatter == null)
                 {
@@ -317,28 +318,57 @@ namespace Jeffijoe.MessageFormat
 
             var dest = new StringBuilder(sourceBuilder.Length, sourceBuilder.Length);
             int length = sourceBuilder.Length;
-            const char EscapeChar = '\\';
+            const char EscapingChar = '\'';
             const char OpenBrace = '{';
             const char CloseBrace = '}';
             var braceBalance = 0;
+            var insideEscapeSequence = false;
             for (int i = 0; i < length; i++)
             {
                 var c = sourceBuilder[i];
-                if (c == EscapeChar)
+
+                if (c == EscapingChar)
                 {
-                    if (i != length - 1)
+                    if (braceBalance == 0)
                     {
-                        char next = sourceBuilder[i + 1];
-                        if (next == OpenBrace && braceBalance == 0)
+                        if (i == length - 1)
                         {
+                            if (!insideEscapeSequence)
+                                dest.Append(EscapingChar);
+
+                            insideEscapeSequence = !insideEscapeSequence; // TODO: throw if insideEscapeSequence == true at the end
                             continue;
                         }
 
-                        if (next == CloseBrace && braceBalance == 1)
+                        var nextChar = sourceBuilder[i + 1];
+                        if (nextChar == EscapingChar)
                         {
+                            dest.Append(EscapingChar);
+                            ++i;
                             continue;
                         }
+
+                        if (insideEscapeSequence)
+                        {
+                            insideEscapeSequence = false;
+                            continue;
+                        }
+
+                        if (nextChar == '{' || nextChar == '}' || nextChar == '#')
+                        {
+                            dest.Append(nextChar);
+                            insideEscapeSequence = true;
+                            ++i;
+                            continue;
+                        }
+
+                        dest.Append(EscapingChar);
+                        continue;
                     }
+                }
+                else if (insideEscapeSequence)
+                {
+                    // fall through to append
                 }
                 else if (c == OpenBrace)
                 {
