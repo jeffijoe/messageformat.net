@@ -340,7 +340,7 @@ namespace Jeffijoe.MessageFormat.Tests
         /// The expected.
         /// </param>
         [Theory]
-        [MemberData("Tests")]
+        [MemberData(nameof(Tests))]
         public void FormatMessage(string source, Dictionary<string, object> args, string expected)
         {
             var subject = new MessageFormatter(false);
@@ -358,7 +358,7 @@ namespace Jeffijoe.MessageFormat.Tests
         /// The format message_debug.
         /// </summary>
         [Theory]
-        [MemberData("EscapingTests")]
+        [MemberData(nameof(EscapingTests))]
         public void FormatMessage_escaping(string source, Dictionary<string, object> args, string expected)
         {
             var subject = new MessageFormatter(false);
@@ -508,7 +508,7 @@ namespace Jeffijoe.MessageFormat.Tests
                         { "NUM_RESULTS", 1 },
                         { "NUM_CATEGORIES", 2 }
                     });
-                Assert.Equal(formatted, "He found 1 result in 2 categories.");
+                Assert.Equal("He found 1 result in 2 categories.", formatted);
 
                 formatted = mf.FormatMessage(
                     Str,
@@ -518,7 +518,7 @@ namespace Jeffijoe.MessageFormat.Tests
                         { "NUM_RESULTS", 1 },
                         { "NUM_CATEGORIES", 1 }
                     });
-                Assert.Equal(formatted, "He found 1 result in 1 category.");
+                Assert.Equal("He found 1 result in 1 category.", formatted);
 
                 formatted = mf.FormatMessage(
                     Str,
@@ -528,17 +528,17 @@ namespace Jeffijoe.MessageFormat.Tests
                         { "NUM_RESULTS", 2 },
                         { "NUM_CATEGORIES", 1 }
                     });
-                Assert.Equal(formatted, "She found 2 results in 1 category.");
+                Assert.Equal("She found 2 results in 1 category.", formatted);
             }
 
             {
                 var mf = new MessageFormatter(false);
                 const string Str = @"Your {NUM, plural, one{message} other{messages}} go here.";
                 var formatted = mf.FormatMessage(Str, new Dictionary<string, object> { { "NUM", 1 } });
-                Assert.Equal(formatted, "Your message go here.");
+                Assert.Equal("Your message go here.", formatted);
 
                 formatted = mf.FormatMessage(Str, new Dictionary<string, object> { { "NUM", 3 } });
-                Assert.Equal(formatted, "Your messages go here.");
+                Assert.Equal("Your messages go here.", formatted);
             }
 
             {
@@ -547,23 +547,23 @@ namespace Jeffijoe.MessageFormat.Tests
                 var formatted = mf.FormatMessage(
                     Str,
                     new Dictionary<string, object> { { "FIRST_NAME", "James" }, { "LAST_NAME", "Bond" } });
-                Assert.Equal(formatted, "His name is Bond... James Bond");
+                Assert.Equal("His name is Bond... James Bond", formatted);
             }
 
             {
                 var mf = new MessageFormatter(false);
                 const string Str = @"{GENDER, select, male{He} female{She} other{They}} liked this.";
                 var formatted = mf.FormatMessage(Str, new Dictionary<string, object> { { "GENDER", "male" } });
-                Assert.Equal(formatted, "He liked this.");
+                Assert.Equal("He liked this.", formatted);
 
                 formatted = mf.FormatMessage(Str, new Dictionary<string, object> { { "GENDER", "female" } });
-                Assert.Equal(formatted, "She liked this.");
+                Assert.Equal("She liked this.", formatted);
 
                 formatted = mf.FormatMessage(Str, new Dictionary<string, object> { { "GENDER", "somethingelse" } });
-                Assert.Equal(formatted, "They liked this.");
+                Assert.Equal("They liked this.", formatted);
 
                 formatted = mf.FormatMessage(Str, new Dictionary<string, object> { { "GENDER", null } });
-                Assert.Equal(formatted, "They liked this.");
+                Assert.Equal("They liked this.", formatted);
             }
 
             {

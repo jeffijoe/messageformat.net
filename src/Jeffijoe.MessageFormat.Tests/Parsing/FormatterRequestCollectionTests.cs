@@ -52,9 +52,9 @@ namespace Jeffijoe.MessageFormat.Tests.Parsing
 
             foreach (var clonedReq in cloned)
             {
-                Assert.False(subject.Any(x => ReferenceEquals(x, clonedReq)));
-                Assert.False(subject.Any(x => x.SourceLiteral == clonedReq.SourceLiteral));
-                Assert.True(subject.Any(x => x.SourceLiteral.StartIndex == clonedReq.SourceLiteral.StartIndex));
+                Assert.DoesNotContain(subject, x => ReferenceEquals(x, clonedReq));
+                Assert.DoesNotContain(subject, x => x.SourceLiteral == clonedReq.SourceLiteral);
+                Assert.Contains(subject, x => x.SourceLiteral.StartIndex == clonedReq.SourceLiteral.StartIndex);
             }
         }
 

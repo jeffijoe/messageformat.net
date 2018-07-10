@@ -107,7 +107,7 @@ namespace Jeffijoe.MessageFormat.Tests.Parsing
         /// The expected column.
         /// </param>
         [Theory]
-        [MemberData("GetKey_throws_with_invalid_characters_Case")]
+        [MemberData(nameof(GetKey_throws_with_invalid_characters_Case))]
         public void ReadLiteralSection_throws_with_invalid_characters(
             Literal literal, 
             int expectedLine, 

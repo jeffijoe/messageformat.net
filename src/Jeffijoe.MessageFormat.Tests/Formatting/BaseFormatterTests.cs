@@ -136,7 +136,7 @@ unknown
         /// The blocks.
         /// </param>
         [Theory]
-        [MemberData("ParseArguments_tests")]
+        [MemberData(nameof(ParseArguments_tests))]
         public void ParseArguments(
             string args,
             string[] extensionKeys,
@@ -270,7 +270,7 @@ unknown
         /// The values.
         /// </param>
         [Theory]
-        [MemberData("ParseKeyedBlocks_tests")]
+        [MemberData(nameof(ParseKeyedBlocks_tests))]
         public void ParseKeyedBlocks(string args, string[] keys, string[] values)
         {
             var subject = new BaseFormatterImpl();

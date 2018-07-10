@@ -57,7 +57,7 @@ namespace Jeffijoe.MessageFormat.Tests.Helpers
 
             dynamic d = new { Cool = "sweet" };
             actual = ObjectHelper.GetProperties(d);
-            Assert.Equal(1, actual.Count());
+            Assert.Single(actual);
         }
 
         /// <summary>
@@ -67,7 +67,7 @@ namespace Jeffijoe.MessageFormat.Tests.Helpers
         public void GetProperties_base_and_derived()
         {
             var actual = ObjectHelper.GetProperties(new Base());
-            Assert.Equal(1, actual.Count());
+            Assert.Single(actual);
 
             actual = ObjectHelper.GetProperties(new Derived());
             Assert.Equal(2, actual.Count());

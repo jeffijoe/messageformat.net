@@ -88,7 +88,7 @@ namespace Jeffijoe.MessageFormat.Tests.Parsing
             Benchmark.Start("Parsing formatter patterns (after warm-up)", this.outputHelper);
             var actual = subject.Parse(sb);
             Benchmark.End(this.outputHelper);
-            Assert.Equal(1, actual.Count());
+            Assert.Single(actual);
             var first = actual.First();
             Assert.Equal(expectedKey, first.Variable);
             Assert.Equal(expectedFormat, first.FormatterName);

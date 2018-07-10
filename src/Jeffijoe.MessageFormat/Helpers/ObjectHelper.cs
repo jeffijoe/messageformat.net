@@ -3,6 +3,7 @@
 // Author: Jeff Hansen <jeff@jeffijoe.com>
 // Copyright (C) Jeff Hansen 2014. All rights reserved.
 
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -51,7 +52,7 @@ namespace Jeffijoe.MessageFormat.Helpers
         ///     The object.
         /// </param>
         /// <returns>
-        ///     The <see cref="Dictionary" />.
+        ///     The <see cref="IDictionary" />.
         /// </returns>
         internal static Dictionary<string, object> ToDictionary(this object obj)
         {

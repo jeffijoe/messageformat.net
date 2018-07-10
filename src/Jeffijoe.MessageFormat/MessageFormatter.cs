@@ -165,7 +165,7 @@ namespace Jeffijoe.MessageFormat
         ///     Formats the specified pattern with the specified data.
         /// </summary>
         /// <remarks>
-        ///     This method calls <see cref="FormatMessage(string,System.Collections.Generic.Dictionary{string,object})" />
+        ///     This method calls <see cref="Format(string, IDictionary{string, object})"/>
         ///     on a singleton instance using a lock.
         ///     Do not use in a tight loop, as a lock is being used to ensure thread safety.
         /// </remarks>

@@ -54,7 +54,7 @@ namespace Jeffijoe.MessageFormat.Tests.Formatting.Formatters
         /// The expected block.
         /// </param>
         [Theory]
-        [MemberData("Format_tests")]
+        [MemberData(nameof(Format_tests))]
         public void Format(string formatterArgs, string gender, string expectedBlock)
         {
             var subject = new SelectFormatter();
