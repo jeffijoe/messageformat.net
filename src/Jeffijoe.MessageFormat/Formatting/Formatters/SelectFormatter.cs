@@ -45,12 +45,12 @@ namespace Jeffijoe.MessageFormat.Formatting.Formatters
         /// The <see cref="string" />.
         /// </returns>
         /// <exception cref="MessageFormatterException">'other' option not found in pattern, and variable was not present in collection.</exception>
-        [SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1126:PrefixCallsCorrectly", 
+        [SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1126:PrefixCallsCorrectly",
             Justification = "Reviewed. Suppression is OK here.")]
         public string Format(
-            string locale, 
+            string locale,
             FormatterRequest request,
-            IDictionary<string, object> args, 
+            IDictionary<string, object> args,
             object value,
             IMessageFormatter messageFormatter)
         {
@@ -63,7 +63,7 @@ namespace Jeffijoe.MessageFormat.Formatting.Formatters
                 {
                     return messageFormatter.FormatMessage(keyedBlock.BlockText, args);
                 }
-                
+
                 if (keyedBlock.Key == OtherKey)
                 {
                     other = keyedBlock;

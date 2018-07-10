@@ -1,6 +1,6 @@
 ﻿// MessageFormat for .NET
 // - MessageFormatter_caching_tests.cs
-// 
+//
 // Author: Jeff Hansen <jeff@jeffijoe.com>
 // Copyright (C) Jeff Hansen 2015. All rights reserved.
 
@@ -114,11 +114,11 @@ namespace Jeffijoe.MessageFormat.Tests
         private void Benchmark(MessageFormatter subject)
         {
             var pattern = "\r\n----\r\nOh {name}? And if we were " + "to surround {gender, select, " + "male {his} "
-                          + "female {her}" + "} name with \\{ and \\}, it would look "
-                          + "like \\{{name}\\}? Yeah, I know {gender, select, " + "male {him} " + "female {her}"
+                          + "female {her}" + "} name with '{' and '}', it would look "
+                          + "like '{'{name}'}'? Yeah, I know {gender, select, " + "male {him} " + "female {her}"
                           + "}. {gender, select, " + "male {He's}" + "female {She's}" + "} got {messageCount, plural, "
                           + "zero {no messages}" + "one {just one message}" + "=42 {a universal amount of messages}"
-                          + "other {uuhm... let's see.. Oh yeah, # messages - and here's a pound: \\#}" + "}!";
+                          + "other {uuhm... let's see.. Oh yeah, # messages - and here's a pound: '#'}" + "}!";
             int iterations = 100000;
             var args = new Dictionary<string, object>[iterations];
             var rnd = new Random();
@@ -128,8 +128,8 @@ namespace Jeffijoe.MessageFormat.Tests
                 args[i] =
                     new
                     {
-                        gender = val % 2 == 0 ? "male" : "female", 
-                        name = val % 2 == 0 ? "Jeff" : "Amanda", 
+                        gender = val % 2 == 0 ? "male" : "female",
+                        name = val % 2 == 0 ? "Jeff" : "Amanda",
                         messageCount = val
                     }.ToDictionary();
             }

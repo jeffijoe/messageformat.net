@@ -1,6 +1,6 @@
 ﻿// MessageFormat for .NET
 // - BaseFormatterTests.cs
-// 
+//
 // Author: Jeff Hansen <jeff@jeffijoe.com>
 // Copyright (C) Jeff Hansen 2015. All rights reserved.
 
@@ -58,20 +58,20 @@ namespace Jeffijoe.MessageFormat.Tests.Formatting
                 yield return
                     new object[]
                     {
-                        "offset:1 test:1337 one {programmer}   other{programmers}", 
-                        new[] { "offset", "test" }, 
-                        new[] { "1", "1337" }, 
-                        new[] { "one", "other" }, 
+                        "offset:1 test:1337 one {programmer}   other{programmers}",
+                        new[] { "offset", "test" },
+                        new[] { "1", "1337" },
+                        new[] { "one", "other" },
                         new[] { "programmer", "programmers" }
                     };
 
                 yield return
                     new object[]
                     {
-                        "offset:1 test:1337 one\\123 {programmer}   other{programmers}", 
-                        new[] { "offset", "test" }, 
-                        new[] { "1", "1337" }, 
-                        new[] { "one\\123", "other" }, 
+                        "offset:1 test:1337 one\\123 {programmer}   other{programmers}",
+                        new[] { "offset", "test" },
+                        new[] { "1", "1337" },
+                        new[] { "one\\123", "other" },
                         new[] { "programmer", "programmers" }
                     };
             }
@@ -87,15 +87,15 @@ namespace Jeffijoe.MessageFormat.Tests.Formatting
                 yield return
                     new object[]
                     {
-                        "male {he} female {she}unknown{they}", 
-                        new[] { "male", "female", "unknown" }, 
+                        "male {he} female {she}unknown{they}",
+                        new[] { "male", "female", "unknown" },
                         new[] { "he", "she", "they" }
                     };
                 yield return
                     new object[]
                     {
-                        "zero {} other {wee}", 
-                        new[] { "zero", "other" }, 
+                        "zero {} other {wee}",
+                        new[] { "zero", "other" },
                         new[] { string.Empty, "wee" }
                     };
                 yield return new object[] { @"
@@ -108,8 +108,8 @@ unknown
                         male {he} 
                         female {she{dawg}}
 unknown
-    {they\{dawg\}}
-", new[] { "male", "female", "unknown" }, new[] { "he", "she{dawg}", @"they\{dawg\}" } };
+    {they'{dawg}'}
+", new[] { "male", "female", "unknown" }, new[] { "he", "she{dawg}", @"they'{dawg}'" } };
             }
         }
 
@@ -138,10 +138,10 @@ unknown
         [Theory]
         [MemberData("ParseArguments_tests")]
         public void ParseArguments(
-            string args, 
-            string[] extensionKeys, 
-            string[] extensionValues, 
-            string[] keys, 
+            string args,
+            string[] extensionKeys,
+            string[] extensionValues,
+            string[] keys,
             string[] blocks)
         {
             var subject = new BaseFormatterImpl();
@@ -175,11 +175,11 @@ unknown
         [Theory]
         [InlineData("hello {{dawg}")]
         [InlineData("hello {dawg}}")]
-        [InlineData("hello \\{dawg}")]
-        [InlineData("hello {dawg\\}")]
+        [InlineData("hello '{dawg}")]
+        [InlineData("hello {dawg'}")]
         [InlineData("hello {dawg} {sweet}")]
         [InlineData("hello {dawg} test{sweet}}")]
-        [InlineData("hello \\{{dawg\\}} test{sweet}")]
+        [InlineData("hello '{{dawg'}} test{sweet}")]
         public void ParseArguments_invalid(string args)
         {
             var subject = new BaseFormatterImpl();
@@ -302,6 +302,23 @@ unknown
                 this.outputHelper.WriteLine("Key: " + keyedBlock.Key);
                 this.outputHelper.WriteLine("Block: " + keyedBlock.BlockText);
             }
+        }
+
+        /// <summary>
+        /// The parse keyed blocks unclosed_escape_sequence.
+        /// </summary>
+        /// <param name="args">
+        /// The args.
+        /// </param>
+        [Theory]
+        [InlineData("male {he} other {'{they}")]
+        [InlineData("male {he} other {'# they}")]
+        public void ParseKeyedBlocks_unclosed_escape_sequence(string args)
+        {
+            var subject = new BaseFormatterImpl();
+            var req = new FormatterRequest(new Literal(1, 1, 1, 1, new StringBuilder()), null, null, args);
+
+            Assert.Throws<MalformedLiteralException>(() => subject.ParseKeyedBlocks(req, 0));
         }
 
         #endregion

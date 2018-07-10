@@ -1,6 +1,6 @@
 ﻿// MessageFormat for .NET
 // - LiteralParserTests.cs
-// 
+//
 // Author: Jeff Hansen <jeff@jeffijoe.com>
 // Copyright (C) Jeff Hansen 2015. All rights reserved.
 
@@ -39,11 +39,11 @@ namespace Jeffijoe.MessageFormat.Tests.Parsing
         [InlineData("An ending }", 0, 1)]
         [InlineData("One { and multiple }}", 1, 2)]
         [InlineData("A few {{{{ and one }", 4, 1)]
-        [InlineData("A few {{{{ and one \\}}", 4, 1)]
-        [InlineData("A few \\{{{{{ and one \\}}", 4, 1)]
+        [InlineData("A few {{{{ and one '}'}", 4, 1)]
+        [InlineData("A few '{'{{{{ and one '}'}", 4, 1)]
         public void ParseLiterals_bracket_mismatch(
-            string source, 
-            int expectedOpenBraceCount, 
+            string source,
+            int expectedOpenBraceCount,
             int expectedCloseBraceCount)
         {
             var sb = new StringBuilder(source);
@@ -65,13 +65,43 @@ namespace Jeffijoe.MessageFormat.Tests.Parsing
         [Theory]
         [InlineData("Hello, {something smells {really} weird.}", 1)]
         [InlineData("Hello, {something smells {really} weird.}, {Hi}", 2)]
-        [InlineData("Hello, {something smells {really} weird.}, \\{Hi\\}", 1)]
+        [InlineData("Hello, {something smells {really} weird.}, '{Hi}'", 1)]
         public void ParseLiterals_count(string source, int expectedMatchCount)
         {
             var sb = new StringBuilder(source);
             var subject = new LiteralParser();
             var actual = subject.ParseLiterals(sb);
             Assert.Equal(expectedMatchCount, actual.Count());
+        }
+
+        /// <summary>
+        /// The parse unclosed_escape_sequence.
+        /// </summary>
+        /// <param name="source">
+        /// The source.
+        /// </param>
+        /// <param name="expectedLineNumber">
+        /// The expected line number.
+        /// </param>
+        /// <param name="expectedColumnNumber">
+        /// The expected column number.
+        /// </param>
+        [Theory]
+        [InlineData("'{", 1, 1)]
+        [InlineData("'}", 1, 1)]
+        [InlineData("a {b {c} d}, '{open escape sequence}", 1, 14)]
+        [InlineData(@"Hello,
+'{World}", 2, 1)]
+        public void ParseLiterals_unclosed_escape_sequence(
+            string source,
+            int expectedLineNumber,
+            int expectedColumnNumber)
+        {
+            var sb = new StringBuilder(source);
+            var subject = new LiteralParser();
+            var ex = Assert.Throws<MalformedLiteralException>(() => subject.ParseLiterals(sb));
+            Assert.Equal(expectedLineNumber, ex.LineNumber);
+            Assert.Equal(expectedColumnNumber, ex.ColumnNumber);
         }
 
         /// <summary>
@@ -94,9 +124,9 @@ sweet
 
 }, right?", new[] { 0, 9 }, @"sweet")]
         [InlineData(@"{
-\{sweet\}
+'{sweet}'
 
-}, right?", new[] { 0, 13 }, @"\{sweet\}")]
+}, right?", new[] { 0, 13 }, @"'{sweet}'")]
         public void ParseLiterals_position_and_inner_text(string source, int[] position, string expectedInnerText)
         {
             var sb = new StringBuilder(source);

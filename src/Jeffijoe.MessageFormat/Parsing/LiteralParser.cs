@@ -28,7 +28,7 @@ namespace Jeffijoe.MessageFormat.Parsing
         {
             const char OpenBrace = '{';
             const char CloseBrace = '}';
-            const char EscapingBackslash = '\\'; // It's just a single \
+            const char EscapingChar = '\'';
 
             var result = new List<Literal>();
             var openBraces = 0;
@@ -40,12 +40,13 @@ namespace Jeffijoe.MessageFormat.Parsing
             var startLineNumber = 1;
             var startColumnNumber = 0;
             var columnNumber = 0;
-            var shouldCount = false;
+            var insideEscapeSequence = false;
+            var currentEscapeSequenceLineNumber = 0;
+            var currentEscapeSequenceColumnNumber = 0;
             const char CR = '\r'; // Carriage return
             const char LF = '\n'; // Line feed
             for (var i = 0; i < sb.Length; i++)
             {
-                shouldCount = true;
                 var c = sb[i];
                 if (c == LF)
                 {
@@ -61,65 +62,75 @@ namespace Jeffijoe.MessageFormat.Parsing
 
                 columnNumber++;
 
-                if (c == OpenBrace)
+                if (c == EscapingChar)
                 {
-                    // Don't check for escaping when we're at the first char
-                    if (i != 0)
+                    if (i == sb.Length - 1)
                     {
-                        if (sb[i - 1] == EscapingBackslash)
-                        {
-                            // Only escape if we're not inside a brace match
-                            if (braceBalance == 0)
-                            {
-                                continue;
-                            }
+                        if (!insideEscapeSequence)
+                            matchTextBuf.Append(EscapingChar);
 
-                            // if we ARE inside, don't make it count as a brace
-                            shouldCount = false;
+                        // The last char can't open a new escape sequence, it can only close one
+                        if (insideEscapeSequence)
+                        {
+                            insideEscapeSequence = false;
                         }
+                        continue;
                     }
 
-                    if (shouldCount)
-                    {
-                        openBraces++;
-                        braceBalance++;
+                    matchTextBuf.Append(EscapingChar);
 
-                        // Record starting position of possible new brace match.
-                        if (braceBalance == 1)
-                        {
-                            start = i;
-                            startColumnNumber = columnNumber;
-                            startLineNumber = lineNumber;
-                            matchTextBuf.Clear();
-                        }
+                    var nextChar = sb[i + 1];
+                    if (nextChar == EscapingChar)
+                    {
+                        matchTextBuf.Append(EscapingChar);
+                        ++i;
+                        continue;
+                    }
+
+                    if (insideEscapeSequence)
+                    {
+                        insideEscapeSequence = false;
+                        continue;
+                    }
+
+                    if (nextChar == '{' || nextChar == '}' || nextChar == '#')
+                    {
+                        matchTextBuf.Append(nextChar);
+                        insideEscapeSequence = true;
+                        currentEscapeSequenceLineNumber = lineNumber;
+                        currentEscapeSequenceColumnNumber = columnNumber;
+                        ++i;
+                        continue;
+                    }
+
+                    continue;
+                }
+
+                if (insideEscapeSequence)
+                {
+                    matchTextBuf.Append(c);
+                    continue;
+                }
+
+                if (c == OpenBrace)
+                {
+                    openBraces++;
+                    braceBalance++;
+
+                    // Record starting position of possible new brace match.
+                    if (braceBalance == 1)
+                    {
+                        start = i;
+                        startColumnNumber = columnNumber;
+                        startLineNumber = lineNumber;
+                        matchTextBuf.Clear();
                     }
                 }
 
-                shouldCount = true;
                 if (c == CloseBrace)
                 {
-                    // Don't check for escaping when we're at the first char.
-                    if (i != 0)
-                    {
-                        if (sb[i - 1] == EscapingBackslash)
-                        {
-                            // Only escape if we're outside (or about to exit) a brace match
-                            if (braceBalance <= 1)
-                            {
-                                matchTextBuf.Append(c);
-                                continue;
-                            }
-
-                            // If we're not outside, don't make it count as a brace.
-                            shouldCount = false;
-                        }
-                    }
-
-                    if (shouldCount)
-                    {
-                        closeBraces++;
-                        braceBalance--;
-                    }
+                    closeBraces++;
+                    braceBalance--;
 
                     // Write the brace to the match buffer if it's not the closing brace
                     // we are looking for.
@@ -147,6 +158,15 @@ namespace Jeffijoe.MessageFormat.Parsing
                 result.Add(new Literal(start, i, startLineNumber, startColumnNumber, matchTextBuf));
                 matchTextBuf = new StringBuilder();
                 start = 0;
+            }
+
+            if (insideEscapeSequence)
+            {
+                throw new MalformedLiteralException(
+                    "There is an unclosed escape sequence.",
+                    currentEscapeSequenceLineNumber,
+                    currentEscapeSequenceColumnNumber,
+                    matchTextBuf.ToString());
             }
 
             if (openBraces != closeBraces)
