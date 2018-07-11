@@ -105,6 +105,20 @@ namespace Jeffijoe.MessageFormat.Tests
                         new Dictionary<string, object> { { "NUM_COWS", 5 } },
                         "a{NUM_COWS}b'"
                     };
+                yield return
+                    new object[]
+                    {
+                        "These '{'braces'}' and thoses '{braces}' ain''t not escaped, which makes a total of {braces, plural, one {a single pair} other {'#'# (=#) pairs}} of escaped braces.",
+                        new Dictionary<string, object> { { "braces", 2 } },
+                        "These {braces} and thoses {braces} ain't not escaped, which makes a total of #2 (=2) pairs of escaped braces."
+                    };
+                yield return
+                    new object[]
+                    {
+                        "{num, plural, =1 {1} other {'#'{num, plural, =1 {1} other {'{'#'#'#'}'}}}}",
+                        new Dictionary<string, object> { { "num", 2 } },
+                        "#{2#2}"
+                    };
             }
         }
 
