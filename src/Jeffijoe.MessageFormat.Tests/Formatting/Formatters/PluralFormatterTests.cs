@@ -1,6 +1,6 @@
 ﻿// MessageFormat for .NET
 // - PluralFormatterTests.cs
-// 
+//
 // Author: Jeff Hansen <jeff@jeffijoe.com>
 // Copyright (C) Jeff Hansen 2015. All rights reserved.
 
@@ -44,10 +44,10 @@ namespace Jeffijoe.MessageFormat.Tests.Formatting.Formatters
                 new ParsedArguments(
                     new[]
                     {
-                        new KeyedBlock("zero", "nothing"), 
-                        new KeyedBlock("one", "just one"), 
+                        new KeyedBlock("zero", "nothing"),
+                        new KeyedBlock("one", "just one"),
                         new KeyedBlock("other", "wow")
-                    }, 
+                    },
                     new FormatterExtension[0]);
             var request = new FormatterRequest(new Literal(1, 1, 1, 1, new StringBuilder()), "test", "plural", null);
             var actual = subject.Pluralize("en", arguments, Convert.ToDouble(args[request.Variable]), 0);
@@ -64,7 +64,9 @@ namespace Jeffijoe.MessageFormat.Tests.Formatting.Formatters
         /// The expected.
         /// </param>
         [Theory]
-        [InlineData(@"Number \#1 has # results", "Number #1 has 1337 results")]
+        [InlineData(@"Number '#1' has # results", "Number '#1' has 1337 results")]
+        [InlineData(@"Number '#'1 has # results", "Number '#'1 has 1337 results")]
+        [InlineData(@"Number '#'# has # results", "Number '#'1337 has 1337 results")]
         [InlineData(@"# results", "1337 results")]
         public void ReplaceNumberLiterals(string input, string expected)
         {

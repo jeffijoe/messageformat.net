@@ -80,9 +80,9 @@ namespace Jeffijoe.MessageFormat.Formatting.Formatters
         ///     The <see cref="string" />.
         /// </returns>
         public string Format(
-            string locale, 
-            FormatterRequest request, 
-            IDictionary<string, object> args, 
+            string locale,
+            FormatterRequest request,
+            IDictionary<string, object> args,
             object value,
             IMessageFormatter messageFormatter)
         {
@@ -126,7 +126,7 @@ namespace Jeffijoe.MessageFormat.Formatting.Formatters
         /// <exception cref="MessageFormatterException">
         ///     The 'other' option was not found in pattern.
         /// </exception>
-        [SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1126:PrefixCallsCorrectly", 
+        [SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1126:PrefixCallsCorrectly",
             Justification = "Reviewed. Suppression is OK here.")]
         internal string Pluralize(string locale, ParsedArguments arguments, double n, double offset)
         {
@@ -188,54 +188,73 @@ namespace Jeffijoe.MessageFormat.Formatting.Formatters
             const char OpenBrace = '{';
             const char CloseBrace = '}';
             const char Pound = '#';
-            const char EscapeChar = '\\';
+            const char EscapeChar = '\'';
             var braceBalance = 0;
+            var insideEscapeSequence = false;
             var sb = new StringBuilder();
             for (int i = 0; i < pluralized.Length; i++)
             {
                 var c = pluralized[i];
 
+                if (c == EscapeChar)
+                {
+                    sb.Append(EscapeChar);
+
+                    if (i == pluralized.Length - 1)
+                    {
+                        // The last char can't open a new escape sequence, it can only close one
+                        if (insideEscapeSequence)
+                        {
+                            insideEscapeSequence = false;
+                        }
+                        continue;
+                    }
+
+                    var nextChar = pluralized[i + 1];
+                    if (nextChar == EscapeChar)
+                    {
+                        sb.Append(EscapeChar);
+                        ++i;
+                        continue;
+                    }
+
+                    if (insideEscapeSequence)
+                    {
+                        insideEscapeSequence = false;
+                        continue;
+                    }
+
+                    if (nextChar == '{' || nextChar == '}' || nextChar == '#')
+                    {
+                        sb.Append(nextChar);
+                        insideEscapeSequence = true;
+                        ++i;
+                        continue;
+                    }
+
+                    continue;
+                }
+
+                if (insideEscapeSequence)
+                {
+                    sb.Append(c);
+                    continue;
+                }
+
                 if (c == OpenBrace)
                 {
-                    if (i == 0 || pluralized[i - 1] != EscapeChar)
-                    {
-                        braceBalance++;
-                    }
+                    braceBalance++;
                 }
                 else if (c == CloseBrace)
                 {
-                    if (i == 0 || pluralized[i - 1] != EscapeChar)
-                    {
-                        braceBalance--;
-                    }
+                    braceBalance--;
                 }
                 else if (c == Pound)
                 {
-                    if (i != 0)
-                    {
-                        if (pluralized[i - 1] != EscapeChar)
-                        {
-                            if (braceBalance == 0)
-                            {
-                                sb.Append(n);
-                                continue;
-                            }
-                        }
-                    }
-                    else
+                    if (braceBalance == 0)
                     {
                         sb.Append(n);
                         continue;
-                    }
-                }
-                else if (c == EscapeChar)
-                {
-                    if (i != pluralized.Length)
-                    {
-                        if (pluralized[i + 1] == Pound)
-                        {
-                            continue; // Next one is an escaped number literal, so we don't want the escaping char.
-                        }
                     }
                 }
 
@@ -251,7 +270,7 @@ namespace Jeffijoe.MessageFormat.Formatting.Formatters
         private void AddStandardPluralizers()
         {
             this.Pluralizers.Add(
-                "en", 
+                "en",
                 n => {
                     // ReSharper disable CompareOfFloatsByEqualityOperator
                     if (n == 0)
