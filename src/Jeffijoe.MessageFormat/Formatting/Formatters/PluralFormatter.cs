@@ -32,6 +32,12 @@ namespace Jeffijoe.MessageFormat.Formatting.Formatters
         #region Public Properties
 
         /// <summary>
+        ///     This formatter requires the input variable to exist.
+        /// </summary>
+        public bool VariableMustExist => true;
+
+
+        /// <summary>
         ///     Gets the pluralizers dictionary. Key is the locale.
         /// </summary>
         /// <value>
@@ -82,8 +88,8 @@ namespace Jeffijoe.MessageFormat.Formatting.Formatters
         public string Format(
             string locale,
             FormatterRequest request,
-            IDictionary<string, object> args,
-            object value,
+            IDictionary<string, object?> args,
+            object? value,
             IMessageFormatter messageFormatter)
         {
             var arguments = this.ParseArguments(request);
@@ -137,7 +143,7 @@ namespace Jeffijoe.MessageFormat.Formatting.Formatters
             }
 
             var pluralForm = pluralizer(n - offset);
-            KeyedBlock other = null;
+            KeyedBlock? other = null;
             foreach (var keyedBlock in arguments.KeyedBlocks)
             {
                 if (keyedBlock.Key == OtherKey)
@@ -207,6 +213,7 @@ namespace Jeffijoe.MessageFormat.Formatting.Formatters
                         {
                             insideEscapeSequence = false;
                         }
+
                         continue;
                     }
 
@@ -229,7 +236,6 @@ namespace Jeffijoe.MessageFormat.Formatting.Formatters
                         sb.Append(nextChar);
                         insideEscapeSequence = true;
                         ++i;
-                        continue;
                     }
 
                     continue;
@@ -271,7 +277,8 @@ namespace Jeffijoe.MessageFormat.Formatting.Formatters
         {
             this.Pluralizers.Add(
                 "en",
-                n => {
+                n =>
+                {
                     // ReSharper disable CompareOfFloatsByEqualityOperator
                     if (n == 0)
                     {

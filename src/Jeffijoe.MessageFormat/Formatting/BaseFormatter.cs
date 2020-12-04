@@ -4,6 +4,7 @@
 // Copyright (C) Jeff Hansen 2014. All rights reserved.
 
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 using Jeffijoe.MessageFormat.Parsing;
@@ -52,6 +53,12 @@ namespace Jeffijoe.MessageFormat.Formatting
         protected internal IEnumerable<FormatterExtension> ParseExtensions(FormatterRequest request, out int index)
         {
             var result = new List<FormatterExtension>();
+            if (request.FormatterArguments == null)
+            {
+                index = -1;
+                return Enumerable.Empty<FormatterExtension>();
+            }
+            
             int length = request.FormatterArguments.Length;
             index = 0;
 
@@ -130,6 +137,11 @@ namespace Jeffijoe.MessageFormat.Formatting
             var braceBalance = 0;
             var foundWhitespaceAfterKey = false;
             var insideEscapeSequence = false;
+            if (request.FormatterArguments == null)
+            {
+                return Enumerable.Empty<KeyedBlock>();
+            }
+            
             for (int i = startIndex; i < request.FormatterArguments.Length; i++)
             {
                 var c = request.FormatterArguments[i];

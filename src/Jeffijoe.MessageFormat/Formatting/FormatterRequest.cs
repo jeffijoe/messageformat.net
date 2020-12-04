@@ -29,7 +29,7 @@ namespace Jeffijoe.MessageFormat.Formatting
         /// <param name="formatterArguments">
         ///     The formatter arguments.
         /// </param>
-        public FormatterRequest(Literal sourceLiteral, string variable, string formatterName, string formatterArguments)
+        public FormatterRequest(Literal sourceLiteral, string variable, string? formatterName, string? formatterArguments)
         {
             this.SourceLiteral = sourceLiteral;
             this.Variable = variable;
@@ -47,7 +47,7 @@ namespace Jeffijoe.MessageFormat.Formatting
         /// <value>
         ///     The formatter arguments.
         /// </value>
-        public string FormatterArguments { get; private set; }
+        public string? FormatterArguments { get; private set; }
 
         /// <summary>
         ///     Gets the name of the formatter to use . e.g. 'select', 'plural'. Can be null.
@@ -55,7 +55,7 @@ namespace Jeffijoe.MessageFormat.Formatting
         /// <value>
         ///     The name of the formatter.
         /// </value>
-        public string FormatterName { get; private set; }
+        public string? FormatterName { get; private set; }
 
         /// <summary>
         ///     Gets the source literal.

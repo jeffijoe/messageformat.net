@@ -1,7 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard1.2;netstandard1.3;netstandard1.4;netstandard1.5;netstandard1.6;netstandard2.0;net45</TargetFrameworks>
     <SignAssembly>True</SignAssembly>
     <AssemblyOriginatorKeyFile>MessageFormat.snk</AssemblyOriginatorKeyFile>
     <PackageId>MessageFormat</PackageId>
@@ -11,6 +10,9 @@
   	<PackageReleaseNotes>Follow official guidelines for escaping literals (saithis, #15)</PackageReleaseNotes>
   	<PackageTags>messageformat,pcl,messageformatter,xamarin,ui,messages,formatting,plural,pluralization,singular,select,strings,stringformat,format</PackageTags>
   	<RepositoryUrl>https://github.com/jeffijoe/messageformat.net</RepositoryUrl>
+  	<TargetFrameworks>netstandard1.2;netstandard2.0</TargetFrameworks>
+  	<LangVersion>latest</LangVersion>
+  	<Nullable>enable</Nullable>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">

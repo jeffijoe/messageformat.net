@@ -59,14 +59,14 @@ namespace Jeffijoe.MessageFormat.Tests.Formatting.Formatters
         {
             var subject = new SelectFormatter();
             var messageFormatterMock = new Mock<IMessageFormatter>();
-            messageFormatterMock.Setup(x => x.FormatMessage(It.IsAny<string>(), It.IsAny<Dictionary<string, object>>()))
+            messageFormatterMock.Setup(x => x.FormatMessage(It.IsAny<string>(), It.IsAny<Dictionary<string, object?>>()))
                                 .Returns((string input, Dictionary<string, object> a) => input);
             var req = new FormatterRequest(
                 new Literal(1, 1, 1, 1, new StringBuilder()), 
                 "gender", 
                 "select", 
                 formatterArgs);
-            var args = new Dictionary<string, object> { { "gender", gender } };
+            var args = new Dictionary<string, object?> { { "gender", gender } };
             var result = subject.Format("en", req, args, gender, messageFormatterMock.Object);
             Assert.Equal(expectedBlock, result);
         }

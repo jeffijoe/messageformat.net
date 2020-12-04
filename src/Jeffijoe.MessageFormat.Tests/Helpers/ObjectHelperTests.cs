@@ -106,7 +106,7 @@ namespace Jeffijoe.MessageFormat.Tests.Helpers
             /// <summary>
             /// Gets or sets the prop 1.
             /// </summary>
-            public string Prop1 { get; set; }
+            public string? Prop1 { get; set; }
 
             #endregion
         }

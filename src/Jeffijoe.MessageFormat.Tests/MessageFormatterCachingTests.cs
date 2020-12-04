@@ -120,7 +120,7 @@ namespace Jeffijoe.MessageFormat.Tests
                           + "zero {no messages}" + "one {just one message}" + "=42 {a universal amount of messages}"
                           + "other {uuhm... let's see.. Oh yeah, # messages - and here's a pound: '#'}" + "}!";
             int iterations = 100000;
-            var args = new Dictionary<string, object>[iterations];
+            var args = new Dictionary<string, object?>[iterations];
             var rnd = new Random();
             for (int i = 0; i < iterations; i++)
             {
@@ -129,7 +129,7 @@ namespace Jeffijoe.MessageFormat.Tests
                     new
                     {
                         gender = val % 2 == 0 ? "male" : "female",
-                        name = val % 2 == 0 ? "Jeff" : "Amanda",
+                        name = val % 2 == 0 ? "Jeff" : "Marcela",
                         messageCount = val
                     }.ToDictionary();
             }
