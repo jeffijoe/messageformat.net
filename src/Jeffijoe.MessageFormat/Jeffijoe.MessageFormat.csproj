@@ -8,7 +8,7 @@
   	<GeneratePackageOnBuild>false</GeneratePackageOnBuild>
   	<Authors>Jeff Hansen</Authors>
   	<PackageReleaseNotes>Follow official guidelines for escaping literals (saithis, #15)</PackageReleaseNotes>
-  	<PackageTags>messageformat,pcl,messageformatter,xamarin,ui,messages,formatting,plural,pluralization,singular,select,strings,stringformat,format</PackageTags>
+  	<PackageTags>messageformat,messageformatter,xamarin,ui,messages,formatting,plural,pluralization,singular,select,strings,stringformat,format</PackageTags>
   	<RepositoryUrl>https://github.com/jeffijoe/messageformat.net</RepositoryUrl>
   	<LangVersion>latest</LangVersion>
   	<Nullable>enable</Nullable>
