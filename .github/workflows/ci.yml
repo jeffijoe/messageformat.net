@@ -1,0 +1,32 @@
+name: .NET Core
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+env:
+  DOTNET_NOLOGO: true
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.1.x
+    - name: Install dependencies
+      run: dotnet restore
+      working-directory: ./src
+    - name: Build
+      run: dotnet build --configuration Release --no-restore
+      working-directory: ./src
+    - name: Test
+      run: dotnet test --no-restore --verbosity normal
+      working-directory: ./src
