@@ -28,16 +28,18 @@ jobs:
         dotnet-version: 3.1.x
         
     - name: Install dependencies
-      run: dotnet restore
       working-directory: ./src
+      run: dotnet restore
       
     - name: Build
-      run: dotnet build --configuration Release --no-restore
       working-directory: ./src
+      run: | 
+        dotnet build --configuration Release --no-restore
+        dotnet pack -c Release Jeffijoe.MessageFormat/Jeffijoe.MessageFormat.csproj
       
     - name: Test
-      run: dotnet test --no-restore --verbosity normal
       working-directory: ./src
+      run: dotnet test --no-restore --verbosity normal
 
     - name: Publish to NuGet
       if: github.event_name == 'release' # Only publish on Release creation.
