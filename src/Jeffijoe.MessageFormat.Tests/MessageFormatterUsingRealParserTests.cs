@@ -80,7 +80,7 @@ whatchu gonna do when dey come for youu?
                 mockLibary.Object, 
                 false);
 
-            var args = new Dictionary<string, object>();
+            var args = new Dictionary<string, object?>();
             args.Add("name", "Jeff");
             dummyFormatter.Setup(x => x.Format("en", It.IsAny<FormatterRequest>(), args, "Jeff", subject))
                           .Returns("Jeff");

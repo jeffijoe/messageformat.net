@@ -145,7 +145,7 @@ unknown
             string[] blocks)
         {
             var subject = new BaseFormatterImpl();
-            var req = new FormatterRequest(new Literal(1, 1, 1, 1, new StringBuilder()), null, null, args);
+            var req = new FormatterRequest(new Literal(1, 1, 1, 1, new StringBuilder()), string.Empty, null, args);
             var actual = subject.ParseArguments(req);
 
             Assert.Equal(extensionKeys.Length, actual.Extensions.Count());
@@ -183,7 +183,7 @@ unknown
         public void ParseArguments_invalid(string args)
         {
             var subject = new BaseFormatterImpl();
-            var req = new FormatterRequest(new Literal(1, 1, 1, 1, new StringBuilder()), null, null, args);
+            var req = new FormatterRequest(new Literal(1, 1, 1, 1, new StringBuilder()), string.Empty, null, args);
             var ex = Assert.Throws<MalformedLiteralException>(() => subject.ParseArguments(req));
             this.outputHelper.WriteLine(ex.Message);
         }
@@ -210,7 +210,7 @@ unknown
         {
             var subject = new BaseFormatterImpl();
             int index;
-            var req = new FormatterRequest(new Literal(1, 1, 1, 1, new StringBuilder()), null, null, args);
+            var req = new FormatterRequest(new Literal(1, 1, 1, 1, new StringBuilder()), string.Empty, null, args);
 
             // Warmup
             subject.ParseExtensions(req, out index);
@@ -242,7 +242,7 @@ unknown
             var args = " offset:2 code:js ";
             var expectedIndex = 17;
 
-            var req = new FormatterRequest(new Literal(1, 1, 1, 1, new StringBuilder()), null, null, args);
+            var req = new FormatterRequest(new Literal(1, 1, 1, 1, new StringBuilder()), string.Empty, null, args);
 
             var actual = subject.ParseExtensions(req, out index);
             Assert.NotEmpty(actual);
@@ -274,7 +274,7 @@ unknown
         public void ParseKeyedBlocks(string args, string[] keys, string[] values)
         {
             var subject = new BaseFormatterImpl();
-            var req = new FormatterRequest(new Literal(1, 1, 1, 1, new StringBuilder()), null, null, args);
+            var req = new FormatterRequest(new Literal(1, 1, 1, 1, new StringBuilder()), string.Empty, null, args);
 
             // Warm-up
             subject.ParseKeyedBlocks(req, 0);
@@ -316,7 +316,7 @@ unknown
         public void ParseKeyedBlocks_unclosed_escape_sequence(string args)
         {
             var subject = new BaseFormatterImpl();
-            var req = new FormatterRequest(new Literal(1, 1, 1, 1, new StringBuilder()), null, null, args);
+            var req = new FormatterRequest(new Literal(1, 1, 1, 1, new StringBuilder()), string.Empty, null, args);
 
             Assert.Throws<MalformedLiteralException>(() => subject.ParseKeyedBlocks(req, 0));
         }

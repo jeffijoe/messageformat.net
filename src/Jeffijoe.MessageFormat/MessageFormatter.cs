@@ -41,7 +41,7 @@ namespace Jeffijoe.MessageFormat
         ///     Pattern cache. If enabled, should speed up formatting the same pattern multiple times,
         ///     regardless of arguments.
         /// </summary>
-        private readonly ConcurrentDictionary<string, IFormatterRequestCollection> cache;
+        private readonly ConcurrentDictionary<string, IFormatterRequestCollection>? cache;
 
         /// <summary>
         ///     The formatter library.
@@ -92,18 +92,8 @@ namespace Jeffijoe.MessageFormat
             bool useCache,
             string locale = "en")
         {
-            if (patternParser == null)
-            {
-                throw new ArgumentNullException("patternParser");
-            }
-
-            if (library == null)
-            {
-                throw new ArgumentNullException("library");
-            }
-
-            this.patternParser = patternParser;
-            this.library = library;
+            this.patternParser = patternParser ?? throw new ArgumentNullException("patternParser");
+            this.library = library ?? throw new ArgumentNullException("library");
             this.Locale = locale;
             if (useCache)
             {
@@ -143,17 +133,12 @@ namespace Jeffijoe.MessageFormat
         /// <value>
         ///     The pluralizers, or <c>null</c> if the plural formatter has not been added.
         /// </value>
-        public IDictionary<string, Pluralizer> Pluralizers
+        public IDictionary<string, Pluralizer>? Pluralizers
         {
             get
             {
                 var pluralFormatter = this.Formatters.OfType<PluralFormatter>().FirstOrDefault();
-                if (pluralFormatter == null)
-                {
-                    return null;
-                }
-
-                return pluralFormatter.Pluralizers;
+                return pluralFormatter?.Pluralizers;
             }
         }
 
@@ -178,7 +163,7 @@ namespace Jeffijoe.MessageFormat
         /// <returns>
         ///     The formatted message.
         /// </returns>
-        public static string Format(string pattern, IDictionary<string, object> data)
+        public static string Format(string pattern, IDictionary<string, object?> data)
         {
             lock (Lock)
             {
@@ -222,7 +207,7 @@ namespace Jeffijoe.MessageFormat
         /// <returns>
         ///     The <see cref="string" />.
         /// </returns>
-        public string FormatMessage(string pattern, IDictionary<string, object> args)
+        public string FormatMessage(string pattern, IDictionary<string, object?> args)
         {
             /*
              * We are asuming the formatters are ordered correctly
@@ -243,16 +228,15 @@ namespace Jeffijoe.MessageFormat
             {
                 var request = requestsEnumerated[i];
 
-                object value;
-                if (args.TryGetValue(request.Variable, out value) == false)
-                {
-                    throw new VariableNotFoundException(request.Variable);
-                }
-
                 var formatter = this.Formatters.GetFormatter(request);
                 if (formatter == null)
                 {
                     throw new FormatterNotFoundException(request);
+                }
+
+                if (args.TryGetValue(request.Variable, out var value) == false && formatter.VariableMustExist)
+                {
+                    throw new VariableNotFoundException(request.Variable);
                 }
 
                 // Double dispatch, yeah!

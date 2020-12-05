@@ -30,11 +30,12 @@ namespace Jeffijoe.MessageFormat.Parsing
             string message, 
             int lineNumber = 0, 
             int columnNumber = 0, 
-            string sourceSnippet = null)
+            string? sourceSnippet = null)
             : base(BuildMessage(message, lineNumber, columnNumber, sourceSnippet))
         {
             this.LineNumber = lineNumber;
             this.ColumnNumber = columnNumber;
+            this.SourceSnippet = sourceSnippet;
         }
 
         #endregion
@@ -63,7 +64,7 @@ namespace Jeffijoe.MessageFormat.Parsing
         /// <value>
         ///     The source snippet.
         /// </value>
-        public string SourceSnippet { get; private set; }
+        public string? SourceSnippet { get; private set; }
 
         #endregion
 
@@ -87,7 +88,7 @@ namespace Jeffijoe.MessageFormat.Parsing
         /// <returns>
         ///     The <see cref="string" />.
         /// </returns>
-        private static string BuildMessage(string message, int lineNumber, int columnNumber, string sourceSnippet)
+        private static string BuildMessage(string message, int lineNumber, int columnNumber, string? sourceSnippet)
         {
             var str = message;
             if (lineNumber != 0 && columnNumber != 0)

@@ -58,7 +58,7 @@ namespace Jeffijoe.MessageFormat.Tests.Formatting.Formatters
         public void VerifyAnEmptyStringIsReturnedWhenTheArgumentIsNull()
         {
             var req = CreateRequest();
-            var args = new Dictionary<string, object>();
+            var args = new Dictionary<string, object?>();
 
             Assert.Equal(string.Empty, this.subject.Format("en", req, args, null, this.formatterMock.Object));
         }
@@ -70,7 +70,7 @@ namespace Jeffijoe.MessageFormat.Tests.Formatting.Formatters
         public void VerifyTheValueFromTheGivenArgumentsIsReturnedAsAString()
         {
             var req = CreateRequest();
-            var args = new Dictionary<string, object>();
+            var args = new Dictionary<string, object?>();
 
             Assert.Equal("is good", this.subject.Format("en", req, args, "is good", this.formatterMock.Object));
         }

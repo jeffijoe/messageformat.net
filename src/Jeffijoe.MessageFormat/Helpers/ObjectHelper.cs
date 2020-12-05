@@ -54,12 +54,12 @@ namespace Jeffijoe.MessageFormat.Helpers
         /// <returns>
         ///     The <see cref="IDictionary" />.
         /// </returns>
-        internal static Dictionary<string, object> ToDictionary(this object obj)
+        internal static Dictionary<string, object?> ToDictionary(this object obj)
         {
             // We want to be able to read the property, and it should not be an indexer.
             var properties = GetProperties(obj).Where(x => x.CanRead && x.GetIndexParameters().Any() == false);
 
-            var result = new Dictionary<string, object>();
+            var result = new Dictionary<string, object?>();
             foreach (var propertyInfo in properties)
             {
                 result[propertyInfo.Name] = propertyInfo.GetValue(obj);

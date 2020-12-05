@@ -14,7 +14,18 @@ namespace Jeffijoe.MessageFormat.Formatting.Formatters
     /// </summary>
     public class SelectFormatter : BaseFormatter, IFormatter
     {
+        #region Public Properties
+
+        /// <summary>
+        ///     This formatter requires the input variable to exist.
+        /// </summary>
+        public bool VariableMustExist => true;
+        
+        #endregion
+        
+        
         #region Public Methods and Operators
+        
 
         /// <summary>
         ///     Determines whether this instance can format a message based on the specified parameters.
@@ -50,12 +61,12 @@ namespace Jeffijoe.MessageFormat.Formatting.Formatters
         public string Format(
             string locale,
             FormatterRequest request,
-            IDictionary<string, object> args,
-            object value,
+            IDictionary<string, object?> args,
+            object? value,
             IMessageFormatter messageFormatter)
         {
             var parsed = this.ParseArguments(request);
-            KeyedBlock other = null;
+            KeyedBlock? other = null;
             foreach (var keyedBlock in parsed.KeyedBlocks)
             {
                 var str = Convert.ToString(value);

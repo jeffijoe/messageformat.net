@@ -44,19 +44,19 @@ namespace Jeffijoe.MessageFormat.Parsing
             var insideEscapeSequence = false;
             var currentEscapeSequenceLineNumber = 0;
             var currentEscapeSequenceColumnNumber = 0;
-            const char CR = '\r'; // Carriage return
-            const char LF = '\n'; // Line feed
+            const char Cr = '\r'; // Carriage return
+            const char Lf = '\n'; // Line feed
             for (var i = 0; i < sb.Length; i++)
             {
                 var c = sb[i];
-                if (c == LF)
+                if (c == Lf)
                 {
                     lineNumber++;
                     columnNumber = 0;
                     continue;
                 }
 
-                if (c == CR)
+                if (c == Cr)
                 {
                     continue;
                 }
@@ -101,7 +101,6 @@ namespace Jeffijoe.MessageFormat.Parsing
                         currentEscapeSequenceLineNumber = lineNumber;
                         currentEscapeSequenceColumnNumber = columnNumber;
                         ++i;
-                        continue;
                     }
 
                     continue;

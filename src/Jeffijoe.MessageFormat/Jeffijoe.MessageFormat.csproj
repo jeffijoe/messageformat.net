@@ -1,20 +1,26 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard1.2;netstandard1.3;netstandard1.4;netstandard1.5;netstandard1.6;netstandard2.0;net45</TargetFrameworks>
     <SignAssembly>True</SignAssembly>
     <AssemblyOriginatorKeyFile>MessageFormat.snk</AssemblyOriginatorKeyFile>
     <PackageId>MessageFormat</PackageId>
-  	<GenerateAssemblyInfo>False</GenerateAssemblyInfo>
-  	<GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+  	<GenerateAssemblyInfo>True</GenerateAssemblyInfo>
   	<Authors>Jeff Hansen</Authors>
-  	<PackageReleaseNotes>Follow official guidelines for escaping literals (saithis, #15)</PackageReleaseNotes>
-  	<PackageTags>messageformat,pcl,messageformatter,xamarin,ui,messages,formatting,plural,pluralization,singular,select,strings,stringformat,format</PackageTags>
+  	<PackageTags>messageformat,messageformatter,xamarin,ui,messages,formatting,plural,pluralization,singular,select,strings,stringformat,format</PackageTags>
   	<RepositoryUrl>https://github.com/jeffijoe/messageformat.net</RepositoryUrl>
+  	<LangVersion>latest</LangVersion>
+  	<Nullable>enable</Nullable>
+  	<TargetFramework>netstandard1.1</TargetFramework>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DocumentationFile>bin\Release\netstandard1.1\Jeffijoe.MessageFormat.xml</DocumentationFile>
+    <DocumentationFile>bin/Release/netstandard1.1/Jeffijoe.MessageFormat.xml</DocumentationFile>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="MinVer" Version="2.3.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
 </Project>

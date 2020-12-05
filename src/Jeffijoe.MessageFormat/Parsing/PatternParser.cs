@@ -6,7 +6,6 @@
 using System;
 using System.Linq;
 using System.Text;
-
 using Jeffijoe.MessageFormat.Formatting;
 using Jeffijoe.MessageFormat.Helpers;
 
@@ -70,13 +69,13 @@ namespace Jeffijoe.MessageFormat.Parsing
             {
                 // The first token to follow an opening brace will be the variable name.
                 int lastIndex;
-                string variableName = ReadLiteralSection(literal, 0, false, out lastIndex);
+                string variableName = ReadLiteralSection(literal, 0, false, out lastIndex)!;
 
                 // The next (if any), is the formatter to use. Null is allowed.
-                string formatterKey = null;
+                string? formatterKey = null;
 
                 // The rest of the string is what we pass into the formatter. Can be null.
-                string formatterArgs = null;
+                string? formatterArgs = null;
                 if (variableName.Length != literal.InnerText.Length)
                 {
                     formatterKey = ReadLiteralSection(literal, variableName.Length + 1, true, out lastIndex);
@@ -119,7 +118,8 @@ namespace Jeffijoe.MessageFormat.Parsing
         /// <exception cref="MalformedLiteralException">
         ///     Parsing the variable key yielded an empty string.
         /// </exception>
-        internal static string ReadLiteralSection(Literal literal, int offset, bool allowEmptyResult, out int lastIndex)
+        internal static string? ReadLiteralSection(Literal literal, int offset, bool allowEmptyResult,
+            out int lastIndex)
         {
             const char Comma = ',';
             var sb = new StringBuilder();
@@ -146,7 +146,8 @@ namespace Jeffijoe.MessageFormat.Parsing
                         var msg = string.Format("Invalid literal character '{0}'.", c);
 
                         // Line number can't have changed.
-                        throw new MalformedLiteralException(msg, literal.SourceLineNumber, column, innerText.ToString());
+                        throw new MalformedLiteralException(msg, literal.SourceLineNumber, column,
+                            innerText.ToString());
                     }
                 }
                 else
@@ -168,15 +169,23 @@ namespace Jeffijoe.MessageFormat.Parsing
                 StringBuilder trimmed = sb.TrimWhitespace();
                 if (trimmed.Length == 0)
                 {
-                    return null;
+                    if (allowEmptyResult)
+                    {
+                        return null;
+                    }
+
+                    throw new MalformedLiteralException(
+                        "Parsing the literal yielded a string that was pure whitespace.",
+                        literal.SourceLineNumber,
+                        column);
                 }
 
                 if (trimmed.ContainsWhitespace())
                 {
                     throw new MalformedLiteralException(
-                        "Parsed literal must not contain whitespace.", 
-                        0, 
-                        0, 
+                        "Parsed literal must not contain whitespace.",
+                        0,
+                        0,
                         trimmed.ToString());
                 }
 
@@ -189,8 +198,8 @@ namespace Jeffijoe.MessageFormat.Parsing
             }
 
             throw new MalformedLiteralException(
-                "Parsing the literal yielded an empty string.", 
-                literal.SourceLineNumber, 
+                "Parsing the literal yielded an empty string.",
+                literal.SourceLineNumber,
                 column);
         }
 

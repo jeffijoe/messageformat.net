@@ -17,10 +17,19 @@ namespace Jeffijoe.MessageFormat.Formatting.Formatters
     {
         #region Fields
 
-        private ConcurrentDictionary<string, CultureInfo> cultures = new ConcurrentDictionary<string, CultureInfo>();
+        private readonly ConcurrentDictionary<string, CultureInfo> cultures = new ConcurrentDictionary<string, CultureInfo>();
 
         #endregion
 
+        #region Public Properties
+
+        /// <summary>
+        ///     This formatter requires the input variable to exist.
+        /// </summary>
+        public bool VariableMustExist => true;
+        
+        #endregion
+        
         #region Public Methods and Operators
 
         /// <summary>
@@ -54,8 +63,8 @@ namespace Jeffijoe.MessageFormat.Formatting.Formatters
         public string Format(
             string locale, 
             FormatterRequest request,
-            IDictionary<string, object> args, 
-            object value,
+            IDictionary<string, object?> args, 
+            object? value,
             IMessageFormatter messageFormatter)
         {
             switch (value)

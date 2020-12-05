@@ -83,7 +83,7 @@ namespace Jeffijoe.MessageFormat.Tests
         {
             const string Pattern = "{name} has {messages, plural, 123}.";
             const string Expected = "Jeff has 123 messages.";
-            var args = new Dictionary<string, object> { { "name", "Jeff" }, { "messages", 1 } };
+            var args = new Dictionary<string, object?> { { "name", "Jeff" }, { "messages", 1 } };
             var requests = new[]
             {
                 new FormatterRequest(
@@ -139,15 +139,15 @@ namespace Jeffijoe.MessageFormat.Tests
         }
 
         /// <summary>
-        ///     Verifies that format message throws when variables are missing.
+        ///     Verifies that format message throws when variables are missing and the formatter requires it to exist.
         /// </summary>
         [Fact]
-        public void VerifyFormatMessageThrowsWhenVariablesAreMissing()
+        public void VerifyFormatMessageThrowsWhenVariablesAreMissingAndTheFormatterRequiresItToExist()
         {
             const string Pattern = "{name} has {messages, plural, 123}.";
 
             // Note the missing "name" variable.
-            var args = new Dictionary<string, object> { { "messages", 1 } };
+            var args = new Dictionary<string, object?> { { "messages", 1 } };
             var requests = new[]
             {
                 new FormatterRequest(
@@ -164,7 +164,9 @@ namespace Jeffijoe.MessageFormat.Tests
 
             this.collectionMock.Setup(x => x.GetEnumerator()).Returns(() => requests.AsEnumerable().GetEnumerator());
             this.patternParserMock.Setup(x => x.Parse(It.IsAny<StringBuilder>())).Returns(this.collectionMock.Object);
-
+            this.formatterMock1.SetupGet(x => x.VariableMustExist).Returns(true);
+            this.libraryMock.Setup(x => x.GetFormatter(It.IsAny<FormatterRequest>())).Returns(formatterMock1.Object);
+            
             // First request, and "name" is 4 chars.
             this.collectionMock.Setup(x => x.ShiftIndices(0, 4)).Callback(
 
@@ -173,6 +175,37 @@ namespace Jeffijoe.MessageFormat.Tests
 
             var ex = Assert.Throws<VariableNotFoundException>(() => this.subject.FormatMessage(Pattern, args));
             Assert.Equal("name", ex.MissingVariable);
+        }
+        
+        /// <summary>
+        ///     Verifies that format message allows non-existent variables when formatter allows it.
+        /// </summary>
+        [Fact]
+        public void VerifyFormatMessageAllowsNonExistentVariablesWhenFormatterAllowsIt()
+        {
+            const string Pattern = "{name}";
+
+            // Note the missing "name" variable.
+            var args = new Dictionary<string, object?> ();
+            var requests = new[]
+            {
+                new FormatterRequest(
+                    new Literal(0, 5, 1, 7, new StringBuilder("name")),
+                    "name",
+                    null,
+                    null),
+            };
+
+            this.collectionMock.Setup(x => x.GetEnumerator()).Returns(() => requests.AsEnumerable().GetEnumerator());
+            this.patternParserMock.Setup(x => x.Parse(It.IsAny<StringBuilder>())).Returns(this.collectionMock.Object);
+            this.libraryMock.Setup(x => x.GetFormatter(It.IsAny<FormatterRequest>())).Returns(formatterMock2.Object);
+            this.formatterMock2.SetupGet(x => x.VariableMustExist).Returns(false);
+            this.formatterMock2.Setup(x => x.Format(It.IsAny<string>(), It.IsAny<FormatterRequest>(),
+                It.IsAny<IDictionary<string, object?>>(), null, It.IsAny<IMessageFormatter>())).Returns("formatted");
+            
+            Assert.Equal("formatted",subject.FormatMessage(Pattern, args));
+            
+            this.formatterMock2.VerifyAll();
         }
 
         #endregion
