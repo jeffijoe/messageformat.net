@@ -2,7 +2,7 @@
 
 #### - better UI strings.
 
- [![Build status](https://ci.appveyor.com/api/projects/status/9g7dplst1vyibc3e?svg=true)](https://ci.appveyor.com/project/jeffijoe/messageformat-net) [![Join the chat at https://gitter.im/jeffijoe/messageformat.net](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/jeffijoe/messageformat.net?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+![Build](https://github.com/jeffijoe/messageformat.net/workflows/.NET%20Core/badge.svg)
 
 This is an implementation of the ICU Message Format in .NET. For official information about the format, go to:
 http://userguide.icu-project.org/formatparse/messages
@@ -60,7 +60,7 @@ Install-Package MessageFormat
 ## Features
 
 * **It's fast.** Everything is hand-written; no parser-generators, *not even regular expressions*.
-* **It's portable.** The library is a PCL, and has just a single dependency ([Portable.ConcurrentDictionary](https://www.nuget.org/packages/Portable.ConcurrentDictionary/) for thread safety) - other than that the only reference is the standard `.NET` in PCL's.
+* **It's portable.** The library is targeting **.NET Standard 1.1**.
 * **It's compatible with other implementations.** I've been peeking a bit at the [MessageFormat.js][0] library to make sure
   the results would be the same.
 * **It's (relatively) small**. For a .NET library, ~25kb is not a lot.
@@ -68,7 +68,7 @@ Install-Package MessageFormat
 * **Nesting is supported.** You can nest your blocks as you please, there's no special structure required to do this, just ensure your braces match.
 * **Adding your own formatters.** I don't know why you would need to, but if you want, you can add your own formatters, and
   take advantage of the code in my base classes to help you parse patterns. Look at the source, this is how I implemented the built-in formatters.
-* **Exceptions make atleast a little sense.** When exceptions are thrown due to a bad pattern, the exception should include useful information.
+* **Exceptions make at least a little sense.** When exceptions are thrown due to a bad pattern, the exception should include useful information.
 * **There are unit tests.** Run them yourself if you want, they're using XUnit.
 * **Built-in cache.** If you are formatting messages in a tight loop, with different data for each iteration,
   and if you are reusing the same instance of `MessageFormatter`, the formatter will cache the tokens of each pattern (nested, too),
