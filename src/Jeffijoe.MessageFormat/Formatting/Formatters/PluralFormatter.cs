@@ -293,6 +293,70 @@ namespace Jeffijoe.MessageFormat.Formatting.Formatters
                     // ReSharper restore CompareOfFloatsByEqualityOperator
                     return "other";
                 });
+            
+            this.Pluralizers.Add(
+                "ru",
+                n =>
+                {
+                    // ReSharper disable CompareOfFloatsByEqualityOperator
+                    if (n == (int) n) 
+                    // ReSharper restore CompareOfFloatsByEqualityOperator
+                    {
+                        var integer = (int) n;
+                        var remainderTen = integer % 10;
+                        var remainderHundred = integer % 100;
+
+                        if (remainderTen == 1 && remainderHundred != 11)
+                        {
+                            return "one";
+                        }
+
+                        if (remainderTen >= 2 && remainderTen <= 4 && (remainderHundred < 12 || remainderHundred > 14))
+                        {
+                            return "few";
+                        }
+
+                        if (remainderTen == 0 || (remainderTen >= 5 && remainderTen <= 9) ||
+                            (remainderHundred >= 11 && remainderHundred <= 14))
+                        {
+                            return "many";
+                        }
+                    }
+
+                    return "other";
+                });
+            
+            this.Pluralizers.Add(
+                "uk",
+                n =>
+                {
+                    // ReSharper disable CompareOfFloatsByEqualityOperator
+                    if (n == (int) n) 
+                    // ReSharper restore CompareOfFloatsByEqualityOperator
+                    {
+                        var integer = (int) n;
+                        var remainderTen = integer % 10;
+                        var remainderHundred = integer % 100;
+
+                        if (remainderTen == 1 && remainderHundred != 11)
+                        {
+                            return "one";
+                        }
+
+                        if (remainderTen >= 2 && remainderTen <= 4 && (remainderHundred < 12 || remainderHundred > 14))
+                        {
+                            return "few";
+                        }
+
+                        if (remainderTen == 0 || (remainderTen >= 5 && remainderTen <= 9) ||
+                            (remainderHundred >= 11 && remainderHundred <= 14))
+                        {
+                            return "many";
+                        }
+                    }
+
+                    return "other";
+                });
         }
 
         #endregion
