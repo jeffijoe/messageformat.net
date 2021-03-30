@@ -26,6 +26,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Jeffijoe.MessageFormat\Jeffijoe.MessageFormat.csproj" />
+    <ProjectReference Include="..\Jeffjoe.MessageFormat.MetadataGenerator\Jeffjoe.MessageFormat.MetadataGenerator.csproj" />
   </ItemGroup>
 
   <ItemGroup>
