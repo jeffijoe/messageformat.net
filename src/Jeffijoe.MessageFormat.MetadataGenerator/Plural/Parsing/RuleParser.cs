@@ -144,8 +144,55 @@ namespace Jeffijoe.MessageFormat.MetadataGenerator.Plural.Parsing
             };
 
             AdvanceWhitespace();
-            var number = ParseNumber();
-            return new Operation(leftOperand, relation, new[] { number });
+            var rightOperand = ParseRightOperand();
+            return new Operation(leftOperand, relation, rightOperand);
+        }
+
+        private int[] ParseRightOperand()
+        {
+            var numbers = new List<int>();
+
+            while (!IsEnd) 
+            {
+                AdvanceWhitespace();
+
+                var number = ParseNumber();
+                if (PeekCurrentChar == '.')
+                {
+                    if (PeekNextChar == '.')
+                    {
+                        ConsumeCharacters(2);
+                        AdvanceWhitespace();
+
+                        var nextNumber = ParseNumber();
+                        for (var i = number; i <= nextNumber; i++)
+                        {
+                            numbers.Add(i);
+                        }
+                    }
+                    else
+                    {
+                        throw new InvalidCharacterException(PeekCurrentChar);
+                    }
+                }
+                else
+                {
+                    numbers.Add(number);
+                }
+
+                if (PeekCurrentChar == ',')
+                {
+                    ConsumeChar();
+                    AdvanceWhitespace();
+                    continue;
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            return numbers.ToArray();
         }
 
         private OrCondition ParseOrCondition()

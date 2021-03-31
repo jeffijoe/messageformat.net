@@ -160,6 +160,51 @@ namespace Jeffijoe.MessageFormat.Tests.MetadataGenerator
             AssertOperationEqual(expected, actual);
         }
 
+        [Fact]
+        public void CanParseRangeInRightOperator()
+        {
+            var rules = ParseRules(
+                GenerateXmlWithRuleContent("n = 3..5 @integer 1, 21, 31, 41, 51, 61, 71, 81, 101, 1001, …"));
+            var rule = Assert.Single(rules);
+            var condition = Assert.Single(rule.Conditions);
+            var orCondition = Assert.Single(condition.OrConditions);
+            var actual = Assert.Single(orCondition.AndConditions);
+            var range = new[] { 3, 4, 5 };
+            var expected = new Operation(new VariableOperand(OperandSymbol.AbsoluteValue), Relation.Equals, range);
+
+            AssertOperationEqual(expected, actual);
+        }
+
+        [Fact]
+        public void CanParseCommaSeparatedInRightOperator()
+        {
+            var rules = ParseRules(
+                GenerateXmlWithRuleContent("n = 3,5,8, 10 @integer 1, 21, 31, 41, 51, 61, 71, 81, 101, 1001, …"));
+            var rule = Assert.Single(rules);
+            var condition = Assert.Single(rule.Conditions);
+            var orCondition = Assert.Single(condition.OrConditions);
+            var actual = Assert.Single(orCondition.AndConditions);
+            var range = new[] { 3, 5, 8, 10 };
+            var expected = new Operation(new VariableOperand(OperandSymbol.AbsoluteValue), Relation.Equals, range);
+
+            AssertOperationEqual(expected, actual);
+        }
+
+        [Fact]
+        public void CanParseMixedCommaSeparatedAndRangeInRightOperator()
+        {
+            var rules = ParseRules(
+                GenerateXmlWithRuleContent("n = 3,5..7,12,15 @integer 1, 21, 31, 41, 51, 61, 71, 81, 101, 1001, …"));
+            var rule = Assert.Single(rules);
+            var condition = Assert.Single(rule.Conditions);
+            var orCondition = Assert.Single(condition.OrConditions);
+            var actual = Assert.Single(orCondition.AndConditions);
+            var range = new[] { 3, 5, 6, 7, 12, 15 };
+            var expected = new Operation(new VariableOperand(OperandSymbol.AbsoluteValue), Relation.Equals, range);
+
+            AssertOperationEqual(expected, actual);
+        }
+
         private static string GenerateXmlWithRuleContent(string ruleText)
         {
             return $@"
