@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 
-namespace Jeffjoe.MessageFormat.MetadataGenerator
+namespace Jeffijoe.MessageFormat.MetadataGenerator.Plural.Parsing
 {
     [DebuggerDisplay("{{RuleDescription}}")]
     public class Condition

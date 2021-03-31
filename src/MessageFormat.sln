@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Jeffijoe.MessageFormat", "J
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Jeffijoe.MessageFormat.Tests", "Jeffijoe.MessageFormat.Tests\Jeffijoe.MessageFormat.Tests.csproj", "{F1AC744E-9031-468E-A397-6F44AA19EBA1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jeffjoe.MessageFormat.MetadataGenerator", "Jeffjoe.MessageFormat.MetadataGenerator\Jeffjoe.MessageFormat.MetadataGenerator.csproj", "{5431C848-23D1-4752-A9B0-5159E5B2F92E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jeffijoe.MessageFormat.MetadataGenerator", "Jeffijoe.MessageFormat.MetadataGenerator\Jeffijoe.MessageFormat.MetadataGenerator.csproj", "{5431C848-23D1-4752-A9B0-5159E5B2F92E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

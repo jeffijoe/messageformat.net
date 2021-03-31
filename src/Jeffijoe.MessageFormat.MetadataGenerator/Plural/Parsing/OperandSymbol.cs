@@ -1,4 +1,4 @@
-﻿namespace Jeffjoe.MessageFormat.MetadataGenerator
+﻿namespace Jeffijoe.MessageFormat.MetadataGenerator.Plural.Parsing
 {
     public enum OperandSymbol
     {

@@ -1,4 +1,4 @@
-﻿using Jeffjoe.MessageFormat.MetadataGenerator;
+﻿using Jeffijoe.MessageFormat.MetadataGenerator.Plural.Parsing;
 
 using System.Collections.Generic;
 using System.Xml;
@@ -102,6 +102,29 @@ namespace Jeffijoe.MessageFormat.Tests.MetadataGenerator
             var orCondition = Assert.Single(condition.OrConditions);
             var actual = Assert.Single(orCondition.AndConditions);
             var expected = new Operation(OperandSymbol.AbsoluteValue, Relation.Equals, new[] { 1 });
+
+            AssertOperationEqual(expected, actual);
+        }
+
+        [Theory]
+        [InlineData("n = 2 @integer 1, 21, 31, 41, 51, 61, 71, 81, 101, 1001, …", Relation.Equals)]
+        [InlineData("n != 2 @integer 1, 21, 31, 41, 51, 61, 71, 81, 101, 1001, …", Relation.NotEquals)]
+        public void CanParseVariousRelations(string ruleText, Relation expectedRelation)
+        {
+            var rules = ParseRules($@"
+<supplementalData>
+    <plurals type=""cardinal"">
+        <pluralRules locales=""am"">
+            <pluralRule count=""one"">{ruleText}</pluralRule>
+        </pluralRules>
+    </plurals>
+</supplementalData>
+");
+            var rule = Assert.Single(rules);
+            var condition = Assert.Single(rule.Conditions);
+            var orCondition = Assert.Single(condition.OrConditions);
+            var actual = Assert.Single(orCondition.AndConditions);
+            var expected = new Operation(OperandSymbol.AbsoluteValue, expectedRelation, new[] { 2 });
 
             AssertOperationEqual(expected, actual);
         }

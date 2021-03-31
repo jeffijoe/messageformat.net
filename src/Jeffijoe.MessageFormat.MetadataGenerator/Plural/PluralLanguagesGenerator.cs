@@ -2,7 +2,7 @@
 
 using System;
 
-namespace Jeffjoe.MessageFormat.MetadataGenerator
+namespace Jeffijoe.MessageFormat.MetadataGenerator
 {
     public class PluralLanguagesGenerator : ISourceGenerator
     {
