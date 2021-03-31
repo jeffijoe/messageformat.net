@@ -49,15 +49,8 @@ namespace Jeffijoe.MessageFormat.Tests.MetadataGenerator
         [Fact]
         public void CanParseSingleCount_RuleDescription_WithoutRelations()
         {
-            var rules = ParseRules(@"
-<supplementalData>
-    <plurals type=""cardinal"">
-        <pluralRules locales=""am"">
-            <pluralRule count=""one"">@integer 1, 21, 31, 41, 51, 61, 71, 81, 101, 1001, …</pluralRule>
-        </pluralRules>
-    </plurals>
-</supplementalData>
-");
+            var rules = ParseRules(GenerateXmlWithRuleContent("@integer 1, 21, 31, 41, 51, 61, 71, 81, 101, 1001, …"));
+
             var rule = Assert.Single(rules);
             var condition = Assert.Single(rule.Conditions);
             var expected = "@integer 1, 21, 31, 41, 51, 61, 71, 81, 101, 1001, …";
@@ -67,15 +60,8 @@ namespace Jeffijoe.MessageFormat.Tests.MetadataGenerator
         [Fact]
         public void CanParseSingleCount_VisibleDigitsNumber()
         {
-            var rules = ParseRules(@"
-<supplementalData>
-    <plurals type=""cardinal"">
-        <pluralRules locales=""am"">
-            <pluralRule count=""one"">v = 0 @integer 1, 21, 31, 41, 51, 61, 71, 81, 101, 1001, …</pluralRule>
-        </pluralRules>
-    </plurals>
-</supplementalData>
-");
+            var rules = ParseRules(
+                GenerateXmlWithRuleContent(@"v = 0 @integer 1, 21, 31, 41, 51, 61, 71, 81, 101, 1001, …"));
             var rule = Assert.Single(rules);
             var condition = Assert.Single(rule.Conditions);
             var orCondition = Assert.Single(condition.OrConditions);
@@ -88,15 +74,8 @@ namespace Jeffijoe.MessageFormat.Tests.MetadataGenerator
         [Fact]
         public void CanParseSingleCount_AbsoluteNumber()
         {
-            var rules = ParseRules(@"
-<supplementalData>
-    <plurals type=""cardinal"">
-        <pluralRules locales=""am"">
-            <pluralRule count=""one"">n = 1 @integer 1, 21, 31, 41, 51, 61, 71, 81, 101, 1001, …</pluralRule>
-        </pluralRules>
-    </plurals>
-</supplementalData>
-");
+            var rules = ParseRules(
+                GenerateXmlWithRuleContent("n = 1 @integer 1, 21, 31, 41, 51, 61, 71, 81, 101, 1001, …"));
             var rule = Assert.Single(rules);
             var condition = Assert.Single(rule.Conditions);
             var orCondition = Assert.Single(condition.OrConditions);
@@ -111,15 +90,7 @@ namespace Jeffijoe.MessageFormat.Tests.MetadataGenerator
         [InlineData("n != 2 @integer 1, 21, 31, 41, 51, 61, 71, 81, 101, 1001, …", Relation.NotEquals)]
         public void CanParseVariousRelations(string ruleText, Relation expectedRelation)
         {
-            var rules = ParseRules($@"
-<supplementalData>
-    <plurals type=""cardinal"">
-        <pluralRules locales=""am"">
-            <pluralRule count=""one"">{ruleText}</pluralRule>
-        </pluralRules>
-    </plurals>
-</supplementalData>
-");
+            var rules = ParseRules(GenerateXmlWithRuleContent(ruleText));
             var rule = Assert.Single(rules);
             var condition = Assert.Single(rule.Conditions);
             var orCondition = Assert.Single(condition.OrConditions);
@@ -127,6 +98,64 @@ namespace Jeffijoe.MessageFormat.Tests.MetadataGenerator
             var expected = new Operation(OperandSymbol.AbsoluteValue, expectedRelation, new[] { 2 });
 
             AssertOperationEqual(expected, actual);
+        }
+
+        [Fact]
+        public void CanParseOrRules()
+        {
+            var rules = ParseRules(GenerateXmlWithRuleContent("n = 2 or n = 1 or n = 0 @integer 1, 21, 31, 41, 51, 61, 71, 81, 101, 1001, …"));
+            var rule = Assert.Single(rules);
+            var condition = Assert.Single(rule.Conditions);
+            
+            Assert.Equal(3, condition.OrConditions.Length);
+
+            var actualFirst = Assert.Single(condition.OrConditions[0].AndConditions);
+            var expectedFirst = new Operation(OperandSymbol.AbsoluteValue, Relation.Equals, new[] { 2 });
+            AssertOperationEqual(expectedFirst, actualFirst);
+
+            var actualSecond = Assert.Single(condition.OrConditions[1].AndConditions);
+            var expectedSecond = new Operation(OperandSymbol.AbsoluteValue, Relation.Equals, new[] { 1 });
+            AssertOperationEqual(expectedSecond, actualSecond);
+
+            var actualThird = Assert.Single(condition.OrConditions[2].AndConditions);
+            var expectedThird = new Operation(OperandSymbol.AbsoluteValue, Relation.Equals, new[] { 0 });
+            AssertOperationEqual(expectedThird, actualThird);
+        }
+
+        [Fact]
+        public void CanParseAndRules()
+        {
+            var rules = ParseRules(GenerateXmlWithRuleContent("n = 2 and n = 1 and n = 0 @integer 1, 21, 31, 41, 51, 61, 71, 81, 101, 1001, …"));
+            var rule = Assert.Single(rules);
+            var condition = Assert.Single(rule.Conditions);
+
+            var orCondition = Assert.Single(condition.OrConditions);
+            Assert.Equal(3, orCondition.AndConditions.Length);
+
+            var actualFirst = orCondition.AndConditions[0];
+            var expectedFirst = new Operation(OperandSymbol.AbsoluteValue, Relation.Equals, new[] { 2 });
+            AssertOperationEqual(expectedFirst, actualFirst);
+
+            var actualSecond = orCondition.AndConditions[1];
+            var expectedSecond = new Operation(OperandSymbol.AbsoluteValue, Relation.Equals, new[] { 1 });
+            AssertOperationEqual(expectedSecond, actualSecond);
+
+            var actualThird = orCondition.AndConditions[2];
+            var expectedThird = new Operation(OperandSymbol.AbsoluteValue, Relation.Equals, new[] { 0 });
+            AssertOperationEqual(expectedThird, actualThird);
+        }
+
+        private static string GenerateXmlWithRuleContent(string ruleText)
+        {
+            return $@"
+<supplementalData>
+    <plurals type=""cardinal"">
+        <pluralRules locales=""am"">
+            <pluralRule count=""one"">{ruleText}</pluralRule>
+        </pluralRules>
+    </plurals>
+</supplementalData>
+";
         }
 
         private static void AssertOperationEqual(Operation expected, Operation actual)

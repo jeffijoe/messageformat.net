@@ -67,7 +67,7 @@ namespace Jeffijoe.MessageFormat.MetadataGenerator.Plural.Parsing
             }
         }
 
-        private OrCondition ParseOrCondition()
+        private Operation ParseAndCondition()
         {
             AdvanceWhitespace();
             var operandSymbol = ConsumeChar() switch
@@ -82,14 +82,53 @@ namespace Jeffijoe.MessageFormat.MetadataGenerator.Plural.Parsing
             var relation = firstRelationCharacter switch
             {
                 '=' => Relation.Equals,
-                '!' when ConsumeChar() == '=' 
+                '!' when ConsumeChar() == '='
                     => Relation.NotEquals,
                 var otherCharacter => throw new InvalidCharacterException(otherCharacter)
             };
 
             AdvanceWhitespace();
             var number = ParseNumber();
-            return new OrCondition(new[] { new Operation(operandSymbol, relation, new[] { number })});
+            return new Operation(operandSymbol, relation, new[] { number });
+        }
+
+        private OrCondition ParseOrCondition()
+        {
+            var andConditions = new List<Operation>();
+            while (!IsEnd)
+            {
+                var operation = ParseAndCondition();
+                andConditions.Add(operation);
+
+                AdvanceWhitespace();
+
+                if (PeekCurrentChar == 'a')
+                {
+                    var andWord = ConsumeCharacters(3);
+                    Span<char> andWordExpected = stackalloc char[3]
+                    {
+                        'a',
+                        'n',
+                        'd'
+                    };
+
+
+                    if (andWord.SequenceEqual(andWordExpected))
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        throw new InvalidCharacterException(andWord[0]);
+                    }
+                }
+                else
+                {
+                    return new OrCondition(andConditions.ToArray());
+                }
+            }
+
+            return new OrCondition(andConditions.ToArray());
         }
 
         private int ParseNumber()
