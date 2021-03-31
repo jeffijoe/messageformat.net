@@ -2,7 +2,14 @@
 {
     public enum OperandSymbol
     {
+        /// <summary>
+        /// n - absolute value of the source number.
+        /// </summary>
         AbsoluteValue,
+
+        /// <summary>
+        /// 
+        /// </summary>
         VisibleFractionDigitNumber
     }
 }
