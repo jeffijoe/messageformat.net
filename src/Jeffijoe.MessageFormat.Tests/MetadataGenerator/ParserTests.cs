@@ -66,7 +66,7 @@ namespace Jeffijoe.MessageFormat.Tests.MetadataGenerator
             var condition = Assert.Single(rule.Conditions);
             var orCondition = Assert.Single(condition.OrConditions);
             var actual = Assert.Single(orCondition.AndConditions);
-            var expected = new Operation(OperandSymbol.VisibleFractionDigitNumber, Relation.Equals, new[] { 0 });
+            var expected = new Operation(new VariableOperand(OperandSymbol.VisibleFractionDigitNumber), Relation.Equals, new[] { 0 });
 
             AssertOperationEqual(expected, actual);
         }
@@ -80,7 +80,7 @@ namespace Jeffijoe.MessageFormat.Tests.MetadataGenerator
             var condition = Assert.Single(rule.Conditions);
             var orCondition = Assert.Single(condition.OrConditions);
             var actual = Assert.Single(orCondition.AndConditions);
-            var expected = new Operation(OperandSymbol.AbsoluteValue, Relation.Equals, new[] { 1 });
+            var expected = new Operation(new VariableOperand(OperandSymbol.AbsoluteValue), Relation.Equals, new[] { 1 });
 
             AssertOperationEqual(expected, actual);
         }
@@ -95,7 +95,7 @@ namespace Jeffijoe.MessageFormat.Tests.MetadataGenerator
             var condition = Assert.Single(rule.Conditions);
             var orCondition = Assert.Single(condition.OrConditions);
             var actual = Assert.Single(orCondition.AndConditions);
-            var expected = new Operation(OperandSymbol.AbsoluteValue, expectedRelation, new[] { 2 });
+            var expected = new Operation(new VariableOperand(OperandSymbol.AbsoluteValue), expectedRelation, new[] { 2 });
 
             AssertOperationEqual(expected, actual);
         }
@@ -110,15 +110,15 @@ namespace Jeffijoe.MessageFormat.Tests.MetadataGenerator
             Assert.Equal(3, condition.OrConditions.Length);
 
             var actualFirst = Assert.Single(condition.OrConditions[0].AndConditions);
-            var expectedFirst = new Operation(OperandSymbol.AbsoluteValue, Relation.Equals, new[] { 2 });
+            var expectedFirst = new Operation(new VariableOperand(OperandSymbol.AbsoluteValue), Relation.Equals, new[] { 2 });
             AssertOperationEqual(expectedFirst, actualFirst);
 
             var actualSecond = Assert.Single(condition.OrConditions[1].AndConditions);
-            var expectedSecond = new Operation(OperandSymbol.AbsoluteValue, Relation.Equals, new[] { 1 });
+            var expectedSecond = new Operation(new VariableOperand(OperandSymbol.AbsoluteValue), Relation.Equals, new[] { 1 });
             AssertOperationEqual(expectedSecond, actualSecond);
 
             var actualThird = Assert.Single(condition.OrConditions[2].AndConditions);
-            var expectedThird = new Operation(OperandSymbol.AbsoluteValue, Relation.Equals, new[] { 0 });
+            var expectedThird = new Operation(new VariableOperand(OperandSymbol.AbsoluteValue), Relation.Equals, new[] { 0 });
             AssertOperationEqual(expectedThird, actualThird);
         }
 
@@ -133,16 +133,31 @@ namespace Jeffijoe.MessageFormat.Tests.MetadataGenerator
             Assert.Equal(3, orCondition.AndConditions.Length);
 
             var actualFirst = orCondition.AndConditions[0];
-            var expectedFirst = new Operation(OperandSymbol.AbsoluteValue, Relation.Equals, new[] { 2 });
+            var expectedFirst = new Operation(new VariableOperand(OperandSymbol.AbsoluteValue), Relation.Equals, new[] { 2 });
             AssertOperationEqual(expectedFirst, actualFirst);
 
             var actualSecond = orCondition.AndConditions[1];
-            var expectedSecond = new Operation(OperandSymbol.AbsoluteValue, Relation.Equals, new[] { 1 });
+            var expectedSecond = new Operation(new VariableOperand(OperandSymbol.AbsoluteValue), Relation.Equals, new[] { 1 });
             AssertOperationEqual(expectedSecond, actualSecond);
 
             var actualThird = orCondition.AndConditions[2];
-            var expectedThird = new Operation(OperandSymbol.AbsoluteValue, Relation.Equals, new[] { 0 });
+            var expectedThird = new Operation(new VariableOperand(OperandSymbol.AbsoluteValue), Relation.Equals, new[] { 0 });
             AssertOperationEqual(expectedThird, actualThird);
+        }
+
+        [Fact]
+        public void CanParseModuloInLeftOperator()
+        {
+            var rules = ParseRules(
+                GenerateXmlWithRuleContent("n % 5 = 3 @integer 1, 21, 31, 41, 51, 61, 71, 81, 101, 1001, …"));
+            var rule = Assert.Single(rules);
+            var condition = Assert.Single(rule.Conditions);
+            var orCondition = Assert.Single(condition.OrConditions);
+            var actual = Assert.Single(orCondition.AndConditions);
+            var modulo = new ModuloOperand(OperandSymbol.AbsoluteValue, 5);
+            var expected = new Operation(modulo, Relation.Equals, new[] { 3 });
+
+            AssertOperationEqual(expected, actual);
         }
 
         private static string GenerateXmlWithRuleContent(string ruleText)
@@ -160,9 +175,29 @@ namespace Jeffijoe.MessageFormat.Tests.MetadataGenerator
 
         private static void AssertOperationEqual(Operation expected, Operation actual)
         {
-            Assert.Equal(expected.OperandLeft, actual.OperandLeft);
+            AssertLeftOperandEqual(expected.OperandLeft, actual.OperandLeft);
             Assert.Equal(expected.Relation, actual.Relation);
             Assert.Equal(expected.OperandRight, actual.OperandRight);
+        }
+
+        private static void AssertLeftOperandEqual(ILeftOperand expectedOperand, ILeftOperand actualOperand)
+        {
+            switch (expectedOperand, actualOperand)
+            {
+                case (VariableOperand expected, VariableOperand actual):
+                {
+                    Assert.Equal(expected.Operand, actual.Operand);
+                } break;
+                case (ModuloOperand expected, ModuloOperand actual):
+                {
+                    Assert.Equal(expected.Operand, actual.Operand);
+                    Assert.Equal(expected.ModValue, actual.ModValue);
+                } break;
+                default:
+                {
+                    Assert.False(true, $"Received unexpected operand types expected={expectedOperand.GetType()} actual={actualOperand.GetType()}");
+                } break;
+            }
         }
 
         private static IEnumerable<PluralRule> ParseRules(string xmlText)

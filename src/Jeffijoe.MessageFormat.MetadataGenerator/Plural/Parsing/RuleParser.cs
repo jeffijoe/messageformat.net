@@ -13,6 +13,42 @@ namespace Jeffijoe.MessageFormat.MetadataGenerator.Plural.Parsing
             _ruleText = ruleText;
         }
 
+        public OrCondition[] ParseRuleContent()
+        {
+            var conditions = new List<OrCondition>();
+
+            while (!IsEnd)
+            {
+                if (PeekCurrentChar == '@')
+                {
+                    return conditions.ToArray();
+                }
+
+                var condition = ParseOrCondition();
+                conditions.Add(condition);
+
+                AdvanceWhitespace();
+
+                var character = ConsumeChar();
+                var characterNext = ConsumeChar();
+
+                if (character == '@')
+                {
+                    return conditions.ToArray();
+                }
+                else if (character == 'o' && characterNext == 'r')
+                {
+                    continue;
+                }
+                else
+                {
+                    throw new InvalidCharacterException(character);
+                }
+            }
+
+            return conditions.ToArray();
+        }
+
         private char PeekCurrentChar =>
             _position < _ruleText.Length
             ? _ruleText[_position]
@@ -67,15 +103,35 @@ namespace Jeffijoe.MessageFormat.MetadataGenerator.Plural.Parsing
             }
         }
 
-        private Operation ParseAndCondition()
+        private ILeftOperand ParseLeftOperand()
         {
-            AdvanceWhitespace();
             var operandSymbol = ConsumeChar() switch
             {
                 'v' => OperandSymbol.VisibleFractionDigitNumber,
                 'n' => OperandSymbol.AbsoluteValue,
                 var otherCharacter => throw new InvalidCharacterException(otherCharacter)
             };
+
+            AdvanceWhitespace();
+
+            if(PeekCurrentChar == '%')
+            {
+                ConsumeChar();
+                AdvanceWhitespace();
+
+                var number = ParseNumber();
+
+                return new ModuloOperand(operandSymbol, number);
+            }
+
+            return new VariableOperand(operandSymbol);
+        }
+
+        private Operation ParseAndCondition()
+        {
+            AdvanceWhitespace();
+            var leftOperand = ParseLeftOperand();
+            
 
             AdvanceWhitespace();
             var firstRelationCharacter = ConsumeChar();
@@ -89,7 +145,7 @@ namespace Jeffijoe.MessageFormat.MetadataGenerator.Plural.Parsing
 
             AdvanceWhitespace();
             var number = ParseNumber();
-            return new Operation(operandSymbol, relation, new[] { number });
+            return new Operation(leftOperand, relation, new[] { number });
         }
 
         private OrCondition ParseOrCondition()
@@ -105,7 +161,7 @@ namespace Jeffijoe.MessageFormat.MetadataGenerator.Plural.Parsing
                 if (PeekCurrentChar == 'a')
                 {
                     var andWord = ConsumeCharacters(3);
-                    Span<char> andWordExpected = stackalloc char[3]
+                    ReadOnlySpan<char> andWordExpected = stackalloc char[3]
                     {
                         'a',
                         'n',
@@ -143,42 +199,6 @@ namespace Jeffijoe.MessageFormat.MetadataGenerator.Plural.Parsing
             var number = int.Parse(numberSpan);
 
             return number;
-        }
-
-        public OrCondition[] ParseRuleContent()
-        {
-            var conditions = new List<OrCondition>();
-
-            while (!IsEnd)
-            {
-                if (PeekCurrentChar == '@')
-                {
-                    return conditions.ToArray();
-                }
-
-                var condition = ParseOrCondition();
-                conditions.Add(condition);
-
-                AdvanceWhitespace();
-
-                var character = ConsumeChar();
-                var characterNext = ConsumeChar();
-
-                if (character == '@')
-                {
-                    return conditions.ToArray();
-                } 
-                else if(character == 'o' && characterNext == 'r')
-                {
-                    continue;
-                }
-                else
-                {
-                    throw new InvalidCharacterException(character);
-                }
-            }
-
-            return conditions.ToArray();
         }
     }
 }
