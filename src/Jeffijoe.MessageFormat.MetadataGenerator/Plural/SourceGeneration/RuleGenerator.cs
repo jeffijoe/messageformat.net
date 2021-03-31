@@ -9,34 +9,36 @@ namespace Jeffijoe.MessageFormat.MetadataGenerator.Plural.SourceGeneration
     public class RuleGenerator
     {
         private PluralRule _rule;
-        private int _conditionNumber;
         private List<OperandSymbol> _initializedSymbols;
         private int _innerIndent;
 
         public RuleGenerator(PluralRule rule)
         {
             _rule = rule;
-            _conditionNumber = 0;
-            HasNext = true;
             _initializedSymbols = new List<OperandSymbol>();
             _innerIndent = 0;
         }
 
-        public bool HasNext { get; private set; }
-
-        public void WriteNext(StringBuilder builder, int indent)
+        public void WriteTo(StringBuilder builder, int indent)
         {
-            if(_conditionNumber > _rule.Conditions.Length - 1)
+            foreach(var condition in _rule.Conditions)
             {
-                if(_rule.Conditions.Length > 0)
-                    WriteLine(builder, string.Empty, indent);
-
-                WriteLine(builder, "return \"other\";", indent);
-                HasNext = false;
-                return;
+                WriteNext(condition, builder, indent);
             }
 
-            var condition = _rule.Conditions[_conditionNumber];
+            WriteOther(builder, indent);
+        }
+
+        private void WriteOther(StringBuilder builder, int indent)
+        {
+            if (_rule.Conditions.Length > 0)
+                WriteLine(builder, string.Empty, indent);
+
+            WriteLine(builder, "return \"other\";", indent);
+        }
+
+        private void WriteNext(Condition condition, StringBuilder builder, int indent)
+        {
             foreach (var operand in GetAllLeftOperands(condition.OrConditions))
             {
                 if(!_initializedSymbols.Contains(operand))
@@ -51,6 +53,7 @@ namespace Jeffijoe.MessageFormat.MetadataGenerator.Plural.SourceGeneration
 
             if(condition.OrConditions.Length > 0)
             {
+                builder.Append(' ', _innerIndent + indent);
                 builder.Append("if (");
 
                 for (int orIdx = 0; orIdx < condition.OrConditions.Length; orIdx++)
@@ -76,9 +79,6 @@ namespace Jeffijoe.MessageFormat.MetadataGenerator.Plural.SourceGeneration
             {
                 throw new InvalidOperationException("Expected to have at least one or condition, but got none");
             }
-
-
-            _conditionNumber++;
         }
 
         private void WriteOrCondition(StringBuilder builder, OrCondition orCondition)
@@ -88,22 +88,34 @@ namespace Jeffijoe.MessageFormat.MetadataGenerator.Plural.SourceGeneration
                 var andIsLast = andIdx == orCondition.AndConditions.Length - 1;
                 Operation andCondition = orCondition.AndConditions[andIdx];
                 builder.Append('(');
-                var csharpOperator = andCondition.Relation == Relation.Equals ? "==" : "!=";
 
                 for (int innerOrIdx = 0; innerOrIdx < andCondition.OperandRight.Length; innerOrIdx++)
                 {
                     var isLast = innerOrIdx == andCondition.OperandRight.Length - 1;
 
-                    int number = andCondition.OperandRight[innerOrIdx];
-                    if (andCondition.OperandLeft is VariableOperand op)
+                    var leftVariable = andCondition.OperandLeft switch
                     {
-                        var variable = OperandToVariable(op.Operand);
-                        builder.Append($"{variable} {csharpOperator} {number}");
-                    }
+                        VariableOperand op => OperandToVariable(op.Operand).ToString(),
+                        ModuloOperand op => $"{OperandToVariable(op.Operand)} % {op.ModValue}",
+                        var otherOp => throw new InvalidOperationException($"Unknown operation {otherOp.GetType()}")
+                    };
+
+                    var line = andCondition.OperandRight[innerOrIdx] switch
+                    {
+                        RangeOperand range => andCondition.Relation == Relation.Equals
+                            ? $"{leftVariable} >= {range.Start} && {leftVariable} <= {range.End}"
+                            : $"({leftVariable} < {range.Start} || {leftVariable} > {range.End})",
+                        NumberOperand number => andCondition.Relation == Relation.Equals
+                            ? $"{leftVariable} == {number.Number}"
+                            : $"{leftVariable} != {number.Number}",
+                        var otherOperand => throw new InvalidOperationException($"Unknown right operand {otherOperand.GetType()}")
+                    };
+                    
+                    builder.Append(line);
 
                     if (!isLast)
                     {
-                        builder.Append(" || ");
+                        builder.Append(andCondition.Relation == Relation.Equals ? " || " : " && ");
                     }
                 }
                 builder.Append(')');
@@ -121,6 +133,7 @@ namespace Jeffijoe.MessageFormat.MetadataGenerator.Plural.SourceGeneration
             {
                 OperandSymbol.AbsoluteValue => 'n',
                 OperandSymbol.VisibleFractionDigitNumber => 'v',
+                OperandSymbol.IntegerDigits => 'i',
                 _ => throw new InvalidOperationException($"Unknown variable {operand}")
             };
         }
@@ -131,6 +144,7 @@ namespace Jeffijoe.MessageFormat.MetadataGenerator.Plural.SourceGeneration
             {
                 OperandSymbol.AbsoluteValue => "var n = Math.Abs(value);",
                 OperandSymbol.VisibleFractionDigitNumber => "var v = (int)value == value ? 0 : 1;",
+                OperandSymbol.IntegerDigits => "var i = (int)value;",
                 var otherSymbol => throw new InvalidOperationException($"Unknown operand symbol {otherSymbol}")
             };
         }

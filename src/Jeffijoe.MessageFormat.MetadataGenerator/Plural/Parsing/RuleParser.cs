@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Jeffijoe.MessageFormat.MetadataGenerator.Plural.Parsing
 {
@@ -109,6 +110,7 @@ namespace Jeffijoe.MessageFormat.MetadataGenerator.Plural.Parsing
             {
                 'v' => OperandSymbol.VisibleFractionDigitNumber,
                 'n' => OperandSymbol.AbsoluteValue,
+                'i' => OperandSymbol.IntegerDigits,
                 var otherCharacter => throw new InvalidCharacterException(otherCharacter)
             };
 
@@ -148,9 +150,9 @@ namespace Jeffijoe.MessageFormat.MetadataGenerator.Plural.Parsing
             return new Operation(leftOperand, relation, rightOperand);
         }
 
-        private int[] ParseRightOperand()
+        private IRightOperand[] ParseRightOperand()
         {
-            var numbers = new List<int>();
+            var numbers = new List<IRightOperand>();
 
             while (!IsEnd) 
             {
@@ -165,10 +167,7 @@ namespace Jeffijoe.MessageFormat.MetadataGenerator.Plural.Parsing
                         AdvanceWhitespace();
 
                         var nextNumber = ParseNumber();
-                        for (var i = number; i <= nextNumber; i++)
-                        {
-                            numbers.Add(i);
-                        }
+                        numbers.Add(new RangeOperand(number, nextNumber));
                     }
                     else
                     {
@@ -177,7 +176,7 @@ namespace Jeffijoe.MessageFormat.MetadataGenerator.Plural.Parsing
                 }
                 else
                 {
-                    numbers.Add(number);
+                    numbers.Add(new NumberOperand(number));
                 }
 
                 if (PeekCurrentChar == ',')
@@ -243,7 +242,8 @@ namespace Jeffijoe.MessageFormat.MetadataGenerator.Plural.Parsing
             }
 
             var numberSpan = ConsumeCharacters(numbersCount);
-            var number = int.Parse(numberSpan);
+            
+            var number = int.Parse(new string(numberSpan.ToArray()));
 
             return number;
         }

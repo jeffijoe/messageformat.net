@@ -20,5 +20,7 @@ namespace Jeffijoe.MessageFormat.Formatting.Formatters
 
             return "other";
         }
+
+        public static partial void AddAllRules(IDictionary<string, Pluralizer> pluralizers);
     }
 }

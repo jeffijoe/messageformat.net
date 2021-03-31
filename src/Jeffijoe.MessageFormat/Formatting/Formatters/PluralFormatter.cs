@@ -293,6 +293,8 @@ namespace Jeffijoe.MessageFormat.Formatting.Formatters
                     // ReSharper restore CompareOfFloatsByEqualityOperator
                     return "other";
                 });
+
+            PluralRulesMetadata.AddAllRules(this.Pluralizers);
         }
 
         #endregion

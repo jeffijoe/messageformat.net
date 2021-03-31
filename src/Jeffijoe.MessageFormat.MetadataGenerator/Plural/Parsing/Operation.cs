@@ -2,7 +2,7 @@
 {
     public class Operation
     {
-        public Operation(ILeftOperand operandLeft, Relation relation, int[] operandRight)
+        public Operation(ILeftOperand operandLeft, Relation relation, IRightOperand[] operandRight)
         {
             OperandLeft = operandLeft;
             Relation = relation;
@@ -13,6 +13,6 @@
 
         public Relation Relation { get; }
 
-        public int[] OperandRight { get; }
+        public IRightOperand[] OperandRight { get; }
     }
 }

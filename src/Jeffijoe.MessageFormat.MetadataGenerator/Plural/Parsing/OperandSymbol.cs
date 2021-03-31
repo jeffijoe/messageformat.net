@@ -8,8 +8,13 @@
         AbsoluteValue,
 
         /// <summary>
-        /// 
+        /// v - number of visible fraction digits in n, with trailing zeros.
         /// </summary>
-        VisibleFractionDigitNumber
+        VisibleFractionDigitNumber,
+
+        /// <summary>
+        /// i - integer digits of n.
+        /// </summary>
+        IntegerDigits,
     }
 }

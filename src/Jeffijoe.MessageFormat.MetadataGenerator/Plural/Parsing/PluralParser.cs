@@ -1,16 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Xml;
+using System.Linq;
 
 namespace Jeffijoe.MessageFormat.MetadataGenerator.Plural.Parsing
 {
     public class PluralParser
     {
         private readonly XmlDocument _rulesDocument;
+        private readonly HashSet<string> _excludedLocales;
 
-        public PluralParser(XmlDocument rulesDocument)
+        public PluralParser(XmlDocument rulesDocument, string[] excludedLocales)
         {
             _rulesDocument = rulesDocument;
+            _excludedLocales = new HashSet<string>(excludedLocales);
         }
 
         public IEnumerable<PluralRule> Parse()
@@ -25,21 +28,30 @@ namespace Jeffijoe.MessageFormat.MetadataGenerator.Plural.Parsing
                     {
                         if(rule.Name == "pluralRules")
                         {
-                            yield return ParseSingleRule(rule);
+                            var parsed = ParseSingleRule(rule);
+                            if (parsed != null)
+                            {
+                                yield return parsed;
+                            }
                         }
                     }
                 }
             }
         }
 
-        private PluralRule ParseSingleRule(XmlNode rule)
+        private PluralRule? ParseSingleRule(XmlNode rule)
         {
             var locales = rule.Attributes["locales"].Value.Split(' ');
+
+            if (locales.All(l => _excludedLocales.Contains(l)))
+            {
+                return null;
+            }
 
             var conditions = new List<Condition>();
             foreach (XmlNode condition in rule.ChildNodes)
             {
-                if(condition.Name == "pluralRule")
+                if (condition.Name == "pluralRule")
                 {
                     var count = condition.Attributes["count"].Value;
 
@@ -58,7 +70,5 @@ namespace Jeffijoe.MessageFormat.MetadataGenerator.Plural.Parsing
 
             return new PluralRule(locales, conditions.ToArray());
         }
-
-
     }
 }
