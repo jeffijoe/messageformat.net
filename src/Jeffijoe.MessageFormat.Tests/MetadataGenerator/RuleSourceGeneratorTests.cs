@@ -9,7 +9,7 @@ using Xunit;
 
 namespace Jeffijoe.MessageFormat.Tests.MetadataGenerator
 {
-    public class SourceGeneratingTests
+    public class RuleSourceGeneratorTests
     {
         [Fact]
         public void CanGenerateEmptyRule()
