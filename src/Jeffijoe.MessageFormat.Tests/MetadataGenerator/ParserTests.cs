@@ -235,29 +235,9 @@ namespace Jeffijoe.MessageFormat.Tests.MetadataGenerator
 
         private static void AssertOperationEqual(Operation expected, Operation actual)
         {
-            AssertLeftOperandEqual(expected.OperandLeft, actual.OperandLeft);
+            Assert.Equal(expected.OperandLeft, actual.OperandLeft);
             Assert.Equal(expected.Relation, actual.Relation);
             Assert.Equal(expected.OperandRight, actual.OperandRight);
-        }
-
-        private static void AssertLeftOperandEqual(ILeftOperand expectedOperand, ILeftOperand actualOperand)
-        {
-            switch (expectedOperand, actualOperand)
-            {
-                case (VariableOperand expected, VariableOperand actual):
-                {
-                    Assert.Equal(expected.Operand, actual.Operand);
-                } break;
-                case (ModuloOperand expected, ModuloOperand actual):
-                {
-                    Assert.Equal(expected.Operand, actual.Operand);
-                    Assert.Equal(expected.ModValue, actual.ModValue);
-                } break;
-                default:
-                {
-                    Assert.False(true, $"Received unexpected operand types expected={expectedOperand.GetType()} actual={actualOperand.GetType()}");
-                } break;
-            }
         }
 
         private static IEnumerable<PluralRule> ParseRules(string xmlText)

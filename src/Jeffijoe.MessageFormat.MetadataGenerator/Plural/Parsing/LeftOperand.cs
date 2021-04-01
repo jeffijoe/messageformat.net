@@ -12,6 +12,19 @@
         }
 
         public OperandSymbol Operand { get; }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is VariableOperand op)
+                return op.Operand == Operand;
+
+            return base.Equals(obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return Operand.GetHashCode();
+        }
     }
 
     public class ModuloOperand : ILeftOperand
@@ -24,5 +37,18 @@
 
         public OperandSymbol Operand { get; }
         public int ModValue { get; }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is ModuloOperand op)
+                return op.Operand == Operand && op.ModValue == ModValue;
+
+            return base.Equals(obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return Operand.GetHashCode() + ModValue.GetHashCode();
+        }
     }
 }
