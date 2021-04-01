@@ -21,6 +21,6 @@ namespace Jeffijoe.MessageFormat.Formatting.Formatters
             return "other";
         }
 
-        public static partial void AddAllRules(IDictionary<string, Pluralizer> pluralizers);
+        public static partial bool TryGetRuleByLocale(string locale, out Pluralizer pluralizer);
     }
 }

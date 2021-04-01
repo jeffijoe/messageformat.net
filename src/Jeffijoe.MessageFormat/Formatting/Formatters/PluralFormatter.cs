@@ -139,7 +139,10 @@ namespace Jeffijoe.MessageFormat.Formatting.Formatters
             Pluralizer pluralizer;
             if (this.Pluralizers.TryGetValue(locale, out pluralizer) == false)
             {
-                pluralizer = this.Pluralizers["en"];
+                if(PluralRulesMetadata.TryGetRuleByLocale(locale, out pluralizer) == false)
+                {
+                    pluralizer = this.Pluralizers["en"];
+                }
             }
 
             var pluralForm = pluralizer(n - offset);
@@ -293,8 +296,6 @@ namespace Jeffijoe.MessageFormat.Formatting.Formatters
                     // ReSharper restore CompareOfFloatsByEqualityOperator
                     return "other";
                 });
-
-            PluralRulesMetadata.AddAllRules(this.Pluralizers);
         }
 
         #endregion

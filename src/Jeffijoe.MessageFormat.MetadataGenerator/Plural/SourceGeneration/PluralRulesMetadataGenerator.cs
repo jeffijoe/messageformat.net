@@ -18,18 +18,18 @@ namespace Jeffijoe.MessageFormat.MetadataGenerator.Plural.SourceGeneration
 
         public string GenerateClass()
         {
-            Write("using System;");
-            Write("using System.Collections.Generic;");
+            WriteLine("using System;");
+            WriteLine("using System.Collections.Generic;");
 
-            Write("namespace Jeffijoe.MessageFormat.Formatting.Formatters");
-            Write("{");
-            _indent += 4;
+            WriteLine("namespace Jeffijoe.MessageFormat.Formatting.Formatters");
+            WriteLine("{");
+            AddIndent();
 
-            Write("public static partial class PluralRulesMetadata");
-            Write("{");
-            _indent += 4;
+            WriteLine("public static partial class PluralRulesMetadata");
+            WriteLine("{");
+            AddIndent();
 
-            for(var ruleIdx = 0; ruleIdx < _rules.Length; ruleIdx++)
+            for (var ruleIdx = 0; ruleIdx < _rules.Length; ruleIdx++)
             {
                 var rule = _rules[ruleIdx];
 
@@ -37,52 +37,62 @@ namespace Jeffijoe.MessageFormat.MetadataGenerator.Plural.SourceGeneration
 
                 foreach(var locale in rule.Locales)
                 {
-                    Write($"public static string Locale_{locale.ToUpper()}(double value)");
-                    Write("{");
-                    _indent += 4;
-
-                    Write($"return Rule{ruleIdx}(value);");
-
-                    _indent -= 4;
-                    Write("}");
+                    WriteLine($"public static string Locale_{locale.ToUpper()}(double value) => Rule{ruleIdx}(value);");
+                    WriteLine(string.Empty);
                 }
 
-                Write($"private static string Rule{ruleIdx}(double value)");
-                Write("{");
-                _indent += 4;
+                WriteLine($"private static string Rule{ruleIdx}(double value)");
+                WriteLine("{");
+                AddIndent();
+
                 ruleGenerator.WriteTo(_sb, _indent);
-                _indent -= 4;
-                Write("}");
+
+                DecreaseIndent();
+                WriteLine("}");
+                WriteLine(string.Empty);
             }
 
-            Write("public static partial void AddAllRules(IDictionary<string, Pluralizer> pluralizers)");
-            Write("{");
-            _indent += 4;
+            WriteLine("private static readonly Dictionary<string, Pluralizer> Pluralizers = new Dictionary<string, Pluralizer>()");
+            WriteLine("{");
+            AddIndent();
 
             for (int ruleIdx = 0; ruleIdx < _rules.Length; ruleIdx++)
             {
                 PluralRule rule = _rules[ruleIdx];
                 foreach (var locale in rule.Locales)
                 {
-                    Write($"pluralizers.Add(\"{locale}\", (Pluralizer) Rule{ruleIdx});");
+                    WriteLine($"{{\"{locale}\", (Pluralizer) Rule{ruleIdx}}},");
                 }
 
-                Write(string.Empty);
+                WriteLine(string.Empty);
             }
 
-            _indent -= 4;
-            Write("}");
+            DecreaseIndent();
+            WriteLine("};");
+            WriteLine(string.Empty);
 
-            _indent -= 4;
-            Write("}");
+            WriteLine("public static partial bool TryGetRuleByLocale(string locale, out Pluralizer pluralizer)");
+            WriteLine("{");
+            AddIndent();
 
-            _indent -= 4;
-            Write("}");
+            WriteLine("return Pluralizers.TryGetValue(locale, out pluralizer);");
+
+            DecreaseIndent();
+            WriteLine("}");
+
+            DecreaseIndent();
+            WriteLine("}");
+
+            DecreaseIndent();
+            WriteLine("}");
 
             return _sb.ToString();
         }
 
-        private void Write(string line)
+        private void AddIndent() => _indent += 4;
+        private void DecreaseIndent() => _indent -= 4;
+
+        private void WriteLine(string line)
         {
             _sb.Append(' ', _indent);
             _sb.AppendLine(line);
