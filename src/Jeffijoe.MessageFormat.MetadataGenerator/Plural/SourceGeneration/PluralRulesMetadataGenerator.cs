@@ -37,7 +37,7 @@ namespace Jeffijoe.MessageFormat.MetadataGenerator.Plural.SourceGeneration
 
                 foreach(var locale in rule.Locales)
                 {
-                    Write($"private static string Locale_{locale.ToUpper()}(double value)");
+                    Write($"public static string Locale_{locale.ToUpper()}(double value)");
                     Write("{");
                     _indent += 4;
 
