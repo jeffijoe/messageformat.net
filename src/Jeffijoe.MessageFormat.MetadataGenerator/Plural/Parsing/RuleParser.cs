@@ -96,8 +96,7 @@ namespace Jeffijoe.MessageFormat.MetadataGenerator.Plural.Parsing
             return character;
         }
 
-        private bool IsEnd => _position >= _ruleText.Length 
-            || PeekCurrentChar == NullCharacter;
+        private bool IsEnd => _position >= _ruleText.Length;
 
         private void AdvanceWhitespace()
         {
