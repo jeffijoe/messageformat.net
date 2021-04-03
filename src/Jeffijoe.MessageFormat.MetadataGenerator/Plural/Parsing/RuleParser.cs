@@ -50,20 +50,22 @@ namespace Jeffijoe.MessageFormat.MetadataGenerator.Plural.Parsing
             return conditions.ToArray();
         }
 
+        private static readonly char NullCharacter = '\0';
+
         private char PeekCurrentChar =>
             _position < _ruleText.Length
             ? _ruleText[_position]
-            : '0';
+            : NullCharacter;
 
         private char PeekNextChar =>
             _position + 1 < _ruleText.Length
             ? _ruleText[_position + 1]
-            : '0';
+            : NullCharacter;
 
         private char PeekAt(int delta)
         {
             if (_position + delta > _ruleText.Length)
-                return '0';
+                return NullCharacter;
 
             return _ruleText[_position + delta];
         }
@@ -87,14 +89,15 @@ namespace Jeffijoe.MessageFormat.MetadataGenerator.Plural.Parsing
         private char ConsumeChar()
         {
             if (IsEnd)
-                return '0';
+                return NullCharacter;
 
             var character = PeekCurrentChar;
             _position++;
             return character;
         }
 
-        private bool IsEnd => _position >= _ruleText.Length;
+        private bool IsEnd => _position >= _ruleText.Length 
+            || PeekCurrentChar == NullCharacter;
 
         private void AdvanceWhitespace()
         {
