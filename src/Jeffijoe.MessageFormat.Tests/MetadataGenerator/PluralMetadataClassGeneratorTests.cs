@@ -1,4 +1,4 @@
-﻿using Jeffijoe.MessageFormat.MetadataGenerator.Plural.Parsing;
+﻿using Jeffijoe.MessageFormat.MetadataGenerator.Plural.Parsing.AST;
 using Jeffijoe.MessageFormat.MetadataGenerator.Plural.SourceGeneration;
 
 using Xunit;

@@ -1,4 +1,4 @@
-﻿namespace Jeffijoe.MessageFormat.MetadataGenerator.Plural.Parsing
+﻿namespace Jeffijoe.MessageFormat.MetadataGenerator.Plural.Parsing.AST
 {
     public class OrCondition
     {

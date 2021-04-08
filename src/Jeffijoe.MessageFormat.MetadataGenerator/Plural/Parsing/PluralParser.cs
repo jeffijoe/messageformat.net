@@ -1,7 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Xml;
 using System.Linq;
+using Jeffijoe.MessageFormat.MetadataGenerator.Plural.Parsing.AST;
 
 namespace Jeffijoe.MessageFormat.MetadataGenerator.Plural.Parsing
 {

@@ -1,15 +1,15 @@
 ﻿using Jeffijoe.MessageFormat.MetadataGenerator.Plural.Parsing;
+using Jeffijoe.MessageFormat.MetadataGenerator.Plural.Parsing.AST;
 using Jeffijoe.MessageFormat.MetadataGenerator.Plural.SourceGeneration;
 
 using Microsoft.CodeAnalysis;
 
 using System;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Xml;
 
-namespace Jeffijoe.MessageFormat.MetadataGenerator
+namespace Jeffijoe.MessageFormat.MetadataGenerator.Plural
 {
     [Generator]
     public class PluralLanguagesGenerator : ISourceGenerator

@@ -1,4 +1,5 @@
 ﻿using Jeffijoe.MessageFormat.MetadataGenerator.Plural.Parsing;
+using Jeffijoe.MessageFormat.MetadataGenerator.Plural.Parsing.AST;
 
 using System;
 using System.Collections.Generic;

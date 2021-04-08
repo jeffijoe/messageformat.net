@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using Jeffijoe.MessageFormat.MetadataGenerator.Plural.Parsing.AST;
 
 namespace Jeffijoe.MessageFormat.MetadataGenerator.Plural.Parsing
 {
@@ -31,20 +31,21 @@ namespace Jeffijoe.MessageFormat.MetadataGenerator.Plural.Parsing
                 AdvanceWhitespace();
 
                 var character = ConsumeChar();
-                var characterNext = ConsumeChar();
 
+                // This is where the samples start, we don't care about any of those.
                 if (character == '@')
                 {
                     return conditions.ToArray();
                 }
-                else if (character == 'o' && characterNext == 'r')
+
+                // We expect the next token to be "or"
+                var characterNext = ConsumeChar();
+                if (character == 'o' && characterNext == 'r')
                 {
                     continue;
                 }
-                else
-                {
-                    throw new InvalidCharacterException(character);
-                }
+
+                throw new InvalidCharacterException(character);
             }
 
             return conditions.ToArray();
@@ -198,6 +199,8 @@ namespace Jeffijoe.MessageFormat.MetadataGenerator.Plural.Parsing
 
         private OrCondition ParseOrCondition()
         {
+            var andWordSpan = "and".AsSpan();
+
             var andConditions = new List<Operation>();
             while (!IsEnd)
             {
@@ -209,27 +212,17 @@ namespace Jeffijoe.MessageFormat.MetadataGenerator.Plural.Parsing
                 if (PeekCurrentChar == 'a')
                 {
                     var andWord = ConsumeCharacters(3);
-                    ReadOnlySpan<char> andWordExpected = stackalloc char[3]
-                    {
-                        'a',
-                        'n',
-                        'd'
-                    };
 
 
-                    if (andWord.SequenceEqual(andWordExpected))
+                    if (andWord.SequenceEqual(andWordSpan))
                     {
                         continue;
                     }
-                    else
-                    {
-                        throw new InvalidCharacterException(andWord[0]);
-                    }
+
+                    throw new InvalidCharacterException(andWord[0]);
                 }
-                else
-                {
-                    return new OrCondition(andConditions.ToArray());
-                }
+
+                return new OrCondition(andConditions.ToArray());
             }
 
             return new OrCondition(andConditions.ToArray());
@@ -245,7 +238,7 @@ namespace Jeffijoe.MessageFormat.MetadataGenerator.Plural.Parsing
 
             var numberSpan = ConsumeCharacters(numbersCount);
             
-            var number = int.Parse(new string(numberSpan.ToArray()));
+            var number = int.Parse(numberSpan.ToString());
 
             return number;
         }

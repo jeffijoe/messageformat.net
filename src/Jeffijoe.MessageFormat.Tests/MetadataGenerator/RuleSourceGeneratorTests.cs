@@ -1,6 +1,5 @@
-﻿using Jeffijoe.MessageFormat.Formatting.Formatters;
-using Jeffijoe.MessageFormat.MetadataGenerator.Plural.Parsing;
-using Jeffijoe.MessageFormat.MetadataGenerator.Plural.SourceGeneration;
+﻿using Jeffijoe.MessageFormat.MetadataGenerator.Plural.SourceGeneration;
+using Jeffijoe.MessageFormat.MetadataGenerator.Plural.Parsing.AST;
 
 using System;
 using System.Text;
