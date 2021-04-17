@@ -8,7 +8,7 @@ using Xunit;
 
 namespace Jeffijoe.MessageFormat.Tests.MetadataGenerator
 {
-    public class GeneratedRulesTests
+    public class GeneratedPluralRulesTests
     {
         [Theory]
         [InlineData(0, "днів")]
