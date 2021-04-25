@@ -100,11 +100,31 @@ namespace Jeffijoe.MessageFormat.Formatting.Formatters
                 offset = Convert.ToDouble(offsetExtension.Value);
             }
 
-            var n = Convert.ToDouble(value);
-            var pluralized = new StringBuilder(this.Pluralize(locale, arguments, n, offset));
-            var result = this.ReplaceNumberLiterals(pluralized, n - offset);
+            var ctx = CreatePluralContext(value, offset);
+            var pluralized = new StringBuilder(this.Pluralize(locale, arguments, ctx, offset));
+            var result = this.ReplaceNumberLiterals(pluralized, ctx.Number);
             var formatted = messageFormatter.FormatMessage(result, args);
             return formatted;
+        }
+
+        private static PluralContext CreatePluralContext(object? value, double offset)
+        {
+            if (offset == 0)
+            {
+                if (value is string v)
+                {
+                    return new PluralContext(v);
+                }
+
+                if (value is int i)
+                {
+                    return new PluralContext(i);
+                }
+
+                return new PluralContext(Convert.ToDecimal(value));
+            }
+
+            return new PluralContext(Convert.ToDecimal(value) - (decimal) offset);
         }
 
         #endregion
@@ -120,11 +140,8 @@ namespace Jeffijoe.MessageFormat.Formatting.Formatters
         /// <param name="arguments">
         ///     The parsed arguments string.
         /// </param>
-        /// <param name="n">
-        ///     The n.
-        /// </param>
-        /// <param name="offset">
-        ///     The offset.
+        /// <param name="context">
+        ///     The plural context.
         /// </param>
         /// <returns>
         ///     The <see cref="string" />.
@@ -134,18 +151,22 @@ namespace Jeffijoe.MessageFormat.Formatting.Formatters
         /// </exception>
         [SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1126:PrefixCallsCorrectly",
             Justification = "Reviewed. Suppression is OK here.")]
-        internal string Pluralize(string locale, ParsedArguments arguments, double n, double offset)
+        internal string Pluralize(string locale, ParsedArguments arguments, PluralContext context, double offset)
         {
-            Pluralizer pluralizer;
-            if (this.Pluralizers.TryGetValue(locale, out pluralizer) == false)
+            string pluralForm;
+            if (this.Pluralizers.TryGetValue(locale, out var pluralizer))
             {
-                if(PluralRulesMetadata.TryGetRuleByLocale(locale, out pluralizer) == false)
-                {
-                    pluralizer = this.Pluralizers["en"];
-                }
+                pluralForm = pluralizer(context.Number);
             }
-
-            var pluralForm = pluralizer(n - offset);
+            else if (PluralRulesMetadata.TryGetRuleByLocale(locale, out var contextPluralizer))
+            {
+                pluralForm= contextPluralizer(context);
+            }
+            else
+            {
+                pluralForm = this.Pluralizers["en"](context.Number);
+            }
+            
             KeyedBlock? other = null;
             foreach (var keyedBlock in arguments.KeyedBlocks)
             {
@@ -159,7 +180,7 @@ namespace Jeffijoe.MessageFormat.Formatting.Formatters
                     var numberLiteral = Convert.ToDouble(keyedBlock.Key.Substring(1));
 
                     // ReSharper disable once CompareOfFloatsByEqualityOperator
-                    if (numberLiteral == n)
+                    if (numberLiteral == context.Number + offset)
                     {
                         return keyedBlock.BlockText;
                     }

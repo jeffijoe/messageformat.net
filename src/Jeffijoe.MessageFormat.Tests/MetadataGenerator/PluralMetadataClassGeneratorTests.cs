@@ -35,30 +35,28 @@ namespace Jeffijoe.MessageFormat.Formatting.Formatters
 {
     public static partial class PluralRulesMetadata
     {
-        public static string Locale_EN(double value) => Rule0(value);
+        public static string Locale_EN(PluralContext context) => Rule0(context);
         
-        public static string Locale_UK(double value) => Rule0(value);
+        public static string Locale_UK(PluralContext context) => Rule0(context);
         
-        private static string Rule0(double value)
+        private static string Rule0(PluralContext context)
         {
-            var n = Math.Abs(value);
-            
-            if ((n == 3))
+            if ((context.N == 3))
                 return ""one"";
             
             return ""other"";
         }
         
-        private static readonly Dictionary<string, Pluralizer> Pluralizers = new Dictionary<string, Pluralizer>()
+        private static readonly Dictionary<string, ContextPluralizer> Pluralizers = new Dictionary<string, ContextPluralizer>()
         {
-            {""en"", (Pluralizer) Rule0},
-            {""uk"", (Pluralizer) Rule0},
+            {""en"", (ContextPluralizer) Rule0},
+            {""uk"", (ContextPluralizer) Rule0},
             
         };
         
-        public static partial bool TryGetRuleByLocale(string locale, out Pluralizer pluralizer)
+        public static partial bool TryGetRuleByLocale(string locale, out ContextPluralizer contextPluralizer)
         {
-            return Pluralizers.TryGetValue(locale, out pluralizer);
+            return Pluralizers.TryGetValue(locale, out contextPluralizer);
         }
     }
 }

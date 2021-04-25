@@ -29,6 +29,11 @@ namespace Jeffijoe.MessageFormat.MetadataGenerator.Plural.Parsing
                 conditions.Add(condition);
 
                 AdvanceWhitespace();
+                
+                if (IsEnd)
+                {
+                    return conditions.ToArray();
+                }
 
                 var character = ConsumeChar();
 
@@ -65,7 +70,7 @@ namespace Jeffijoe.MessageFormat.MetadataGenerator.Plural.Parsing
 
         private char PeekAt(int delta)
         {
-            if (_position + delta > _ruleText.Length)
+            if (_position + delta >= _ruleText.Length)
                 return NullCharacter;
 
             return _ruleText[_position + delta];
@@ -111,9 +116,14 @@ namespace Jeffijoe.MessageFormat.MetadataGenerator.Plural.Parsing
         {
             var operandSymbol = ConsumeChar() switch
             {
-                'v' => OperandSymbol.VisibleFractionDigitNumber,
                 'n' => OperandSymbol.AbsoluteValue,
                 'i' => OperandSymbol.IntegerDigits,
+                'v' => OperandSymbol.VisibleFractionDigitNumber,
+                'w' => OperandSymbol.VisibleFractionDigitNumberWithoutTrailingZeroes,
+                'f' => OperandSymbol.VisibleFractionDigits,
+                't' => OperandSymbol.VisibleFractionDigitsWithoutTrailingZeroes,
+                'c' => OperandSymbol.ExponentC,
+                'e' => OperandSymbol.ExponentE,
                 var otherCharacter => throw new InvalidCharacterException(otherCharacter)
             };
 

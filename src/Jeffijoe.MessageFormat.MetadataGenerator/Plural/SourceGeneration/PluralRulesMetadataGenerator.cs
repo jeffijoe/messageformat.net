@@ -36,11 +36,11 @@ namespace Jeffijoe.MessageFormat.MetadataGenerator.Plural.SourceGeneration
 
                 foreach(var locale in rule.Locales)
                 {
-                    WriteLine($"public static string Locale_{locale.ToUpper()}(double value) => Rule{ruleIdx}(value);");
+                    WriteLine($"public static string Locale_{locale.ToUpper()}(PluralContext context) => Rule{ruleIdx}(context);");
                     WriteLine(string.Empty);
                 }
 
-                WriteLine($"private static string Rule{ruleIdx}(double value)");
+                WriteLine($"private static string Rule{ruleIdx}(PluralContext context)");
                 WriteLine("{");
                 AddIndent();
 
@@ -51,7 +51,7 @@ namespace Jeffijoe.MessageFormat.MetadataGenerator.Plural.SourceGeneration
                 WriteLine(string.Empty);
             }
 
-            WriteLine("private static readonly Dictionary<string, Pluralizer> Pluralizers = new Dictionary<string, Pluralizer>()");
+            WriteLine("private static readonly Dictionary<string, ContextPluralizer> Pluralizers = new Dictionary<string, ContextPluralizer>()");
             WriteLine("{");
             AddIndent();
 
@@ -60,7 +60,7 @@ namespace Jeffijoe.MessageFormat.MetadataGenerator.Plural.SourceGeneration
                 PluralRule rule = _rules[ruleIdx];
                 foreach (var locale in rule.Locales)
                 {
-                    WriteLine($"{{\"{locale}\", (Pluralizer) Rule{ruleIdx}}},");
+                    WriteLine($"{{\"{locale}\", (ContextPluralizer) Rule{ruleIdx}}},");
                 }
 
                 WriteLine(string.Empty);
@@ -70,11 +70,11 @@ namespace Jeffijoe.MessageFormat.MetadataGenerator.Plural.SourceGeneration
             WriteLine("};");
             WriteLine(string.Empty);
 
-            WriteLine("public static partial bool TryGetRuleByLocale(string locale, out Pluralizer pluralizer)");
+            WriteLine("public static partial bool TryGetRuleByLocale(string locale, out ContextPluralizer contextPluralizer)");
             WriteLine("{");
             AddIndent();
 
-            WriteLine("return Pluralizers.TryGetValue(locale, out pluralizer);");
+            WriteLine("return Pluralizers.TryGetValue(locale, out contextPluralizer);");
 
             DecreaseIndent();
             WriteLine("}");

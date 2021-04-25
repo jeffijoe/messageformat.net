@@ -10,7 +10,7 @@
   	<RepositoryUrl>https://github.com/jeffijoe/messageformat.net</RepositoryUrl>
   	<LangVersion>latest</LangVersion>
   	<Nullable>enable</Nullable>
-  	<TargetFramework>netstandard2.0</TargetFramework>
+  	<TargetFrameworks>netstandard2.0;net5.0</TargetFrameworks>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -29,9 +29,8 @@
   </ItemGroup>
 
   <PropertyGroup>
-    <PluralLanguagesMetadataExcludeLocales>si da is mk ceb fil tl lv prg bs hr sh sr fr dsb hsb lt</PluralLanguagesMetadataExcludeLocales>
+    <PluralLanguagesMetadataExcludeLocales></PluralLanguagesMetadataExcludeLocales>
   </PropertyGroup>
-
   <ItemGroup>
     <CompilerVisibleProperty Include="PluralLanguagesMetadataExcludeLocales" />
   </ItemGroup>

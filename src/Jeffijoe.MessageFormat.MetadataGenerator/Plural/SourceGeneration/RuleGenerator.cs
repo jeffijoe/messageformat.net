@@ -7,14 +7,12 @@ namespace Jeffijoe.MessageFormat.MetadataGenerator.Plural.SourceGeneration
 {
     public class RuleGenerator
     {
-        private PluralRule _rule;
-        private List<OperandSymbol> _initializedSymbols;
+        private readonly PluralRule _rule;
         private int _innerIndent;
 
         public RuleGenerator(PluralRule rule)
         {
             _rule = rule;
-            _initializedSymbols = new List<OperandSymbol>();
             _innerIndent = 0;
         }
 
@@ -30,26 +28,11 @@ namespace Jeffijoe.MessageFormat.MetadataGenerator.Plural.SourceGeneration
 
         private void WriteOther(StringBuilder builder, int indent)
         {
-            if (_rule.Conditions.Length > 0)
-                WriteLine(builder, string.Empty, indent);
-
             WriteLine(builder, "return \"other\";", indent);
         }
 
         private void WriteNext(Condition condition, StringBuilder builder, int indent)
         {
-            foreach (var operand in GetAllLeftOperands(condition.OrConditions))
-            {
-                if(!_initializedSymbols.Contains(operand))
-                {
-                    var line = InitializeValue(operand);
-                    WriteLine(builder, line, indent);
-                    _initializedSymbols.Add(operand);
-                }
-            }
-
-            WriteLine(builder, string.Empty, indent);
-
             if(condition.OrConditions.Length > 0)
             {
                 builder.Append(' ', _innerIndent + indent);
@@ -73,6 +56,8 @@ namespace Jeffijoe.MessageFormat.MetadataGenerator.Plural.SourceGeneration
                 _innerIndent += 4;
                 WriteLine(builder, $"return \"{condition.Count}\";", indent);
                 _innerIndent -= 4;
+
+                WriteLine(builder, string.Empty, indent);
             }
             else
             {
@@ -94,8 +79,8 @@ namespace Jeffijoe.MessageFormat.MetadataGenerator.Plural.SourceGeneration
 
                     var leftVariable = andCondition.OperandLeft switch
                     {
-                        VariableOperand op => OperandToVariable(op.Operand).ToString(),
-                        ModuloOperand op => $"{OperandToVariable(op.Operand)} % {op.ModValue}",
+                        VariableOperand op => $"context.{OperandToVariable(op.Operand)}",
+                        ModuloOperand op => $"context.{OperandToVariable(op.Operand)} % {op.ModValue}",
                         var otherOp => throw new InvalidOperationException($"Unknown operation {otherOp.GetType()}")
                     };
 
@@ -130,21 +115,15 @@ namespace Jeffijoe.MessageFormat.MetadataGenerator.Plural.SourceGeneration
         {
             return operand switch
             {
-                OperandSymbol.AbsoluteValue => 'n',
-                OperandSymbol.VisibleFractionDigitNumber => 'v',
-                OperandSymbol.IntegerDigits => 'i',
+                OperandSymbol.AbsoluteValue => 'N',
+                OperandSymbol.IntegerDigits => 'I',
+                OperandSymbol.VisibleFractionDigitNumber => 'V',
+                OperandSymbol.VisibleFractionDigitNumberWithoutTrailingZeroes => 'W',
+                OperandSymbol.VisibleFractionDigits => 'F',
+                OperandSymbol.VisibleFractionDigitsWithoutTrailingZeroes => 'T',
+                OperandSymbol.ExponentC => 'C',
+                OperandSymbol.ExponentE => 'E',
                 _ => throw new InvalidOperationException($"Unknown variable {operand}")
-            };
-        }
-
-        private string InitializeValue(OperandSymbol operand)
-        {
-            return operand switch
-            {
-                OperandSymbol.AbsoluteValue => "var n = Math.Abs(value);",
-                OperandSymbol.VisibleFractionDigitNumber => "var v = (int)value == value ? 0 : 1;",
-                OperandSymbol.IntegerDigits => "var i = (int)value;",
-                var otherSymbol => throw new InvalidOperationException($"Unknown operand symbol {otherSymbol}")
             };
         }
 

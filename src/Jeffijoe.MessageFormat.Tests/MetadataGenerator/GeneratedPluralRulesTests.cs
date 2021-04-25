@@ -31,7 +31,7 @@ namespace Jeffijoe.MessageFormat.Tests.MetadataGenerator
                     },
                     new FormatterExtension[0]);
             var request = new FormatterRequest(new Literal(1, 1, 1, 1, new StringBuilder()), "test", "plural", null);
-            var actual = subject.Pluralize("uk", arguments, Convert.ToDouble(args[request.Variable]), 0);
+            var actual = subject.Pluralize("uk", arguments, new PluralContext(Convert.ToDecimal(Convert.ToDouble(args[request.Variable]))), 0);
             Assert.Equal(expected, actual);
         }
 
@@ -56,7 +56,7 @@ namespace Jeffijoe.MessageFormat.Tests.MetadataGenerator
                     },
                     new FormatterExtension[0]);
             var request = new FormatterRequest(new Literal(1, 1, 1, 1, new StringBuilder()), "test", "plural", null);
-            var actual = subject.Pluralize("ru", arguments, Convert.ToDouble(args[request.Variable]), 0);
+            var actual = subject.Pluralize("ru", arguments, new PluralContext(Convert.ToDecimal(args[request.Variable])), 0);
             Assert.Equal(expected, actual);
         }
         
@@ -79,7 +79,7 @@ namespace Jeffijoe.MessageFormat.Tests.MetadataGenerator
                     },
                     new FormatterExtension[0]);
             var request = new FormatterRequest(new Literal(1, 1, 1, 1, new StringBuilder()), "test", "plural", null);
-            var actual = subject.Pluralize("en", arguments, Convert.ToDouble(args[request.Variable]), 0);
+            var actual = subject.Pluralize("en", arguments, new PluralContext(Convert.ToDecimal(args[request.Variable])), 0);
             Assert.Equal(expected, actual);
         }
     }

@@ -221,6 +221,29 @@ namespace Jeffijoe.MessageFormat.Tests.MetadataGenerator
             AssertOperationEqual(expected, actual);
         }
 
+        [Theory]
+        [InlineData('n', OperandSymbol.AbsoluteValue)]
+        [InlineData('i', OperandSymbol.IntegerDigits)]
+        [InlineData('v', OperandSymbol.VisibleFractionDigitNumber)]
+        [InlineData('w', OperandSymbol.VisibleFractionDigitNumberWithoutTrailingZeroes)]
+        [InlineData('f', OperandSymbol.VisibleFractionDigits)]
+        [InlineData('t', OperandSymbol.VisibleFractionDigitsWithoutTrailingZeroes)]
+        [InlineData('c', OperandSymbol.ExponentC)]
+        [InlineData('e', OperandSymbol.ExponentE)]
+        public void MapsVariable_ToCorrectOperator(char variable, OperandSymbol symbol)
+        {
+            var rules = ParseRules(
+                GenerateXmlWithRuleContent($"{variable} = 3"));
+            var rule = Assert.Single(rules);
+            var condition = Assert.Single(rule.Conditions);
+            var orCondition = Assert.Single(condition.OrConditions);
+            var actual = Assert.Single(orCondition.AndConditions);
+            var right = new IRightOperand[] { new NumberOperand(3) };
+            var expected = new Operation(new VariableOperand(symbol), Relation.Equals, right);
+
+            AssertOperationEqual(expected, actual);
+        }
+
         private static string GenerateXmlWithRuleContent(string ruleText)
         {
             return $@"

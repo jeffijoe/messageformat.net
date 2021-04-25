@@ -36,9 +36,7 @@ namespace Jeffijoe.MessageFormat.Tests.MetadataGenerator
 
             var actual = GenerateText(generator);
             var expected = @$"
-var v = (int)value == value ? 0 : 1;
-
-if ((v == 0))
+if ((context.V == 0))
     return ""one"";
 
 return ""other"";
@@ -62,9 +60,7 @@ return ""other"";
 
             var actual = GenerateText(generator);
             var expected = @$"
-var i = (int)value;
-
-if ((i == 1))
+if ((context.I == 1))
     return ""one"";
 
 return ""other"";
@@ -88,9 +84,7 @@ return ""other"";
 
             var actual = GenerateText(generator);
             var expected = @$"
-var i = (int)value;
-
-if ((i % 5 == 1))
+if ((context.I % 5 == 1))
     return ""one"";
 
 return ""other"";
@@ -114,9 +108,7 @@ return ""other"";
 
             var actual = GenerateText(generator);
             var expected = @$"
-var n = Math.Abs(value);
-
-if ((n == 5))
+if ((context.N == 5))
     return ""one"";
 
 return ""other"";
@@ -140,9 +132,7 @@ return ""other"";
 
             var actual = GenerateText(generator);
             var expected = @$"
-var n = Math.Abs(value);
-
-if ((n != 5))
+if ((context.N != 5))
     return ""one"";
 
 return ""other"";
@@ -166,9 +156,7 @@ return ""other"";
 
             var actual = GenerateText(generator);
             var expected = @$"
-var n = Math.Abs(value);
-
-if ((n >= 5 && n <= 6 || n == 10))
+if ((context.N >= 5 && context.N <= 6 || context.N == 10))
     return ""one"";
 
 return ""other"";
@@ -192,9 +180,7 @@ return ""other"";
 
             var actual = GenerateText(generator);
             var expected = @$"
-var n = Math.Abs(value);
-
-if (((n < 5 || n > 6) && n != 10))
+if (((context.N < 5 || context.N > 6) && context.N != 10))
     return ""one"";
 
 return ""other"";
@@ -219,10 +205,7 @@ return ""other"";
 
             var actual = GenerateText(generator);
             var expected = @$"
-var n = Math.Abs(value);
-var v = (int)value == value ? 0 : 1;
-
-if ((n == 4) && (v == 0))
+if ((context.N == 4) && (context.V == 0))
     return ""one"";
 
 return ""other"";
@@ -247,10 +230,7 @@ return ""other"";
 
             var actual = GenerateText(generator);
             var expected = @$"
-var n = Math.Abs(value);
-var v = (int)value == value ? 0 : 1;
-
-if ((n >= 4 && n <= 5) && (v == 0))
+if ((context.N >= 4 && context.N <= 5) && (context.V == 0))
     return ""one"";
 
 return ""other"";
@@ -278,10 +258,7 @@ return ""other"";
 
             var actual = GenerateText(generator);
             var expected = @$"
-var n = Math.Abs(value);
-var v = (int)value == value ? 0 : 1;
-
-if ((n == 4) || (v == 0))
+if ((context.N == 4) || (context.V == 0))
     return ""one"";
 
 return ""other"";
@@ -310,10 +287,7 @@ return ""other"";
 
             var actual = GenerateText(generator);
             var expected = @$"
-var n = Math.Abs(value);
-var v = (int)value == value ? 0 : 1;
-
-if ((n == 4) && (v != 0) || (v == 0))
+if ((context.N == 4) && (context.V != 0) || (context.V == 0))
     return ""one"";
 
 return ""other"";
@@ -342,10 +316,7 @@ return ""other"";
 
             var actual = GenerateText(generator);
             var expected = @$"
-var n = Math.Abs(value);
-var v = (int)value == value ? 0 : 1;
-
-if ((n >= 4 && n <= 5) && (v != 0) || (v == 0))
+if ((context.N >= 4 && context.N <= 5) && (context.V != 0) || (context.V == 0))
     return ""one"";
 
 return ""other"";
