@@ -36,7 +36,7 @@ namespace Jeffijoe.MessageFormat.Formatting.Formatters
             N = Math.Abs(parsed);
             I = (int) parsed;
 
-            var dotIndex = number.IndexOf(".", StringComparison.InvariantCulture);
+            var dotIndex = number.IndexOf('.');
             if (dotIndex == -1)
             {
                 V = 0;
