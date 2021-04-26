@@ -121,10 +121,15 @@ namespace Jeffijoe.MessageFormat.Formatting.Formatters
                     return new PluralContext(i);
                 }
 
-                return new PluralContext(Convert.ToDecimal(value));
+                if (value is decimal d)
+                {
+                    return new PluralContext(d);
+                }
+
+                return new PluralContext(Convert.ToDouble(value));
             }
 
-            return new PluralContext(Convert.ToDecimal(value) - (decimal) offset);
+            return new PluralContext(Convert.ToDouble(value) - offset);
         }
 
         #endregion

@@ -22,6 +22,10 @@ namespace Jeffijoe.MessageFormat.Formatting.Formatters
         {
         }
 
+        public PluralContext(double number) : this(number.ToString(CultureInfo.InvariantCulture), number)
+        {
+        }
+
         public PluralContext(string number) : this(number, double.Parse(number, CultureInfo.InvariantCulture))
         {
         }
