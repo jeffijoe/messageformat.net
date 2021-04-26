@@ -33,7 +33,7 @@ using System;
 using System.Collections.Generic;
 namespace Jeffijoe.MessageFormat.Formatting.Formatters
 {
-    public static partial class PluralRulesMetadata
+    internal static partial class PluralRulesMetadata
     {
         public static string Locale_EN(PluralContext context) => Rule0(context);
         

@@ -14,7 +14,7 @@ namespace Jeffijoe.MessageFormat.Formatting.Formatters
     /// <summary>
     ///     Given the specified number context, determines what plural form is being used.
     /// </summary>
-    /// <param name="n">The context of the number used to determine the pluralization rule..</param>
+    /// <param name="context">The context of the number used to determine the pluralization rule..</param>
     /// <returns>The plural form to use.</returns>
-    public delegate string ContextPluralizer(PluralContext context);
+    internal delegate string ContextPluralizer(PluralContext context);
 }

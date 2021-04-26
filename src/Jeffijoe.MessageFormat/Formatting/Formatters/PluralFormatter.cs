@@ -148,6 +148,9 @@ namespace Jeffijoe.MessageFormat.Formatting.Formatters
         /// <param name="context">
         ///     The plural context.
         /// </param>
+        /// <param name="offset">
+        ///     The offset (already applied in context).
+        /// </param>
         /// <returns>
         ///     The <see cref="string" />.
         /// </returns>

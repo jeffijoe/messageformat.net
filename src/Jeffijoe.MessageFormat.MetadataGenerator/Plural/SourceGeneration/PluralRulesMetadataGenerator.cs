@@ -25,7 +25,7 @@ namespace Jeffijoe.MessageFormat.MetadataGenerator.Plural.SourceGeneration
             WriteLine("{");
             AddIndent();
 
-            WriteLine("public static partial class PluralRulesMetadata");
+            WriteLine("internal static partial class PluralRulesMetadata");
             WriteLine("{");
             AddIndent();
 

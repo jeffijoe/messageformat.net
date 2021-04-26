@@ -3,7 +3,7 @@ using System.Globalization;
 
 namespace Jeffijoe.MessageFormat.Formatting.Formatters
 {
-    public readonly struct PluralContext
+    internal readonly struct PluralContext
     {
         public PluralContext(int number)
         {
