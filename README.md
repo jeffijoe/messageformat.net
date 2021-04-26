@@ -74,6 +74,7 @@ Install-Package MessageFormat
   and if you are reusing the same instance of `MessageFormatter`, the formatter will cache the tokens of each pattern (nested, too),
   so it won't have to spend CPU time to parse out literals every time. I benchmarked it, and on my monster machine,
   it didn't make much of a difference (10000 iterations).
+* **Built-in pluralization formatters**. Generated from the [CLDR pluralization rule data](http://cldr.unicode.org/index/downloads).
 
 ## Performance
 
@@ -148,12 +149,6 @@ be (somewhat) compatible with his.
 
 If you have issues with the library, and the exception makes no sense, please open an issue
 and include your message, as well as the data you used.
-
-# Todo
-
-* Built-in locales (currently only `en` is added per default).
-
-Don't expect this in the near future - you're welcome to submit a PR. :)
 
 # Author
 
