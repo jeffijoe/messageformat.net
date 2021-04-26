@@ -10,11 +10,11 @@
   	<RepositoryUrl>https://github.com/jeffijoe/messageformat.net</RepositoryUrl>
   	<LangVersion>latest</LangVersion>
   	<Nullable>enable</Nullable>
-  	<TargetFramework>netstandard1.1</TargetFramework>
+  	<TargetFrameworks>netstandard2.0;net5.0</TargetFrameworks>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DocumentationFile>bin/Release/netstandard1.1/Jeffijoe.MessageFormat.xml</DocumentationFile>
+    <DocumentationFile>bin/$(Configuration)/$(TargetFramework)/$(AssemblyName).xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
@@ -23,4 +23,16 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
   </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../Jeffijoe.MessageFormat.MetadataGenerator/Jeffijoe.MessageFormat.MetadataGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <PluralLanguagesMetadataExcludeLocales></PluralLanguagesMetadataExcludeLocales>
+  </PropertyGroup>
+  <ItemGroup>
+    <CompilerVisibleProperty Include="PluralLanguagesMetadataExcludeLocales" />
+  </ItemGroup>
+
 </Project>
