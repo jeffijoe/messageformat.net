@@ -68,7 +68,7 @@ namespace Jeffijoe.MessageFormat.MetadataGenerator.Plural.Parsing
                 }
             }
 
-            return new PluralRule(locales, conditions.ToArray());
+            return new PluralRule(locales, conditions);
         }
     }
 }

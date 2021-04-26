@@ -6,7 +6,7 @@ namespace Jeffijoe.MessageFormat.MetadataGenerator.Plural.Parsing
 {
     public class RuleParser
     {
-        private string _ruleText;
+        private readonly string _ruleText;
         private int _position;
 
         public RuleParser(string ruleText)
@@ -14,7 +14,7 @@ namespace Jeffijoe.MessageFormat.MetadataGenerator.Plural.Parsing
             _ruleText = ruleText;
         }
 
-        public OrCondition[] ParseRuleContent()
+        public IReadOnlyList<OrCondition> ParseRuleContent()
         {
             var conditions = new List<OrCondition>();
 
@@ -22,7 +22,7 @@ namespace Jeffijoe.MessageFormat.MetadataGenerator.Plural.Parsing
             {
                 if (PeekCurrentChar == '@')
                 {
-                    return conditions.ToArray();
+                    return conditions;
                 }
 
                 var condition = ParseOrCondition();
@@ -32,7 +32,7 @@ namespace Jeffijoe.MessageFormat.MetadataGenerator.Plural.Parsing
                 
                 if (IsEnd)
                 {
-                    return conditions.ToArray();
+                    return conditions;
                 }
 
                 var character = ConsumeChar();
@@ -40,7 +40,7 @@ namespace Jeffijoe.MessageFormat.MetadataGenerator.Plural.Parsing
                 // This is where the samples start, we don't care about any of those.
                 if (character == '@')
                 {
-                    return conditions.ToArray();
+                    return conditions;
                 }
 
                 // We expect the next token to be "or"
@@ -53,7 +53,7 @@ namespace Jeffijoe.MessageFormat.MetadataGenerator.Plural.Parsing
                 throw new InvalidCharacterException(character);
             }
 
-            return conditions.ToArray();
+            return conditions;
         }
 
         private static readonly char NullCharacter = '\0';
@@ -163,7 +163,7 @@ namespace Jeffijoe.MessageFormat.MetadataGenerator.Plural.Parsing
             return new Operation(leftOperand, relation, rightOperand);
         }
 
-        private IRightOperand[] ParseRightOperand()
+        private IReadOnlyList<IRightOperand> ParseRightOperand()
         {
             var numbers = new List<IRightOperand>();
 
@@ -204,7 +204,7 @@ namespace Jeffijoe.MessageFormat.MetadataGenerator.Plural.Parsing
                 }
             }
 
-            return numbers.ToArray();
+            return numbers;
         }
 
         private OrCondition ParseOrCondition()
@@ -232,10 +232,10 @@ namespace Jeffijoe.MessageFormat.MetadataGenerator.Plural.Parsing
                     throw new InvalidCharacterException(andWord[0]);
                 }
 
-                return new OrCondition(andConditions.ToArray());
+                return new OrCondition(andConditions);
             }
 
-            return new OrCondition(andConditions.ToArray());
+            return new OrCondition(andConditions);
         }
 
         private int ParseNumber()

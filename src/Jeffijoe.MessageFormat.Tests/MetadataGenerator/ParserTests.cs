@@ -123,7 +123,7 @@ namespace Jeffijoe.MessageFormat.Tests.MetadataGenerator
             var rule = Assert.Single(rules);
             var condition = Assert.Single(rule.Conditions);
             
-            Assert.Equal(3, condition.OrConditions.Length);
+            Assert.Equal(3, condition.OrConditions.Count);
 
             var actualFirst = Assert.Single(condition.OrConditions[0].AndConditions);
             var expectedFirst = new Operation(new VariableOperand(OperandSymbol.AbsoluteValue), Relation.Equals, new[] { new NumberOperand(2) });
@@ -146,7 +146,7 @@ namespace Jeffijoe.MessageFormat.Tests.MetadataGenerator
             var condition = Assert.Single(rule.Conditions);
 
             var orCondition = Assert.Single(condition.OrConditions);
-            Assert.Equal(3, orCondition.AndConditions.Length);
+            Assert.Equal(3, orCondition.AndConditions.Count);
 
             var actualFirst = orCondition.AndConditions[0];
             var expectedFirst = new Operation(new VariableOperand(OperandSymbol.AbsoluteValue), Relation.Equals, new[] { new NumberOperand(2) });

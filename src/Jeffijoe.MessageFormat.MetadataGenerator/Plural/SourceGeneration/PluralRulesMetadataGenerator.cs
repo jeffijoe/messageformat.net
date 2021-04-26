@@ -1,15 +1,16 @@
-﻿using System.Text;
+﻿using System.Collections.Generic;
+using System.Text;
 using Jeffijoe.MessageFormat.MetadataGenerator.Plural.Parsing.AST;
 
 namespace Jeffijoe.MessageFormat.MetadataGenerator.Plural.SourceGeneration
 {
     public class PluralRulesMetadataGenerator
     {
-        private readonly PluralRule[] _rules;
+        private readonly IReadOnlyList<PluralRule> _rules;
         private readonly StringBuilder _sb;
         private int _indent;
 
-        public PluralRulesMetadataGenerator(PluralRule[] rules)
+        public PluralRulesMetadataGenerator(IReadOnlyList<PluralRule> rules)
         {
             _rules = rules;
             _sb = new StringBuilder();
@@ -28,7 +29,7 @@ namespace Jeffijoe.MessageFormat.MetadataGenerator.Plural.SourceGeneration
             WriteLine("{");
             AddIndent();
 
-            for (var ruleIdx = 0; ruleIdx < _rules.Length; ruleIdx++)
+            for (var ruleIdx = 0; ruleIdx < _rules.Count; ruleIdx++)
             {
                 var rule = _rules[ruleIdx];
 
@@ -55,7 +56,7 @@ namespace Jeffijoe.MessageFormat.MetadataGenerator.Plural.SourceGeneration
             WriteLine("{");
             AddIndent();
 
-            for (int ruleIdx = 0; ruleIdx < _rules.Length; ruleIdx++)
+            for (int ruleIdx = 0; ruleIdx < _rules.Count; ruleIdx++)
             {
                 PluralRule rule = _rules[ruleIdx];
                 foreach (var locale in rule.Locales)

@@ -33,15 +33,15 @@ namespace Jeffijoe.MessageFormat.MetadataGenerator.Plural.SourceGeneration
 
         private void WriteNext(Condition condition, StringBuilder builder, int indent)
         {
-            if(condition.OrConditions.Length > 0)
+            if(condition.OrConditions.Count > 0)
             {
                 builder.Append(' ', _innerIndent + indent);
                 builder.Append("if (");
 
-                for (int orIdx = 0; orIdx < condition.OrConditions.Length; orIdx++)
+                for (int orIdx = 0; orIdx < condition.OrConditions.Count; orIdx++)
                 {
                     OrCondition orCondition = condition.OrConditions[orIdx];
-                    var orIsLast = orIdx == condition.OrConditions.Length - 1;
+                    var orIsLast = orIdx == condition.OrConditions.Count - 1;
 
                     WriteOrCondition(builder, orCondition);
 
@@ -67,15 +67,15 @@ namespace Jeffijoe.MessageFormat.MetadataGenerator.Plural.SourceGeneration
 
         private void WriteOrCondition(StringBuilder builder, OrCondition orCondition)
         {
-            for (int andIdx = 0; andIdx < orCondition.AndConditions.Length; andIdx++)
+            for (int andIdx = 0; andIdx < orCondition.AndConditions.Count; andIdx++)
             {
-                var andIsLast = andIdx == orCondition.AndConditions.Length - 1;
+                var andIsLast = andIdx == orCondition.AndConditions.Count - 1;
                 Operation andCondition = orCondition.AndConditions[andIdx];
                 builder.Append('(');
 
-                for (int innerOrIdx = 0; innerOrIdx < andCondition.OperandRight.Length; innerOrIdx++)
+                for (int innerOrIdx = 0; innerOrIdx < andCondition.OperandRight.Count; innerOrIdx++)
                 {
-                    var isLast = innerOrIdx == andCondition.OperandRight.Length - 1;
+                    var isLast = innerOrIdx == andCondition.OperandRight.Count - 1;
 
                     var leftVariable = andCondition.OperandLeft switch
                     {

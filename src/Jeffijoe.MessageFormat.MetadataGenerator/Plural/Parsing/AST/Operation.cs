@@ -1,8 +1,10 @@
-﻿namespace Jeffijoe.MessageFormat.MetadataGenerator.Plural.Parsing.AST
+﻿using System.Collections.Generic;
+
+namespace Jeffijoe.MessageFormat.MetadataGenerator.Plural.Parsing.AST
 {
     public class Operation
     {
-        public Operation(ILeftOperand operandLeft, Relation relation, IRightOperand[] operandRight)
+        public Operation(ILeftOperand operandLeft, Relation relation, IReadOnlyList<IRightOperand> operandRight)
         {
             OperandLeft = operandLeft;
             Relation = relation;
@@ -13,6 +15,6 @@
 
         public Relation Relation { get; }
 
-        public IRightOperand[] OperandRight { get; }
+        public IReadOnlyList<IRightOperand> OperandRight { get; }
     }
 }

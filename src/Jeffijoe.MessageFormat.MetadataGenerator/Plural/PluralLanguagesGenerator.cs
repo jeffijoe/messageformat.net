@@ -5,6 +5,7 @@ using Jeffijoe.MessageFormat.MetadataGenerator.Plural.SourceGeneration;
 using Microsoft.CodeAnalysis;
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml;
@@ -35,7 +36,7 @@ namespace Jeffijoe.MessageFormat.MetadataGenerator.Plural
             return Array.Empty<string>();
         }
 
-        private PluralRule[] GetRules(string[] excludedLocales)
+        private IReadOnlyList<PluralRule> GetRules(string[] excludedLocales)
         {
             using var rulesStream = GetRulesContentStream();
             var xml = new XmlDocument();

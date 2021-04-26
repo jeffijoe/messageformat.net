@@ -1,11 +1,12 @@
-﻿using System.Diagnostics;
+﻿using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Jeffijoe.MessageFormat.MetadataGenerator.Plural.Parsing.AST
 {
     [DebuggerDisplay("{{RuleDescription}}")]
     public class Condition
     {
-        public Condition(string count, string ruleDescription, OrCondition[] orConditions)
+        public Condition(string count, string ruleDescription, IReadOnlyList<OrCondition> orConditions)
         {
             Count = count;
             RuleDescription = ruleDescription;
@@ -16,6 +17,6 @@ namespace Jeffijoe.MessageFormat.MetadataGenerator.Plural.Parsing.AST
 
         public string RuleDescription { get; }
 
-        public OrCondition[] OrConditions { get; }
+        public IReadOnlyList<OrCondition> OrConditions { get; }
     }
 }

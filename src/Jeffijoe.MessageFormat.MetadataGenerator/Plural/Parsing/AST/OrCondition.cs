@@ -1,12 +1,14 @@
-﻿namespace Jeffijoe.MessageFormat.MetadataGenerator.Plural.Parsing.AST
+﻿using System.Collections.Generic;
+
+namespace Jeffijoe.MessageFormat.MetadataGenerator.Plural.Parsing.AST
 {
     public class OrCondition
     {
-        public OrCondition(Operation[] andConditions)
+        public OrCondition(IReadOnlyList<Operation> andConditions)
         {
             AndConditions = andConditions;
         }
 
-        public Operation[] AndConditions { get; }
+        public IReadOnlyList<Operation> AndConditions { get; }
     }
 }
