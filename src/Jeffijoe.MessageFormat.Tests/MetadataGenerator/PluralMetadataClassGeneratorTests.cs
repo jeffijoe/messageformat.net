@@ -49,8 +49,8 @@ namespace Jeffijoe.MessageFormat.Formatting.Formatters
         
         private static readonly Dictionary<string, ContextPluralizer> Pluralizers = new Dictionary<string, ContextPluralizer>()
         {
-            {""en"", (ContextPluralizer) Rule0},
-            {""uk"", (ContextPluralizer) Rule0},
+            {""en"", Rule0},
+            {""uk"", Rule0},
             
         };
         

@@ -60,7 +60,7 @@ namespace Jeffijoe.MessageFormat.MetadataGenerator.Plural.SourceGeneration
                 PluralRule rule = _rules[ruleIdx];
                 foreach (var locale in rule.Locales)
                 {
-                    WriteLine($"{{\"{locale}\", (ContextPluralizer) Rule{ruleIdx}}},");
+                    WriteLine($"{{\"{locale}\", Rule{ruleIdx}}},");
                 }
 
                 WriteLine(string.Empty);
