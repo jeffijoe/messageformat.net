@@ -295,11 +295,16 @@ namespace Jeffijoe.MessageFormat
                 return string.Empty;
             }
 
-            var length = sourceBuilder.Length;
             const char EscapingChar = '\'';
             const char OpenBrace = '{';
             const char CloseBrace = '}';
 
+            if (!sourceBuilder.Contains(EscapingChar))
+            {
+                return sourceBuilder.ToString();
+            }
+
+            var length = sourceBuilder.Length;
             var braceBalance = 0;
             var insideEscapeSequence = false;
 
