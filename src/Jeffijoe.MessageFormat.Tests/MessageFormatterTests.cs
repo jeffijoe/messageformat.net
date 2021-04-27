@@ -101,6 +101,8 @@ namespace Jeffijoe.MessageFormat.Tests
             this.formatterMock1.Setup(x => x.Format("en", requests[0], args, "Jeff", this.subject)).Returns("Jeff");
             this.formatterMock2.Setup(x => x.Format("en", requests[1], args, 1, this.subject)).Returns("123 messages");
             this.collectionMock.Setup(x => x.GetEnumerator()).Returns(requests.AsEnumerable().GetEnumerator());
+            this.collectionMock.Setup(x => x.Count).Returns(requests.Length);
+            this.collectionMock.Setup(x => x[It.IsAny<int>()]).Returns((int i) => requests[i]);
             this.libraryMock.Setup(x => x.GetFormatter(requests[0])).Returns(this.formatterMock1.Object);
             this.libraryMock.Setup(x => x.GetFormatter(requests[1])).Returns(this.formatterMock2.Object);
             this.patternParserMock.Setup(x => x.Parse(It.IsAny<StringBuilder>())).Returns(this.collectionMock.Object);
@@ -163,6 +165,8 @@ namespace Jeffijoe.MessageFormat.Tests
             };
 
             this.collectionMock.Setup(x => x.GetEnumerator()).Returns(() => requests.AsEnumerable().GetEnumerator());
+            this.collectionMock.Setup(x => x.Count).Returns(requests.Length);
+            this.collectionMock.Setup(x => x[It.IsAny<int>()]).Returns((int i) => requests[i]);
             this.patternParserMock.Setup(x => x.Parse(It.IsAny<StringBuilder>())).Returns(this.collectionMock.Object);
             this.formatterMock1.SetupGet(x => x.VariableMustExist).Returns(true);
             this.libraryMock.Setup(x => x.GetFormatter(It.IsAny<FormatterRequest>())).Returns(formatterMock1.Object);
@@ -197,6 +201,8 @@ namespace Jeffijoe.MessageFormat.Tests
             };
 
             this.collectionMock.Setup(x => x.GetEnumerator()).Returns(() => requests.AsEnumerable().GetEnumerator());
+            this.collectionMock.Setup(x => x.Count).Returns(requests.Length);
+            this.collectionMock.Setup(x => x[It.IsAny<int>()]).Returns((int i) => requests[i]);
             this.patternParserMock.Setup(x => x.Parse(It.IsAny<StringBuilder>())).Returns(this.collectionMock.Object);
             this.libraryMock.Setup(x => x.GetFormatter(It.IsAny<FormatterRequest>())).Returns(formatterMock2.Object);
             this.formatterMock2.SetupGet(x => x.VariableMustExist).Returns(false);

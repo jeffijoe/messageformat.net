@@ -215,16 +215,9 @@ namespace Jeffijoe.MessageFormat
              */
             var sourceBuilder = new StringBuilder(pattern);
             var requests = this.ParseRequests(pattern, sourceBuilder);
-            var requestsEnumerated = requests.ToArray();
+            var requestsEnumerated = requests;
 
-            // If we got no formatters, then we only need to unescape the literals.
-            if (requestsEnumerated.Length == 0)
-            {
-                sourceBuilder = this.UnescapeLiterals(sourceBuilder);
-                return sourceBuilder.ToString();
-            }
-
-            for (int i = 0; i < requestsEnumerated.Length; i++)
+            for (int i = 0; i < requestsEnumerated.Count; i++)
             {
                 var request = requestsEnumerated[i];
 
@@ -297,7 +290,7 @@ namespace Jeffijoe.MessageFormat
             // If the block is empty, do nothing.
             if (sourceBuilder.Length == 0)
             {
-                return new StringBuilder();
+                return sourceBuilder;
             }
 
             var dest = new StringBuilder(sourceBuilder.Length, sourceBuilder.Length);
@@ -307,6 +300,7 @@ namespace Jeffijoe.MessageFormat
             const char CloseBrace = '}';
             var braceBalance = 0;
             var insideEscapeSequence = false;
+
             for (int i = 0; i < length; i++)
             {
                 var c = sourceBuilder[i];

@@ -12,7 +12,7 @@ namespace Jeffijoe.MessageFormat.Parsing
     /// <summary>
     ///     Formatter requests collection.
     /// </summary>
-    public interface IFormatterRequestCollection : IEnumerable<FormatterRequest>
+    public interface IFormatterRequestCollection : IReadOnlyList<FormatterRequest>
     {
         #region Public Methods and Operators
 
