@@ -82,7 +82,7 @@ namespace Jeffijoe.MessageFormat.Parsing
                     if (formatterKey != null)
                     {
                         formatterArgs =
-                            literal.InnerText.ToString(lastIndex + 1, literal.InnerText.Length - lastIndex - 1).Trim();
+                            literal.InnerText.Substring(lastIndex + 1, literal.InnerText.Length - lastIndex - 1).Trim();
                     }
                 }
 
