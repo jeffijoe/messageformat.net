@@ -62,14 +62,13 @@ namespace Jeffijoe.MessageFormat.Formatting
             
             int length = request.FormatterArguments.Length;
             index = 0;
+            const char Colon = ':';
+            bool foundExtension = false;
 
             var extension = StringBuilderPool.Get();
             var value = StringBuilderPool.Get();
-
             try
             {
-                const char Colon = ':';
-                bool foundExtension = false;
                 for (int i = 0; i < length; i++)
                 {
                     var c = request.FormatterArguments[i];
