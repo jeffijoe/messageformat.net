@@ -47,7 +47,7 @@ namespace Jeffijoe.MessageFormat.Formatting
         /// <value>
         ///     The formatter arguments.
         /// </value>
-        public string? FormatterArguments { get; private set; }
+        public string? FormatterArguments { get; }
 
         /// <summary>
         ///     Gets the name of the formatter to use . e.g. 'select', 'plural'. Can be null.
@@ -55,7 +55,7 @@ namespace Jeffijoe.MessageFormat.Formatting
         /// <value>
         ///     The name of the formatter.
         /// </value>
-        public string? FormatterName { get; private set; }
+        public string? FormatterName { get; }
 
         /// <summary>
         ///     Gets the source literal.
@@ -63,7 +63,7 @@ namespace Jeffijoe.MessageFormat.Formatting
         /// <value>
         ///     The source literal.
         /// </value>
-        public Literal SourceLiteral { get; private set; }
+        public Literal SourceLiteral { get; }
 
         /// <summary>
         ///     Gets the variable name. Never null.
@@ -71,7 +71,7 @@ namespace Jeffijoe.MessageFormat.Formatting
         /// <value>
         ///     The variable.
         /// </value>
-        public string Variable { get; private set; }
+        public string Variable { get; }
 
         #endregion
 

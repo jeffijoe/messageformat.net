@@ -215,17 +215,12 @@ namespace Jeffijoe.MessageFormat
              */
             var sourceBuilder = new StringBuilder(pattern);
             var requests = this.ParseRequests(pattern, sourceBuilder);
-            var requestsEnumerated = requests;
 
-            for (int i = 0; i < requestsEnumerated.Count; i++)
+            for (int i = 0; i < requests.Count; i++)
             {
-                var request = requestsEnumerated[i];
+                var request = requests[i];
 
                 var formatter = this.Formatters.GetFormatter(request);
-                if (formatter == null)
-                {
-                    throw new FormatterNotFoundException(request);
-                }
 
                 if (args.TryGetValue(request.Variable, out var value) == false && formatter.VariableMustExist)
                 {
@@ -298,6 +293,7 @@ namespace Jeffijoe.MessageFormat
             const char EscapingChar = '\'';
             const char OpenBrace = '{';
             const char CloseBrace = '}';
+
             var braceBalance = 0;
             var insideEscapeSequence = false;
 
@@ -397,6 +393,6 @@ namespace Jeffijoe.MessageFormat
             return requests;
         }
 
-        #endregion
+#endregion
     }
 }

@@ -23,7 +23,7 @@ namespace Jeffijoe.MessageFormat.Formatting
         /// <returns>
         ///     The <see cref="IFormatter" />.
         /// </returns>
-        IFormatter? GetFormatter(FormatterRequest request);
+        IFormatter GetFormatter(FormatterRequest request);
 
         #endregion
     }
