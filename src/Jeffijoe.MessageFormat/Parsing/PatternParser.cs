@@ -127,14 +127,14 @@ namespace Jeffijoe.MessageFormat.Parsing
             out int lastIndex)
         {
             const char Comma = ',';
-            var sb = StringBuilderPool.Get();
 
+            var innerText = literal.InnerText;
+            var column = literal.SourceColumnNumber;
+            var foundWhitespace = false;
+            lastIndex = 0;
+            var sb = StringBuilderPool.Get();
             try
             {
-                var innerText = literal.InnerText;
-                var column = literal.SourceColumnNumber;
-                var foundWhitespace = false;
-                lastIndex = 0;
                 for (var i = offset; i < innerText.Length; i++)
                 {
                     var c = innerText[i];
