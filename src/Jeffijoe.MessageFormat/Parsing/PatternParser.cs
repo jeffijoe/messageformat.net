@@ -81,8 +81,13 @@ namespace Jeffijoe.MessageFormat.Parsing
                     formatterKey = ReadLiteralSection(literal, variableName.Length + 1, true, out lastIndex);
                     if (formatterKey != null)
                     {
+#if NET5_0_OR_GREATER
+                        formatterArgs =
+                            literal.InnerText.AsSpan(lastIndex + 1, literal.InnerText.Length - lastIndex - 1).Trim().ToString();
+#else
                         formatterArgs =
                             literal.InnerText.Substring(lastIndex + 1, literal.InnerText.Length - lastIndex - 1).Trim();
+#endif
                     }
                 }
 
