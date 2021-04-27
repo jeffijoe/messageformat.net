@@ -69,12 +69,10 @@ namespace Jeffijoe.MessageFormat.Formatting.Formatters
         {
             switch (value)
             {
-                case null:
-                    return string.Empty;
                 case IFormattable formattable:
                     return formattable.ToString(null, GetCultureInfo(locale));
                 default:
-                    return value.ToString();
+                    return value?.ToString() ?? string.Empty;
             }
         }
 

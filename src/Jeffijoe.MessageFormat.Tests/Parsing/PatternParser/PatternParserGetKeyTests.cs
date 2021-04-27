@@ -52,12 +52,12 @@ namespace Jeffijoe.MessageFormat.Tests.Parsing
         {
             get
             {
-                yield return new object[] { new Literal(3, 10, 1, 3, new StringBuilder("Hellåw,")), 1, 8 };
-                yield return new object[] { new Literal(0, 0, 3, 3, new StringBuilder(",")), 3, 4 };
-                yield return new object[] { new Literal(0, 0, 3, 3, new StringBuilder(" hello dawg")), 0, 0 };
-                yield return new object[] { new Literal(0, 0, 3, 3, new StringBuilder("hello dawg ")), 0, 0 };
-                yield return new object[] { new Literal(0, 0, 3, 3, new StringBuilder(" hello dawg")), 0, 0 };
-                yield return new object[] { new Literal(0, 0, 3, 3, new StringBuilder(" hello\r\ndawg")), 0, 0 };
+                yield return new object[] { new Literal(3, 10, 1, 3, "Hellåw,"), 1, 8 };
+                yield return new object[] { new Literal(0, 0, 3, 3, ","), 3, 4 };
+                yield return new object[] { new Literal(0, 0, 3, 3, " hello dawg"), 0, 0 };
+                yield return new object[] { new Literal(0, 0, 3, 3, "hello dawg "), 0, 0 };
+                yield return new object[] { new Literal(0, 0, 3, 3, " hello dawg"), 0, 0 };
+                yield return new object[] { new Literal(0, 0, 3, 3, " hello\r\ndawg"), 0, 0 };
             }
         }
 
@@ -88,7 +88,7 @@ namespace Jeffijoe.MessageFormat.Tests.Parsing
         [InlineData("0", "0", 0)]
         public void ReadLiteralSection(string source, string expected, int expectedLastIndex)
         {
-            var literal = new Literal(10, 10, 1, 1, new StringBuilder(source));
+            var literal = new Literal(10, 10, 1, 1, source);
             int lastIndex;
             Assert.Equal(expected, PatternParser.ReadLiteralSection(literal, 0, false, out lastIndex));
             Assert.Equal(expectedLastIndex, lastIndex);
@@ -142,7 +142,7 @@ namespace Jeffijoe.MessageFormat.Tests.Parsing
         [InlineData("SupDawg,", null, 8)]
         public void ReadLiteralSection_with_offset(string source, string expected, int offset)
         {
-            var literal = new Literal(10, 10, 1, 1, new StringBuilder(source));
+            var literal = new Literal(10, 10, 1, 1, source);
             int lastIndex;
             Assert.Equal(expected, PatternParser.ReadLiteralSection(literal, offset, true, out lastIndex));
         }

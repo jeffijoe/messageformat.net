@@ -81,8 +81,13 @@ namespace Jeffijoe.MessageFormat.Parsing
                     formatterKey = ReadLiteralSection(literal, variableName.Length + 1, true, out lastIndex);
                     if (formatterKey != null)
                     {
+#if NET5_0_OR_GREATER
                         formatterArgs =
-                            literal.InnerText.ToString(lastIndex + 1, literal.InnerText.Length - lastIndex - 1).Trim();
+                            literal.InnerText.AsSpan(lastIndex + 1, literal.InnerText.Length - lastIndex - 1).Trim().ToString();
+#else
+                        formatterArgs =
+                            literal.InnerText.Substring(lastIndex + 1, literal.InnerText.Length - lastIndex - 1).Trim();
+#endif
                     }
                 }
 
@@ -122,85 +127,93 @@ namespace Jeffijoe.MessageFormat.Parsing
             out int lastIndex)
         {
             const char Comma = ',';
-            var sb = new StringBuilder();
+
             var innerText = literal.InnerText;
             var column = literal.SourceColumnNumber;
             var foundWhitespace = false;
             lastIndex = 0;
-            for (var i = offset; i < innerText.Length; i++)
+            var sb = StringBuilderPool.Get();
+            try
             {
-                var c = innerText[i];
-                column++;
-                lastIndex = i;
-                if (c == Comma)
+                for (var i = offset; i < innerText.Length; i++)
                 {
-                    break;
-                }
-
-                // Disregard whitespace.
-                var whitespace = c == ' ' || c == '\r' || c == '\n' || c == '\t';
-                if (!whitespace)
-                {
-                    if (c.IsAlphaNumeric() == false)
+                    var c = innerText[i];
+                    column++;
+                    lastIndex = i;
+                    if (c == Comma)
                     {
-                        var msg = string.Format("Invalid literal character '{0}'.", c);
-
-                        // Line number can't have changed.
-                        throw new MalformedLiteralException(msg, literal.SourceLineNumber, column,
-                            innerText.ToString());
+                        break;
                     }
-                }
-                else
-                {
-                    foundWhitespace = true;
+
+                    // Disregard whitespace.
+                    var whitespace = c == ' ' || c == '\r' || c == '\n' || c == '\t';
+                    if (!whitespace)
+                    {
+                        if (c.IsAlphaNumeric() == false)
+                        {
+                            var msg = string.Format("Invalid literal character '{0}'.", c);
+
+                            // Line number can't have changed.
+                            throw new MalformedLiteralException(msg, literal.SourceLineNumber, column,
+                                innerText.ToString());
+                        }
+                    }
+                    else
+                    {
+                        foundWhitespace = true;
+                    }
+
+                    sb.Append(c);
                 }
 
-                sb.Append(c);
-            }
-
-            if (sb.Length != 0)
-            {
-                // Trim whitespace from beginning and end of the string, if necessary.
-                if (!foundWhitespace)
+                if (sb.Length != 0)
                 {
+                    // Trim whitespace from beginning and end of the string, if necessary.
+                    if (!foundWhitespace)
+                    {
+                        return sb.ToString();
+                    }
+
+                    StringBuilder trimmed = sb.TrimWhitespace();
+                    if (trimmed.Length == 0)
+                    {
+                        if (allowEmptyResult)
+                        {
+                            return null;
+                        }
+
+                        throw new MalformedLiteralException(
+                            "Parsing the literal yielded a string that was pure whitespace.",
+                            literal.SourceLineNumber,
+                            column);
+                    }
+
+                    if (trimmed.ContainsWhitespace())
+                    {
+                        throw new MalformedLiteralException(
+                            "Parsed literal must not contain whitespace.",
+                            0,
+                            0,
+                            trimmed.ToString());
+                    }
+
                     return sb.ToString();
                 }
 
-                StringBuilder trimmed = sb.TrimWhitespace();
-                if (trimmed.Length == 0)
+                if (allowEmptyResult)
                 {
-                    if (allowEmptyResult)
-                    {
-                        return null;
-                    }
-
-                    throw new MalformedLiteralException(
-                        "Parsing the literal yielded a string that was pure whitespace.",
-                        literal.SourceLineNumber,
-                        column);
+                    return null;
                 }
 
-                if (trimmed.ContainsWhitespace())
-                {
-                    throw new MalformedLiteralException(
-                        "Parsed literal must not contain whitespace.",
-                        0,
-                        0,
-                        trimmed.ToString());
-                }
-
-                return sb.ToString();
+                throw new MalformedLiteralException(
+                    "Parsing the literal yielded an empty string.",
+                    literal.SourceLineNumber,
+                    column);
             }
-
-            if (allowEmptyResult)
+            finally
             {
-                return null;
+                StringBuilderPool.Return(sb);
             }
-
-            throw new MalformedLiteralException(
-                "Parsing the literal yielded an empty string.",
-                literal.SourceLineNumber,
-                column);
         }
 
         #endregion

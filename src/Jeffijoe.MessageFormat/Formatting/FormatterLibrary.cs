@@ -45,13 +45,13 @@ namespace Jeffijoe.MessageFormat.Formatting
         /// </exception>
         public IFormatter GetFormatter(FormatterRequest request)
         {
-            var formatter = this.FirstOrDefault(x => x.CanFormat(request));
-            if (formatter == null)
+            foreach (var formatter in this)
             {
-                throw new FormatterNotFoundException(request);
+                if (formatter.CanFormat(request))
+                    return formatter;
             }
 
-            return formatter;
+            throw new FormatterNotFoundException(request);
         }
 
         #endregion

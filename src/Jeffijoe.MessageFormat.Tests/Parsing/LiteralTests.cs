@@ -25,8 +25,8 @@ namespace Jeffijoe.MessageFormat.Tests.Parsing
         [Fact]
         public void ShiftIndices()
         {
-            var subject = new Literal(20, 29, 1, 1, new StringBuilder(new string('a', 10)));
-            var other = new Literal(5, 10, 1, 1, new StringBuilder(new string('a', 6)));
+            var subject = new Literal(20, 29, 1, 1, new string('a', 10));
+            var other = new Literal(5, 10, 1, 1, new string('a', 6));
 
             subject.ShiftIndices(2, other);
 

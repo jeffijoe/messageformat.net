@@ -37,7 +37,7 @@ namespace Jeffijoe.MessageFormat.Parsing
             int endIndex, 
             int sourceLineNumber, 
             int sourceColumnNumber, 
-            StringBuilder innerText)
+            string innerText)
         {
             this.StartIndex = startIndex;
             this.EndIndex = endIndex;
@@ -64,7 +64,7 @@ namespace Jeffijoe.MessageFormat.Parsing
         /// <value>
         ///     The inner text.
         /// </value>
-        public StringBuilder InnerText { get; private set; }
+        public string InnerText { get; private set; }
 
         /// <summary>
         ///     Gets the source column number.

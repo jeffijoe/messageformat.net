@@ -77,7 +77,7 @@ namespace Jeffijoe.MessageFormat.Tests.Parsing
             var sb = new StringBuilder(source);
             literalParserMock.Setup(x => x.ParseLiterals(sb));
             literalParserMock.Setup(x => x.ParseLiterals(sb))
-                             .Returns(new[] { new Literal(0, source.Length, 1, 1, new StringBuilder(source)) });
+                             .Returns(new[] { new Literal(0, source.Length, 1, 1, source) });
 
             var subject = new PatternParser(literalParserMock.Object);
 

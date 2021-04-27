@@ -48,7 +48,7 @@ namespace Jeffijoe.MessageFormat.Formatting.Formatters
             }
             else
             {
-#if NET5_0
+#if NET5_0_OR_GREATER
                 var fractionSpan = number.AsSpan(dotIndex + 1, number.Length - dotIndex - 1);
                 var fractionSpanWithoutZeroes = fractionSpan.TrimEnd('0');
 #else

@@ -210,56 +210,51 @@ namespace Jeffijoe.MessageFormat
         public string FormatMessage(string pattern, IDictionary<string, object?> args)
         {
             /*
-             * We are asuming the formatters are ordered correctly
+             * We are assuming the formatters are ordered correctly
              * - that is, from left to right, string-wise.
              */
-            var sourceBuilder = new StringBuilder(pattern);
-            var requests = this.ParseRequests(pattern, sourceBuilder);
-            var requestsEnumerated = requests.ToArray();
+            var sourceBuilder = StringBuilderPool.Get();
 
-            // If we got no formatters, then we only need to unescape the literals.
-            if (requestsEnumerated.Length == 0)
+            try
             {
-                sourceBuilder = this.UnescapeLiterals(sourceBuilder);
-                return sourceBuilder.ToString();
-            }
+                sourceBuilder.Append(pattern);
+                var requests = this.ParseRequests(pattern, sourceBuilder);
 
-            for (int i = 0; i < requestsEnumerated.Length; i++)
-            {
-                var request = requestsEnumerated[i];
-
-                var formatter = this.Formatters.GetFormatter(request);
-                if (formatter == null)
+                for (int i = 0; i < requests.Count; i++)
                 {
-                    throw new FormatterNotFoundException(request);
+                    var request = requests[i];
+
+                    var formatter = this.Formatters.GetFormatter(request);
+
+                    if (args.TryGetValue(request.Variable, out var value) == false && formatter.VariableMustExist)
+                    {
+                        throw new VariableNotFoundException(request.Variable);
+                    }
+
+                    // Double dispatch, yeah!
+                    var result = formatter.Format(this.Locale, request, args, value, this);
+
+                    // First, we remove the literal from the source.
+                    Literal sourceLiteral = request.SourceLiteral;
+
+                    // +1 because we want to include the last index.
+                    var length = (sourceLiteral.EndIndex - sourceLiteral.StartIndex) + 1;
+                    sourceBuilder.Remove(sourceLiteral.StartIndex, length);
+
+                    // Now, we inject the result.
+                    sourceBuilder.Insert(sourceLiteral.StartIndex, result);
+
+                    // The next requests will want to know what happened.
+                    requests.ShiftIndices(i, result.Length);
                 }
 
-                if (args.TryGetValue(request.Variable, out var value) == false && formatter.VariableMustExist)
-                {
-                    throw new VariableNotFoundException(request.Variable);
-                }
-
-                // Double dispatch, yeah!
-                var result = formatter.Format(this.Locale, request, args, value, this);
-
-                // First, we remove the literal from the source.
-                Literal sourceLiteral = request.SourceLiteral;
-
-                // +1 because we want to include the last index.
-                var length = (sourceLiteral.EndIndex - sourceLiteral.StartIndex) + 1;
-                sourceBuilder.Remove(sourceLiteral.StartIndex, length);
-
-                // Now, we inject the result.
-                sourceBuilder.Insert(sourceLiteral.StartIndex, result);
-
-                // The next requests will want to know what happened.
-                requests.ShiftIndices(i, result.Length);
+                // And we're done.
+                return this.UnescapeLiterals(sourceBuilder);
             }
-
-            sourceBuilder = this.UnescapeLiterals(sourceBuilder);
-
-            // And we're done.
-            return sourceBuilder.ToString();
+            finally
+            {
+                StringBuilderPool.Return(sourceBuilder);
+            }
         }
 
         /// <summary>
@@ -292,79 +287,94 @@ namespace Jeffijoe.MessageFormat
         /// <returns>
         ///     The <see cref="StringBuilder" />.
         /// </returns>
-        protected internal StringBuilder UnescapeLiterals(StringBuilder sourceBuilder)
+        protected internal string UnescapeLiterals(StringBuilder sourceBuilder)
         {
             // If the block is empty, do nothing.
             if (sourceBuilder.Length == 0)
             {
-                return new StringBuilder();
+                return string.Empty;
             }
 
-            var dest = new StringBuilder(sourceBuilder.Length, sourceBuilder.Length);
-            int length = sourceBuilder.Length;
             const char EscapingChar = '\'';
             const char OpenBrace = '{';
             const char CloseBrace = '}';
-            var braceBalance = 0;
-            var insideEscapeSequence = false;
-            for (int i = 0; i < length; i++)
+
+            if (!sourceBuilder.Contains(EscapingChar))
             {
-                var c = sourceBuilder[i];
-
-                if (c == EscapingChar)
-                {
-                    if (braceBalance == 0)
-                    {
-                        if (i == length - 1)
-                        {
-                            if (!insideEscapeSequence)
-                                dest.Append(EscapingChar);
-                            continue;
-                        }
-
-                        var nextChar = sourceBuilder[i + 1];
-                        if (nextChar == EscapingChar)
-                        {
-                            dest.Append(EscapingChar);
-                            ++i;
-                            continue;
-                        }
-
-                        if (insideEscapeSequence)
-                        {
-                            insideEscapeSequence = false;
-                            continue;
-                        }
-
-                        if (nextChar == '{' || nextChar == '}' || nextChar == '#')
-                        {
-                            dest.Append(nextChar);
-                            insideEscapeSequence = true;
-                            ++i;
-                            continue;
-                        }
-
-                        dest.Append(EscapingChar);
-                        continue;
-                    }
-                }
-                else if (insideEscapeSequence)
-                {
-                    // fall through to append
-                }
-                else if (c == OpenBrace)
-                {
-                    braceBalance++;
-                }
-                else if (c == CloseBrace)
-                {
-                    braceBalance--;
-                }
-
-                dest.Append(c);
+                return sourceBuilder.ToString();
             }
 
-            return dest;
+            var length = sourceBuilder.Length;
+            var braceBalance = 0;
+            var insideEscapeSequence = false;
+
+            var dest = StringBuilderPool.Get();
+
+            try
+            {
+                for (int i = 0; i < length; i++)
+                {
+                    var c = sourceBuilder[i];
+
+                    if (c == EscapingChar)
+                    {
+                        if (braceBalance == 0)
+                        {
+                            if (i == length - 1)
+                            {
+                                if (!insideEscapeSequence)
+                                    dest.Append(EscapingChar);
+                                continue;
+                            }
+
+                            var nextChar = sourceBuilder[i + 1];
+                            if (nextChar == EscapingChar)
+                            {
+                                dest.Append(EscapingChar);
+                                ++i;
+                                continue;
+                            }
+
+                            if (insideEscapeSequence)
+                            {
+                                insideEscapeSequence = false;
+                                continue;
+                            }
+
+                            if (nextChar == '{' || nextChar == '}' || nextChar == '#')
+                            {
+                                dest.Append(nextChar);
+                                insideEscapeSequence = true;
+                                ++i;
+                                continue;
+                            }
+
+                            dest.Append(EscapingChar);
+                            continue;
+                        }
+                    }
+                    else if (insideEscapeSequence)
+                    {
+                        // fall through to append
+                    }
+                    else if (c == OpenBrace)
+                    {
+                        braceBalance++;
+                    }
+                    else if (c == CloseBrace)
+                    {
+                        braceBalance--;
+                    }
+
+                    dest.Append(c);
+                }
+
+                return dest.ToString();
+            }
+            finally
+            {
+                StringBuilderPool.Return(dest);
+            }
         }
 
         /// <summary>
@@ -388,21 +398,17 @@ namespace Jeffijoe.MessageFormat
             }
 
             // If we have a cached result from this pattern, clone it and return the clone.
-            IFormatterRequestCollection cached;
-            if (this.cache.TryGetValue(pattern, out cached))
+            if (this.cache.TryGetValue(pattern, out var cached))
             {
                 return cached.Clone();
             }
 
             var requests = this.patternParser.Parse(sourceBuilder);
-            if (this.cache != null)
-            {
-                this.cache.TryAdd(pattern, requests.Clone());
-            }
+            this.cache?.TryAdd(pattern, requests.Clone());
 
             return requests;
         }
 
-        #endregion
+#endregion
     }
 }

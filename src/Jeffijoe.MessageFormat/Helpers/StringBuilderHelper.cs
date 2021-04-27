@@ -3,6 +3,7 @@
 // Author: Jeff Hansen <jeff@jeffijoe.com>
 // Copyright (C) Jeff Hansen 2014. All rights reserved.
 
+using System;
 using System.Text;
 
 namespace Jeffijoe.MessageFormat.Helpers
@@ -28,6 +29,15 @@ namespace Jeffijoe.MessageFormat.Helpers
         /// </returns>
         internal static bool Contains(this StringBuilder src, params char[] chars)
         {
+#if NET5_0_OR_GREATER
+            foreach (var chunk in src.GetChunks())
+            {
+                if (chunk.Span.IndexOfAny(chars) != -1)
+                {
+                    return true;
+                }
+            }
+#else
             for (int i = 0; i < src.Length; i++)
             {
                 foreach (var c in chars)
@@ -38,6 +48,40 @@ namespace Jeffijoe.MessageFormat.Helpers
                     }
                 }
             }
+#endif
+
+            return false;
+        }
+        
+        /// <summary>
+        ///     Determines whether the specified source contains the specified character.
+        /// </summary>
+        /// <param name="src">
+        ///     The source.
+        /// </param>
+        /// <param name="character">
+        ///     The character.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="bool" />.
+        /// </returns>
+        internal static bool Contains(this StringBuilder src, char character)
+        {
+#if NET5_0_OR_GREATER
+            foreach (var chunk in src.GetChunks())
+            {
+                if (chunk.Span.IndexOf(character) != -1)
+                    return true;
+            }
+#else
+            for (int i = 0; i < src.Length; i++)
+            {
+                if (src[i] == character)
+                {
+                    return true;
+                }
+            }
+#endif
 
             return false;
         }
@@ -105,6 +149,6 @@ namespace Jeffijoe.MessageFormat.Helpers
             return src;
         }
 
-        #endregion
+#endregion
     }
 }

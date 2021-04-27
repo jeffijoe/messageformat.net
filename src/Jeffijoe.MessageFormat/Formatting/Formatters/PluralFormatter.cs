@@ -101,7 +101,7 @@ namespace Jeffijoe.MessageFormat.Formatting.Formatters
             }
 
             var ctx = CreatePluralContext(value, offset);
-            var pluralized = new StringBuilder(this.Pluralize(locale, arguments, ctx, offset));
+            var pluralized = this.Pluralize(locale, arguments, ctx, offset);
             var result = this.ReplaceNumberLiterals(pluralized, ctx.Number);
             var formatted = messageFormatter.FormatMessage(result, args);
             return formatted;
@@ -220,86 +220,94 @@ namespace Jeffijoe.MessageFormat.Formatting.Formatters
         /// <returns>
         ///     The <see cref="string" />.
         /// </returns>
-        internal string ReplaceNumberLiterals(StringBuilder pluralized, double n)
+        internal string ReplaceNumberLiterals(string pluralized, double n)
         {
-            // I've done this a few times now..
-            const char OpenBrace = '{';
-            const char CloseBrace = '}';
-            const char Pound = '#';
-            const char EscapeChar = '\'';
-            var braceBalance = 0;
-            var insideEscapeSequence = false;
-            var sb = new StringBuilder();
-            for (int i = 0; i < pluralized.Length; i++)
+            var sb = StringBuilderPool.Get();
+
+            try
             {
-                var c = pluralized[i];
-
-                if (c == EscapeChar)
+                // I've done this a few times now..
+                const char OpenBrace = '{';
+                const char CloseBrace = '}';
+                const char Pound = '#';
+                const char EscapeChar = '\'';
+                var braceBalance = 0;
+                var insideEscapeSequence = false;
+                for (int i = 0; i < pluralized.Length; i++)
                 {
-                    sb.Append(EscapeChar);
+                    var c = pluralized[i];
 
-                    if (i == pluralized.Length - 1)
+                    if (c == EscapeChar)
                     {
-                        // The last char can't open a new escape sequence, it can only close one
+                        sb.Append(EscapeChar);
+
+                        if (i == pluralized.Length - 1)
+                        {
+                            // The last char can't open a new escape sequence, it can only close one
+                            if (insideEscapeSequence)
+                            {
+                                insideEscapeSequence = false;
+                            }
+
+                            continue;
+                        }
+
+                        var nextChar = pluralized[i + 1];
+                        if (nextChar == EscapeChar)
+                        {
+                            sb.Append(EscapeChar);
+                            ++i;
+                            continue;
+                        }
+
                         if (insideEscapeSequence)
                         {
                             insideEscapeSequence = false;
+                            continue;
+                        }
+
+                        if (nextChar == '{' || nextChar == '}' || nextChar == '#')
+                        {
+                            sb.Append(nextChar);
+                            insideEscapeSequence = true;
+                            ++i;
                         }
 
                         continue;
                     }
 
-                    var nextChar = pluralized[i + 1];
-                    if (nextChar == EscapeChar)
-                    {
-                        sb.Append(EscapeChar);
-                        ++i;
-                        continue;
-                    }
-
                     if (insideEscapeSequence)
                     {
-                        insideEscapeSequence = false;
+                        sb.Append(c);
                         continue;
                     }
 
-                    if (nextChar == '{' || nextChar == '}' || nextChar == '#')
+                    if (c == OpenBrace)
                     {
-                        sb.Append(nextChar);
-                        insideEscapeSequence = true;
-                        ++i;
+                        braceBalance++;
+                    }
+                    else if (c == CloseBrace)
+                    {
+                        braceBalance--;
+                    }
+                    else if (c == Pound)
+                    {
+                        if (braceBalance == 0)
+                        {
+                            sb.Append(n);
+                            continue;
+                        }
                     }
 
-                    continue;
-                }
-
-                if (insideEscapeSequence)
-                {
                     sb.Append(c);
-                    continue;
                 }
 
-                if (c == OpenBrace)
-                {
-                    braceBalance++;
-                }
-                else if (c == CloseBrace)
-                {
-                    braceBalance--;
-                }
-                else if (c == Pound)
-                {
-                    if (braceBalance == 0)
-                    {
-                        sb.Append(n);
-                        continue;
-                    }
-                }
-
-                sb.Append(c);
+                return sb.ToString();
             }
-
-            return sb.ToString();
+            finally
+            {
+                StringBuilderPool.Return(sb);
+            }
         }
 
         /// <summary>

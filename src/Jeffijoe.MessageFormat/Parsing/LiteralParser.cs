@@ -36,7 +36,6 @@ namespace Jeffijoe.MessageFormat.Parsing
             var closeBraces = 0;
             var start = 0;
             var braceBalance = 0;
-            var matchTextBuf = new StringBuilder();
             var lineNumber = 1;
             var startLineNumber = 1;
             var startColumnNumber = 0;
@@ -46,135 +45,144 @@ namespace Jeffijoe.MessageFormat.Parsing
             var currentEscapeSequenceColumnNumber = 0;
             const char Cr = '\r'; // Carriage return
             const char Lf = '\n'; // Line feed
-            for (var i = 0; i < sb.Length; i++)
+
+            var matchTextBuf = StringBuilderPool.Get();
+            try
             {
-                var c = sb[i];
-                if (c == Lf)
+                for (var i = 0; i < sb.Length; i++)
                 {
-                    lineNumber++;
-                    columnNumber = 0;
-                    continue;
-                }
-
-                if (c == Cr)
-                {
-                    continue;
-                }
-
-                columnNumber++;
-
-                if (c == EscapingChar)
-                {
-                    if (i == sb.Length - 1)
+                    var c = sb[i];
+                    if (c == Lf)
                     {
-                        if (!insideEscapeSequence)
-                            matchTextBuf.Append(EscapingChar);
-
-                        // The last char can't open a new escape sequence, it can only close one
-                        if (insideEscapeSequence)
-                        {
-                            insideEscapeSequence = false;
-                        }
+                        lineNumber++;
+                        columnNumber = 0;
                         continue;
                     }
 
-                    matchTextBuf.Append(EscapingChar);
-
-                    var nextChar = sb[i + 1];
-                    if (nextChar == EscapingChar)
+                    if (c == Cr)
                     {
+                        continue;
+                    }
+
+                    columnNumber++;
+
+                    if (c == EscapingChar)
+                    {
+                        if (i == sb.Length - 1)
+                        {
+                            if (!insideEscapeSequence)
+                                matchTextBuf.Append(EscapingChar);
+
+                            // The last char can't open a new escape sequence, it can only close one
+                            if (insideEscapeSequence)
+                            {
+                                insideEscapeSequence = false;
+                            }
+
+                            continue;
+                        }
+
                         matchTextBuf.Append(EscapingChar);
-                        ++i;
+
+                        var nextChar = sb[i + 1];
+                        if (nextChar == EscapingChar)
+                        {
+                            matchTextBuf.Append(EscapingChar);
+                            ++i;
+                            continue;
+                        }
+
+                        if (insideEscapeSequence)
+                        {
+                            insideEscapeSequence = false;
+                            continue;
+                        }
+
+                        if (nextChar == '{' || nextChar == '}' || nextChar == '#')
+                        {
+                            matchTextBuf.Append(nextChar);
+                            insideEscapeSequence = true;
+                            currentEscapeSequenceLineNumber = lineNumber;
+                            currentEscapeSequenceColumnNumber = columnNumber;
+                            ++i;
+                        }
+
                         continue;
                     }
 
                     if (insideEscapeSequence)
                     {
-                        insideEscapeSequence = false;
+                        matchTextBuf.Append(c);
                         continue;
                     }
 
-                    if (nextChar == '{' || nextChar == '}' || nextChar == '#')
+                    if (c == OpenBrace)
                     {
-                        matchTextBuf.Append(nextChar);
-                        insideEscapeSequence = true;
-                        currentEscapeSequenceLineNumber = lineNumber;
-                        currentEscapeSequenceColumnNumber = columnNumber;
-                        ++i;
+                        openBraces++;
+                        braceBalance++;
+
+                        // Record starting position of possible new brace match.
+                        if (braceBalance == 1)
+                        {
+                            start = i;
+                            startColumnNumber = columnNumber;
+                            startLineNumber = lineNumber;
+                            matchTextBuf.Clear();
+                        }
                     }
 
-                    continue;
+                    if (c == CloseBrace)
+                    {
+                        closeBraces++;
+                        braceBalance--;
+
+                        // Write the brace to the match buffer if it's not the closing brace
+                        // we are looking for.
+                        if (braceBalance > 0)
+                        {
+                            matchTextBuf.Append(c);
+                        }
+                    }
+                    else
+                    {
+                        if (i > start && braceBalance > 0)
+                        {
+                            matchTextBuf.Append(c);
+                        }
+
+                        continue;
+                    }
+
+                    if (openBraces != closeBraces)
+                    {
+                        continue;
+                    }
+
+                    result.Add(new Literal(start, i, startLineNumber, startColumnNumber, matchTextBuf.ToString()));
+                    matchTextBuf.Clear();
+                    start = 0;
                 }
 
                 if (insideEscapeSequence)
                 {
-                    matchTextBuf.Append(c);
-                    continue;
-                }
-
-                if (c == OpenBrace)
-                {
-                    openBraces++;
-                    braceBalance++;
-
-                    // Record starting position of possible new brace match.
-                    if (braceBalance == 1)
-                    {
-                        start = i;
-                        startColumnNumber = columnNumber;
-                        startLineNumber = lineNumber;
-                        matchTextBuf.Clear();
-                    }
-                }
-
-                if (c == CloseBrace)
-                {
-                    closeBraces++;
-                    braceBalance--;
-
-                    // Write the brace to the match buffer if it's not the closing brace
-                    // we are looking for.
-                    if (braceBalance > 0)
-                    {
-                        matchTextBuf.Append(c);
-                    }
-                }
-                else
-                {
-                    if (i > start && braceBalance > 0)
-                    {
-                        matchTextBuf.Append(c);
-                    }
-
-                    continue;
+                    throw new MalformedLiteralException(
+                        "There is an unclosed escape sequence.",
+                        currentEscapeSequenceLineNumber,
+                        currentEscapeSequenceColumnNumber,
+                        matchTextBuf.ToString());
                 }
 
                 if (openBraces != closeBraces)
                 {
-                    continue;
+                    throw new UnbalancedBracesException(openBraces, closeBraces);
                 }
 
-                // Passing in the text buffer instead of the actual string to avoid allocating a new string.
-                result.Add(new Literal(start, i, startLineNumber, startColumnNumber, matchTextBuf));
-                matchTextBuf = new StringBuilder();
-                start = 0;
+                return result;
             }
-
-            if (insideEscapeSequence)
+            finally
             {
-                throw new MalformedLiteralException(
-                    "There is an unclosed escape sequence.",
-                    currentEscapeSequenceLineNumber,
-                    currentEscapeSequenceColumnNumber,
-                    matchTextBuf.ToString());
+                StringBuilderPool.Return(matchTextBuf);
             }
-
-            if (openBraces != closeBraces)
-            {
-                throw new UnbalancedBracesException(openBraces, closeBraces);
-            }
-
-            return result;
         }
 
         #endregion
