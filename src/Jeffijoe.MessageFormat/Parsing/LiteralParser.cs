@@ -158,7 +158,6 @@ namespace Jeffijoe.MessageFormat.Parsing
                         continue;
                     }
 
-                    // Passing in the text buffer instead of the actual string to avoid allocating a new string.
                     result.Add(new Literal(start, i, startLineNumber, startColumnNumber, matchTextBuf.ToString()));
                     matchTextBuf.Clear();
                     start = 0;
