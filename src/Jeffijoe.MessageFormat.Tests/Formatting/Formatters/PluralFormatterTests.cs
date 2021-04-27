@@ -71,7 +71,7 @@ namespace Jeffijoe.MessageFormat.Tests.Formatting.Formatters
         public void ReplaceNumberLiterals(string input, string expected)
         {
             var subject = new PluralFormatter();
-            var actual = subject.ReplaceNumberLiterals(new StringBuilder(input), 1337);
+            var actual = subject.ReplaceNumberLiterals(input, 1337);
             Assert.Equal(expected, actual);
         }
 

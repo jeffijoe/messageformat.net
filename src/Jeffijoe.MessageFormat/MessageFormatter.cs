@@ -213,41 +213,48 @@ namespace Jeffijoe.MessageFormat
              * We are asuming the formatters are ordered correctly
              * - that is, from left to right, string-wise.
              */
-            var sourceBuilder = new StringBuilder(pattern);
-            var requests = this.ParseRequests(pattern, sourceBuilder);
+            var sourceBuilder = StringBuilderPool.Get();
 
-            for (int i = 0; i < requests.Count; i++)
+            try
             {
-                var request = requests[i];
+                sourceBuilder.Append(pattern);
+                var requests = this.ParseRequests(pattern, sourceBuilder);
 
-                var formatter = this.Formatters.GetFormatter(request);
-
-                if (args.TryGetValue(request.Variable, out var value) == false && formatter.VariableMustExist)
+                for (int i = 0; i < requests.Count; i++)
                 {
-                    throw new VariableNotFoundException(request.Variable);
+                    var request = requests[i];
+
+                    var formatter = this.Formatters.GetFormatter(request);
+
+                    if (args.TryGetValue(request.Variable, out var value) == false && formatter.VariableMustExist)
+                    {
+                        throw new VariableNotFoundException(request.Variable);
+                    }
+
+                    // Double dispatch, yeah!
+                    var result = formatter.Format(this.Locale, request, args, value, this);
+
+                    // First, we remove the literal from the source.
+                    Literal sourceLiteral = request.SourceLiteral;
+
+                    // +1 because we want to include the last index.
+                    var length = (sourceLiteral.EndIndex - sourceLiteral.StartIndex) + 1;
+                    sourceBuilder.Remove(sourceLiteral.StartIndex, length);
+
+                    // Now, we inject the result.
+                    sourceBuilder.Insert(sourceLiteral.StartIndex, result);
+
+                    // The next requests will want to know what happened.
+                    requests.ShiftIndices(i, result.Length);
                 }
 
-                // Double dispatch, yeah!
-                var result = formatter.Format(this.Locale, request, args, value, this);
-
-                // First, we remove the literal from the source.
-                Literal sourceLiteral = request.SourceLiteral;
-
-                // +1 because we want to include the last index.
-                var length = (sourceLiteral.EndIndex - sourceLiteral.StartIndex) + 1;
-                sourceBuilder.Remove(sourceLiteral.StartIndex, length);
-
-                // Now, we inject the result.
-                sourceBuilder.Insert(sourceLiteral.StartIndex, result);
-
-                // The next requests will want to know what happened.
-                requests.ShiftIndices(i, result.Length);
+                // And we're done.
+                return this.UnescapeLiterals(sourceBuilder);
             }
-
-            sourceBuilder = this.UnescapeLiterals(sourceBuilder);
-
-            // And we're done.
-            return sourceBuilder.ToString();
+            finally
+            {
+                StringBuilderPool.Return(sourceBuilder);
+            }
         }
 
         /// <summary>
@@ -280,81 +287,89 @@ namespace Jeffijoe.MessageFormat
         /// <returns>
         ///     The <see cref="StringBuilder" />.
         /// </returns>
-        protected internal StringBuilder UnescapeLiterals(StringBuilder sourceBuilder)
+        protected internal string UnescapeLiterals(StringBuilder sourceBuilder)
         {
             // If the block is empty, do nothing.
             if (sourceBuilder.Length == 0)
             {
-                return sourceBuilder;
+                return string.Empty;
             }
 
-            var dest = new StringBuilder(sourceBuilder.Length, sourceBuilder.Length);
-            int length = sourceBuilder.Length;
-            const char EscapingChar = '\'';
-            const char OpenBrace = '{';
-            const char CloseBrace = '}';
+            var dest = StringBuilderPool.Get();
 
-            var braceBalance = 0;
-            var insideEscapeSequence = false;
-
-            for (int i = 0; i < length; i++)
+            try
             {
-                var c = sourceBuilder[i];
+                int length = sourceBuilder.Length;
+                const char EscapingChar = '\'';
+                const char OpenBrace = '{';
+                const char CloseBrace = '}';
 
-                if (c == EscapingChar)
+                var braceBalance = 0;
+                var insideEscapeSequence = false;
+
+                for (int i = 0; i < length; i++)
                 {
-                    if (braceBalance == 0)
+                    var c = sourceBuilder[i];
+
+                    if (c == EscapingChar)
                     {
-                        if (i == length - 1)
+                        if (braceBalance == 0)
                         {
-                            if (!insideEscapeSequence)
+                            if (i == length - 1)
+                            {
+                                if (!insideEscapeSequence)
+                                    dest.Append(EscapingChar);
+                                continue;
+                            }
+
+                            var nextChar = sourceBuilder[i + 1];
+                            if (nextChar == EscapingChar)
+                            {
                                 dest.Append(EscapingChar);
-                            continue;
-                        }
+                                ++i;
+                                continue;
+                            }
 
-                        var nextChar = sourceBuilder[i + 1];
-                        if (nextChar == EscapingChar)
-                        {
+                            if (insideEscapeSequence)
+                            {
+                                insideEscapeSequence = false;
+                                continue;
+                            }
+
+                            if (nextChar == '{' || nextChar == '}' || nextChar == '#')
+                            {
+                                dest.Append(nextChar);
+                                insideEscapeSequence = true;
+                                ++i;
+                                continue;
+                            }
+
                             dest.Append(EscapingChar);
-                            ++i;
                             continue;
                         }
-
-                        if (insideEscapeSequence)
-                        {
-                            insideEscapeSequence = false;
-                            continue;
-                        }
-
-                        if (nextChar == '{' || nextChar == '}' || nextChar == '#')
-                        {
-                            dest.Append(nextChar);
-                            insideEscapeSequence = true;
-                            ++i;
-                            continue;
-                        }
-
-                        dest.Append(EscapingChar);
-                        continue;
                     }
-                }
-                else if (insideEscapeSequence)
-                {
-                    // fall through to append
-                }
-                else if (c == OpenBrace)
-                {
-                    braceBalance++;
-                }
-                else if (c == CloseBrace)
-                {
-                    braceBalance--;
+                    else if (insideEscapeSequence)
+                    {
+                        // fall through to append
+                    }
+                    else if (c == OpenBrace)
+                    {
+                        braceBalance++;
+                    }
+                    else if (c == CloseBrace)
+                    {
+                        braceBalance--;
+                    }
+
+                    dest.Append(c);
                 }
 
-                dest.Append(c);
+                return dest.ToString();
             }
-
-            return dest;
+            finally
+            {
+                StringBuilderPool.Return(dest);
+            }
         }
 
         /// <summary>
