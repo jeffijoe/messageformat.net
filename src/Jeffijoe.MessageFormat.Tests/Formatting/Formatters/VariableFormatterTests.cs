@@ -87,7 +87,7 @@ namespace Jeffijoe.MessageFormat.Tests.Formatting.Formatters
         /// </returns>
         private static FormatterRequest CreateRequest()
         {
-            var req = new FormatterRequest(new Literal(1, 10, 1, 1, new StringBuilder()), "test", null, null);
+            var req = new FormatterRequest(new Literal(1, 10, 1, 1, ""), "test", null, null);
             return req;
         }
 

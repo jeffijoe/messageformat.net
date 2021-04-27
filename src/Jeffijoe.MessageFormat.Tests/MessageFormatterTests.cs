@@ -87,12 +87,12 @@ namespace Jeffijoe.MessageFormat.Tests
             var requests = new[]
             {
                 new FormatterRequest(
-                    new Literal(0, 5, 1, 7, new StringBuilder("name")),
+                    new Literal(0, 5, 1, 7, "name"),
                     "name",
                     null,
                     null),
                 new FormatterRequest(
-                    new Literal(11, 33, 1, 7, new StringBuilder("messages, plural, 123")),
+                    new Literal(11, 33, 1, 7, "messages, plural, 123"),
                     "messages",
                     "plural",
                     " 123")
@@ -153,12 +153,12 @@ namespace Jeffijoe.MessageFormat.Tests
             var requests = new[]
             {
                 new FormatterRequest(
-                    new Literal(0, 5, 1, 7, new StringBuilder("name")),
+                    new Literal(0, 5, 1, 7, "name"),
                     "name",
                     null,
                     null),
                 new FormatterRequest(
-                    new Literal(11, 33, 1, 7, new StringBuilder("messages, plural, 123")),
+                    new Literal(11, 33, 1, 7, "messages, plural, 123"),
                     "messages",
                     "plural",
                     " 123")
@@ -194,7 +194,7 @@ namespace Jeffijoe.MessageFormat.Tests
             var requests = new[]
             {
                 new FormatterRequest(
-                    new Literal(0, 5, 1, 7, new StringBuilder("name")),
+                    new Literal(0, 5, 1, 7, "name"),
                     "name",
                     null,
                     null),

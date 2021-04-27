@@ -30,19 +30,19 @@ namespace Jeffijoe.MessageFormat.Tests.Parsing
             var subject = new FormatterRequestCollection();
             subject.Add(
                 new FormatterRequest(
-                    new Literal(0, 9, 1, 1, new StringBuilder(new string('a', 10))), 
+                    new Literal(0, 9, 1, 1, new string('a', 10)), 
                     "test", 
                     "test", 
                     "test"));
             subject.Add(
                 new FormatterRequest(
-                    new Literal(10, 19, 1, 1, new StringBuilder(new string('a', 10))), 
+                    new Literal(10, 19, 1, 1, new string('a', 10)), 
                     "test", 
                     "test", 
                     "test"));
             subject.Add(
                 new FormatterRequest(
-                    new Literal(20, 29, 1, 1, new StringBuilder(new string('a', 10))), 
+                    new Literal(20, 29, 1, 1, new string('a', 10)), 
                     "test", 
                     "test", 
                     "test"));
@@ -67,19 +67,19 @@ namespace Jeffijoe.MessageFormat.Tests.Parsing
             var subject = new FormatterRequestCollection();
             subject.Add(
                 new FormatterRequest(
-                    new Literal(0, 9, 1, 1, new StringBuilder(new string('a', 10))), 
+                    new Literal(0, 9, 1, 1, new string('a', 10)), 
                     "test", 
                     "test", 
                     "test"));
             subject.Add(
                 new FormatterRequest(
-                    new Literal(10, 19, 1, 1, new StringBuilder(new string('a', 10))), 
+                    new Literal(10, 19, 1, 1, new string('a', 10)), 
                     "test", 
                     "test", 
                     "test"));
             subject.Add(
                 new FormatterRequest(
-                    new Literal(20, 29, 1, 1, new StringBuilder(new string('a', 10))), 
+                    new Literal(20, 29, 1, 1, new string('a', 10)), 
                     "test", 
                     "test", 
                     "test"));

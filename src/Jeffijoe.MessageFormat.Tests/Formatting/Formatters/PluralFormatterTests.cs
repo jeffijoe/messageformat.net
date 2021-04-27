@@ -49,7 +49,7 @@ namespace Jeffijoe.MessageFormat.Tests.Formatting.Formatters
                         new KeyedBlock("other", "wow")
                     },
                     new FormatterExtension[0]);
-            var request = new FormatterRequest(new Literal(1, 1, 1, 1, new StringBuilder()), "test", "plural", null);
+            var request = new FormatterRequest(new Literal(1, 1, 1, 1, ""), "test", "plural", null);
             var actual = subject.Pluralize("en", arguments, new PluralContext(Convert.ToDecimal(Convert.ToDouble(args[request.Variable]))), 0);
             Assert.Equal(expected, actual);
         }

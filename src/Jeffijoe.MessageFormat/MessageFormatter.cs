@@ -210,7 +210,7 @@ namespace Jeffijoe.MessageFormat
         public string FormatMessage(string pattern, IDictionary<string, object?> args)
         {
             /*
-             * We are asuming the formatters are ordered correctly
+             * We are assuming the formatters are ordered correctly
              * - that is, from left to right, string-wise.
              */
             var sourceBuilder = StringBuilderPool.Get();
@@ -295,18 +295,18 @@ namespace Jeffijoe.MessageFormat
                 return string.Empty;
             }
 
+            var length = sourceBuilder.Length;
+            const char EscapingChar = '\'';
+            const char OpenBrace = '{';
+            const char CloseBrace = '}';
+
+            var braceBalance = 0;
+            var insideEscapeSequence = false;
+
             var dest = StringBuilderPool.Get();
 
             try
             {
-                int length = sourceBuilder.Length;
-                const char EscapingChar = '\'';
-                const char OpenBrace = '{';
-                const char CloseBrace = '}';
-
-                var braceBalance = 0;
-                var insideEscapeSequence = false;
-
                 for (int i = 0; i < length; i++)
                 {
                     var c = sourceBuilder[i];
@@ -393,17 +393,13 @@ namespace Jeffijoe.MessageFormat
             }
 
             // If we have a cached result from this pattern, clone it and return the clone.
-            IFormatterRequestCollection cached;
-            if (this.cache.TryGetValue(pattern, out cached))
+            if (this.cache.TryGetValue(pattern, out var cached))
             {
                 return cached.Clone();
             }
 
             var requests = this.patternParser.Parse(sourceBuilder);
-            if (this.cache != null)
-            {
-                this.cache.TryAdd(pattern, requests.Clone());
-            }
+            this.cache?.TryAdd(pattern, requests.Clone());
 
             return requests;
         }
