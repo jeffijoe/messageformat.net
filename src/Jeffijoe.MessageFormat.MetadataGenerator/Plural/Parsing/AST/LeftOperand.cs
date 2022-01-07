@@ -16,7 +16,7 @@
             if (obj is ModuloOperand op)
                 return op.Operand == Operand && op.ModValue == ModValue;
 
-            return base.Equals(obj);
+            return this == obj;
         }
 
         public override int GetHashCode()

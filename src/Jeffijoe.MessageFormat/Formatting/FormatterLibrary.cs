@@ -4,8 +4,6 @@
 // Copyright (C) Jeff Hansen 2014. All rights reserved.
 
 using System.Collections.Generic;
-using System.Linq;
-
 using Jeffijoe.MessageFormat.Formatting.Formatters;
 
 namespace Jeffijoe.MessageFormat.Formatting

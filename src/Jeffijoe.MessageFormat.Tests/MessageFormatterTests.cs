@@ -111,7 +111,7 @@ namespace Jeffijoe.MessageFormat.Tests
             this.collectionMock.Setup(x => x.ShiftIndices(0, 4)).Callback(
 
                 // The '- 2' is also done in the used implementation.
-                (int index, int length) => requests[1].SourceLiteral.ShiftIndices(length - 2, requests[0].SourceLiteral));
+                (int _, int length) => requests[1].SourceLiteral.ShiftIndices(length - 2, requests[0].SourceLiteral));
 
             var actual = this.subject.FormatMessage(Pattern, args);
             this.collectionMock.Verify(x => x.ShiftIndices(0, 4), Times.Once);
@@ -136,7 +136,7 @@ namespace Jeffijoe.MessageFormat.Tests
         [InlineData(@"Hello ''{buddy}'', how are you '{doing}'?", @"Hello '{buddy}', how are you {doing}?")]
         public void UnescapeLiterals(string source, string expected)
         {
-            var actual = this.subject.UnescapeLiterals(new StringBuilder(source)).ToString();
+            var actual = this.subject.UnescapeLiterals(new StringBuilder(source));
             Assert.Equal(expected, actual);
         }
 
@@ -175,7 +175,7 @@ namespace Jeffijoe.MessageFormat.Tests
             this.collectionMock.Setup(x => x.ShiftIndices(0, 4)).Callback(
 
                 // The '- 2' is also done in the used implementation.
-                (int index, int length) => requests[1].SourceLiteral.ShiftIndices(length - 2, requests[0].SourceLiteral));
+                (int _, int length) => requests[1].SourceLiteral.ShiftIndices(length - 2, requests[0].SourceLiteral));
 
             var ex = Assert.Throws<VariableNotFoundException>(() => this.subject.FormatMessage(Pattern, args));
             Assert.Equal("name", ex.MissingVariable);

@@ -12,6 +12,8 @@ using Jeffijoe.MessageFormat.Tests.TestHelpers;
 using Xunit;
 using Xunit.Abstractions;
 
+// ReSharper disable UnusedMember.Local
+
 namespace Jeffijoe.MessageFormat.Tests.Helpers
 {
     /// <summary>

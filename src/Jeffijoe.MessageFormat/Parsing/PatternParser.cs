@@ -83,7 +83,8 @@ namespace Jeffijoe.MessageFormat.Parsing
                     {
 #if NET5_0_OR_GREATER
                         formatterArgs =
-                            literal.InnerText.AsSpan(lastIndex + 1, literal.InnerText.Length - lastIndex - 1).Trim().ToString();
+                            literal.InnerText.AsSpan(lastIndex + 1, literal.InnerText.Length - lastIndex - 1).Trim()
+                                .ToString();
 #else
                         formatterArgs =
                             literal.InnerText.Substring(lastIndex + 1, literal.InnerText.Length - lastIndex - 1).Trim();
@@ -151,11 +152,14 @@ namespace Jeffijoe.MessageFormat.Parsing
                     {
                         if (c.IsAlphaNumeric() == false)
                         {
-                            var msg = string.Format("Invalid literal character '{0}'.", c);
+                            var msg = $"Invalid literal character '{c}'.";
 
                             // Line number can't have changed.
-                            throw new MalformedLiteralException(msg, literal.SourceLineNumber, column,
-                                innerText.ToString());
+                            throw new MalformedLiteralException(
+                                msg, 
+                                literal.SourceLineNumber, 
+                                column,
+                                innerText);
                         }
                     }
                     else

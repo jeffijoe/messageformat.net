@@ -4,13 +4,7 @@
 // Author: Jeff Hansen <jeff@jeffijoe.com>
 // Copyright (C) Jeff Hansen 2015. All rights reserved.
 
-using System.Collections.Generic;
-
-using Jeffijoe.MessageFormat.Formatting;
-using Jeffijoe.MessageFormat.Tests.TestHelpers;
-
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Jeffijoe.MessageFormat.Tests
 {
@@ -19,28 +13,6 @@ namespace Jeffijoe.MessageFormat.Tests
     /// </summary>
     public class MessageFormatterIssues
     {
-        #region Fields
-
-        /// <summary>
-        /// The output helper.
-        /// </summary>
-        private readonly ITestOutputHelper outputHelper;
-
-        #endregion
-
-        #region Constructors and Destructors
-
-        /// <summary>
-        /// Ctor.
-        /// </summary>
-        /// <param name="outputHelper"></param>
-        public MessageFormatterIssues(ITestOutputHelper outputHelper)
-        {
-            this.outputHelper = outputHelper;
-        }
-
-        #endregion
-
         [Fact]
         public void Issue13()
         {

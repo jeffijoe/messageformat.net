@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Text;
 using Jeffijoe.MessageFormat.MetadataGenerator.Plural.Parsing.AST;
 
@@ -125,24 +124,6 @@ namespace Jeffijoe.MessageFormat.MetadataGenerator.Plural.SourceGeneration
                 OperandSymbol.ExponentE => 'E',
                 _ => throw new InvalidOperationException($"Unknown variable {operand}")
             };
-        }
-
-        private IEnumerable<OperandSymbol> GetAllLeftOperands(OrCondition[] conditions)
-        {
-            foreach (var condition in conditions)
-            {
-                foreach(var operation in condition.AndConditions)
-                {
-                    var operand = operation.OperandLeft switch
-                    {
-                        VariableOperand op => op.Operand,
-                        ModuloOperand op => op.Operand,
-                        var op => throw new InvalidOperationException($"Unexpected operand {op.GetType()}")
-                    };
-
-                    yield return operand;
-                }
-            }
         }
 
         private void WriteLine(StringBuilder builder, string value, int indent)

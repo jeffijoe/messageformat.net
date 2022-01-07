@@ -198,10 +198,8 @@ namespace Jeffijoe.MessageFormat.MetadataGenerator.Plural.Parsing
                     AdvanceWhitespace();
                     continue;
                 }
-                else
-                {
-                    break;
-                }
+
+                break;
             }
 
             return numbers;

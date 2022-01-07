@@ -5,8 +5,6 @@
 // Copyright (C) Jeff Hansen 2015. All rights reserved.
 
 using System.Collections.Generic;
-using System.Text;
-
 using Jeffijoe.MessageFormat.Formatting;
 using Jeffijoe.MessageFormat.Formatting.Formatters;
 using Jeffijoe.MessageFormat.Parsing;

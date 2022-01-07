@@ -4,7 +4,6 @@
 // Author: Jeff Hansen <jeff@jeffijoe.com>
 // Copyright (C) Jeff Hansen 2015. All rights reserved.
 
-using System.Linq;
 using System.Text;
 
 using Jeffijoe.MessageFormat.Parsing;
@@ -89,7 +88,7 @@ namespace Jeffijoe.MessageFormat.Tests.Parsing
             var actual = subject.Parse(sb);
             Benchmark.End(this.outputHelper);
             Assert.Single(actual);
-            var first = actual.First();
+            var first = actual[0];
             Assert.Equal(expectedKey, first.Variable);
             Assert.Equal(expectedFormat, first.FormatterName);
             Assert.Equal(expectedArgs, first.FormatterArguments);

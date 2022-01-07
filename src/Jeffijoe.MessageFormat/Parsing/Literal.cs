@@ -3,8 +3,6 @@
 // Author: Jeff Hansen <jeff@jeffijoe.com>
 // Copyright (C) Jeff Hansen 2014. All rights reserved.
 
-using System.Text;
-
 namespace Jeffijoe.MessageFormat.Parsing
 {
     /// <summary>

@@ -87,7 +87,7 @@ namespace Jeffijoe.MessageFormat.Tests
         [Fact]
         public void FormatMessage_with_cache_benchmark()
         {
-            var subject = new MessageFormatter(true);
+            var subject = new MessageFormatter(useCache: true);
             this.Benchmark(subject);
         }
 

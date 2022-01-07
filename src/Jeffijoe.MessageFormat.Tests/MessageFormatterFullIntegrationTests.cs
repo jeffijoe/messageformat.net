@@ -581,7 +581,7 @@ namespace Jeffijoe.MessageFormat.Tests
             }
 
             {
-                var mf = new MessageFormatter(true, "en");
+                var mf = new MessageFormatter(useCache: true, locale: "en");
                 mf.Pluralizers!["en"] = n => {
                     // ´n´ is the number being pluralized.
                     // ReSharper disable once CompareOfFloatsByEqualityOperator
@@ -590,6 +590,7 @@ namespace Jeffijoe.MessageFormat.Tests
                         return "zero";
                     }
 
+                    // ReSharper disable once CompareOfFloatsByEqualityOperator
                     if (n == 1)
                     {
                         return "one";

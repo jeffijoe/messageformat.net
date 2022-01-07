@@ -6,8 +6,6 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-
 using Jeffijoe.MessageFormat.Formatting;
 using Jeffijoe.MessageFormat.Parsing;
 using Jeffijoe.MessageFormat.Tests.TestHelpers;
@@ -51,7 +49,7 @@ namespace Jeffijoe.MessageFormat.Tests.Formatting
         /// <summary>
         ///     Gets the parse arguments_tests.
         /// </summary>
-        public static IEnumerable<object[]> ParseArguments_tests
+        public static IEnumerable<object[]> ParseArgumentsTests
         {
             get
             {
@@ -80,7 +78,7 @@ namespace Jeffijoe.MessageFormat.Tests.Formatting
         /// <summary>
         ///     Gets the parse keyed blocks_tests.
         /// </summary>
-        public static IEnumerable<object[]> ParseKeyedBlocks_tests
+        public static IEnumerable<object[]> ParseKeyedBlocksTests
         {
             get
             {
@@ -136,7 +134,7 @@ unknown
         /// The blocks.
         /// </param>
         [Theory]
-        [MemberData(nameof(ParseArguments_tests))]
+        [MemberData(nameof(ParseArgumentsTests))]
         public void ParseArguments(
             string args,
             string[] extensionKeys,
@@ -223,7 +221,7 @@ unknown
 
             Benchmark.End(this.outputHelper);
 
-            var actual = subject.ParseExtensions(req, out index);
+            var actual = subject.ParseExtensions(req, out index).ToList();
             Assert.NotEmpty(actual);
             var first = actual.First();
             Assert.Equal(extension, first.Extension);
@@ -244,7 +242,7 @@ unknown
 
             var req = new FormatterRequest(new Literal(1, 1, 1, 1, ""), string.Empty, null, args);
 
-            var actual = subject.ParseExtensions(req, out index);
+            var actual = subject.ParseExtensions(req, out index).ToList();
             Assert.NotEmpty(actual);
             var result = actual.First();
             Assert.Equal("offset", result.Extension);
@@ -270,7 +268,7 @@ unknown
         /// The values.
         /// </param>
         [Theory]
-        [MemberData(nameof(ParseKeyedBlocks_tests))]
+        [MemberData(nameof(ParseKeyedBlocksTests))]
         public void ParseKeyedBlocks(string args, string[] keys, string[] values)
         {
             var subject = new BaseFormatterImpl();
@@ -287,7 +285,7 @@ unknown
 
             Benchmark.End(this.outputHelper);
 
-            var actual = subject.ParseKeyedBlocks(req, 0);
+            var actual = subject.ParseKeyedBlocks(req, 0).ToList();
             Assert.Equal(keys.Length, actual.Count());
             this.outputHelper.WriteLine("Input: " + args);
             this.outputHelper.WriteLine("-----");

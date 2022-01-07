@@ -16,7 +16,7 @@
             if (obj is RangeOperand n)
                 return n.Start == Start && n.End == End;
 
-            return base.Equals(obj);
+            return this == obj;
         }
 
         public override int GetHashCode()

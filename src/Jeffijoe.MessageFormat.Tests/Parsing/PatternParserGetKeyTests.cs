@@ -5,10 +5,7 @@
 // Copyright (C) Jeff Hansen 2015. All rights reserved.
 
 using System.Collections.Generic;
-using System.Text;
-
 using Jeffijoe.MessageFormat.Parsing;
-
 using Xunit;
 using Xunit.Abstractions;
 
@@ -48,7 +45,7 @@ namespace Jeffijoe.MessageFormat.Tests.Parsing
         /// <summary>
         /// Gets the get key_throws_with_invalid_characters_ case.
         /// </summary>
-        public static IEnumerable<object[]> GetKey_throws_with_invalid_characters_Case
+        public static IEnumerable<object[]> GetKeyThrowsWithInvalidCharactersCase
         {
             get
             {
@@ -107,16 +104,15 @@ namespace Jeffijoe.MessageFormat.Tests.Parsing
         /// The expected column.
         /// </param>
         [Theory]
-        [MemberData(nameof(GetKey_throws_with_invalid_characters_Case))]
+        [MemberData(nameof(GetKeyThrowsWithInvalidCharactersCase))]
         public void ReadLiteralSection_throws_with_invalid_characters(
             Literal literal, 
             int expectedLine, 
             int expectedColumn)
         {
-            int lastIndex;
             var ex =
                 Assert.Throws<MalformedLiteralException>(
-                    () => PatternParser.ReadLiteralSection(literal, 0, false, out lastIndex));
+                    () => PatternParser.ReadLiteralSection(literal, 0, false, out _));
             Assert.Equal(expectedLine, ex.LineNumber);
             Assert.Equal(expectedColumn, ex.ColumnNumber);
             this.outputHelper.WriteLine(ex.Message);
@@ -143,8 +139,7 @@ namespace Jeffijoe.MessageFormat.Tests.Parsing
         public void ReadLiteralSection_with_offset(string source, string expected, int offset)
         {
             var literal = new Literal(10, 10, 1, 1, source);
-            int lastIndex;
-            Assert.Equal(expected, PatternParser.ReadLiteralSection(literal, offset, true, out lastIndex));
+            Assert.Equal(expected, PatternParser.ReadLiteralSection(literal, offset, true, out _));
         }
 
         #endregion

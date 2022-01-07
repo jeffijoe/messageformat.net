@@ -3,7 +3,10 @@
 // Author: Jeff Hansen <jeff@jeffijoe.com>
 // Copyright (C) Jeff Hansen 2014. All rights reserved.
 
+#if NET5_0_OR_GREATER
 using System;
+#endif
+
 using System.Text;
 
 namespace Jeffijoe.MessageFormat.Helpers
@@ -27,7 +30,7 @@ namespace Jeffijoe.MessageFormat.Helpers
         /// <returns>
         ///     The <see cref="bool" />.
         /// </returns>
-        internal static bool Contains(this StringBuilder src, params char[] chars)
+        private static bool Contains(this StringBuilder src, params char[] chars)
         {
 #if NET5_0_OR_GREATER
             foreach (var chunk in src.GetChunks())

@@ -5,8 +5,6 @@
 // Copyright (C) Jeff Hansen 2015. All rights reserved.
 
 using System.Collections.Generic;
-using System.Text;
-
 using Jeffijoe.MessageFormat.Formatting;
 using Jeffijoe.MessageFormat.Formatting.Formatters;
 using Jeffijoe.MessageFormat.Parsing;
@@ -27,7 +25,7 @@ namespace Jeffijoe.MessageFormat.Tests.Formatting.Formatters
         /// <summary>
         /// Gets the format_tests.
         /// </summary>
-        public static IEnumerable<object[]> Format_tests
+        public static IEnumerable<object[]> FormatTests
         {
             get
             {
@@ -54,13 +52,13 @@ namespace Jeffijoe.MessageFormat.Tests.Formatting.Formatters
         /// The expected block.
         /// </param>
         [Theory]
-        [MemberData(nameof(Format_tests))]
+        [MemberData(nameof(FormatTests))]
         public void Format(string formatterArgs, string gender, string expectedBlock)
         {
             var subject = new SelectFormatter();
             var messageFormatterMock = new Mock<IMessageFormatter>();
             messageFormatterMock.Setup(x => x.FormatMessage(It.IsAny<string>(), It.IsAny<Dictionary<string, object?>>()))
-                                .Returns((string input, Dictionary<string, object> a) => input);
+                                .Returns((string input, Dictionary<string, object> _) => input);
             var req = new FormatterRequest(
                 new Literal(1, 1, 1, 1, ""), 
                 "gender", 

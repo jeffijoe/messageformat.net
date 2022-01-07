@@ -14,7 +14,7 @@
             if (obj is NumberOperand n)
                 return n.Number == Number;
 
-            return base.Equals(obj);
+            return this == obj;
         }
 
         public override int GetHashCode()
