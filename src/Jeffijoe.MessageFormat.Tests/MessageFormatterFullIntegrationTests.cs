@@ -5,10 +5,8 @@
 // Copyright (C) Jeff Hansen 2015. All rights reserved.
 
 using System.Collections.Generic;
-
 using Jeffijoe.MessageFormat.Formatting;
 using Jeffijoe.MessageFormat.Tests.TestHelpers;
-
 using Xunit;
 using Xunit.Abstractions;
 
@@ -208,7 +206,8 @@ namespace Jeffijoe.MessageFormat.Tests
                     new object[]
                     {
                         Case2,
-                        new Dictionary<string, object?> { { "gender", "female" }, { "name", "Amanda" }, { "count", 1 } },
+                        new Dictionary<string, object?>
+                            { { "gender", "female" }, { "name", "Amanda" }, { "count", 1 } },
                         "She - {Amanda} - said: You have just one notification. Have a nice day!"
                     };
                 yield return
@@ -271,7 +270,8 @@ namespace Jeffijoe.MessageFormat.Tests
                     new object[]
                     {
                         Case5,
-                        new Dictionary<string, object?> { { "count", 42 }, { "gender", "female" }, { "genitals", 102 } },
+                        new Dictionary<string, object?>
+                            { { "count", 42 }, { "gender", "female" }, { "genitals", 102 } },
                         "She (who has the freakish amount of 102 boobies) said: You have a universal amount of notifications. Have a nice day!"
                     };
                 yield return
@@ -333,6 +333,13 @@ namespace Jeffijoe.MessageFormat.Tests
                         Case6,
                         new Dictionary<string, object?> { { "count", 3 } },
                         "You and 2 others added this to their profiles."
+                    };
+                yield return
+                    new object[]
+                    {
+                        "{ count, plural, one {1 thing} other {# things} }",
+                        new Dictionary<string, object?> { { "count", 2 } },
+                        "2 things"
                     };
             }
         }
@@ -582,7 +589,8 @@ namespace Jeffijoe.MessageFormat.Tests
 
             {
                 var mf = new MessageFormatter(useCache: true, locale: "en");
-                mf.Pluralizers!["en"] = n => {
+                mf.Pluralizers!["en"] = n =>
+                {
                     // ´n´ is the number being pluralized.
                     // ReSharper disable once CompareOfFloatsByEqualityOperator
                     if (n == 0)

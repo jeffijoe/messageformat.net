@@ -68,8 +68,7 @@ namespace Jeffijoe.MessageFormat.Parsing
             foreach (var literal in literals)
             {
                 // The first token to follow an opening brace will be the variable name.
-                int lastIndex;
-                string variableName = ReadLiteralSection(literal, 0, false, out lastIndex)!;
+                var variableName = ReadLiteralSection(literal, 0, false, out var lastIndex)!;
 
                 // The next (if any), is the formatter to use. Null is allowed.
                 string? formatterKey = null;
@@ -78,7 +77,7 @@ namespace Jeffijoe.MessageFormat.Parsing
                 string? formatterArgs = null;
                 if (variableName.Length != literal.InnerText.Length)
                 {
-                    formatterKey = ReadLiteralSection(literal, variableName.Length + 1, true, out lastIndex);
+                    formatterKey = ReadLiteralSection(literal, lastIndex + 1, true, out lastIndex);
                     if (formatterKey != null)
                     {
 #if NET5_0_OR_GREATER
@@ -147,7 +146,7 @@ namespace Jeffijoe.MessageFormat.Parsing
                     }
 
                     // Disregard whitespace.
-                    var whitespace = c == ' ' || c == '\r' || c == '\n' || c == '\t';
+                    var whitespace = char.IsWhiteSpace(c);
                     if (!whitespace)
                     {
                         if (c.IsAlphaNumeric() == false)
