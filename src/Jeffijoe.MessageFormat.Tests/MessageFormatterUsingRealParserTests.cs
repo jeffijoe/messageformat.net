@@ -10,8 +10,6 @@ using Jeffijoe.MessageFormat.Formatting;
 using Jeffijoe.MessageFormat.Parsing;
 using Jeffijoe.MessageFormat.Tests.TestHelpers;
 
-using Moq;
-
 using Xunit;
 using Xunit.Abstractions;
 
@@ -58,7 +56,7 @@ namespace Jeffijoe.MessageFormat.Tests
         /// The expected.
         /// </param>
         [Theory]
-        [InlineData(@"Hi, I'm {name}, and it's still {name, plural, whatever
+        [InlineData(@"Hi, I'm {name}, and it's still {name, fake, whatever
 
 i do what i want
 
@@ -73,18 +71,16 @@ whatchu gonna do when dey come for youu?
 }, ok?", "Hi, I'm Jeff, and it's still Jeff, ok?")]
         public void FormatMessage_using_real_parser_and_library_mock(string source, string expected)
         {
-            var mockLibary = new Mock<IFormatterLibrary>();
-            var dummyFormatter = new Mock<IFormatter>();
+            var library = new FormatterLibrary();
+            var dummyFormatter = new FakeFormatter(canFormat:true, formatResult: "Jeff");
+            library.Add(dummyFormatter);
             var subject = new MessageFormatter(
                 new PatternParser(new LiteralParser()), 
-                mockLibary.Object, 
+                library,
                 false);
 
             var args = new Dictionary<string, object?>();
             args.Add("name", "Jeff");
-            dummyFormatter.Setup(x => x.Format("en", It.IsAny<FormatterRequest>(), args, "Jeff", subject))
-                          .Returns("Jeff");
-            mockLibary.Setup(x => x.GetFormatter(It.IsAny<FormatterRequest>())).Returns(dummyFormatter.Object);
 
             // Warm up
             Benchmark.Start("Warm-up", this.outputHelper);

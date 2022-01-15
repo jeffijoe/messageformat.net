@@ -5,13 +5,10 @@
 // Copyright (C) Jeff Hansen 2015. All rights reserved.
 
 using System.Collections.Generic;
-using System.Text;
-
 using Jeffijoe.MessageFormat.Formatting;
 using Jeffijoe.MessageFormat.Formatting.Formatters;
 using Jeffijoe.MessageFormat.Parsing;
-
-using Moq;
+using Jeffijoe.MessageFormat.Tests.TestHelpers;
 
 using Xunit;
 
@@ -25,14 +22,14 @@ namespace Jeffijoe.MessageFormat.Tests.Formatting.Formatters
         #region Fields
 
         /// <summary>
-        ///     The formatter mock.
-        /// </summary>
-        private readonly Mock<IMessageFormatter> formatterMock;
-
-        /// <summary>
         ///     The subject.
         /// </summary>
         private readonly VariableFormatter subject;
+
+        /// <summary>
+        ///     The fake message formatter.
+        /// </summary>
+        private readonly IMessageFormatter formatter;
 
         #endregion
 
@@ -43,7 +40,7 @@ namespace Jeffijoe.MessageFormat.Tests.Formatting.Formatters
         /// </summary>
         public VariableFormatterTests()
         {
-            this.formatterMock = new Mock<IMessageFormatter>();
+            this.formatter = new FakeMessageFormatter();
             this.subject = new VariableFormatter();
         }
 
@@ -60,7 +57,7 @@ namespace Jeffijoe.MessageFormat.Tests.Formatting.Formatters
             var req = CreateRequest();
             var args = new Dictionary<string, object?>();
 
-            Assert.Equal(string.Empty, this.subject.Format("en", req, args, null, this.formatterMock.Object));
+            Assert.Equal(string.Empty, this.subject.Format("en", req, args, null, this.formatter));
         }
 
         /// <summary>
@@ -72,7 +69,7 @@ namespace Jeffijoe.MessageFormat.Tests.Formatting.Formatters
             var req = CreateRequest();
             var args = new Dictionary<string, object?>();
 
-            Assert.Equal("is good", this.subject.Format("en", req, args, "is good", this.formatterMock.Object));
+            Assert.Equal("is good", this.subject.Format("en", req, args, "is good", this.formatter));
         }
 
         #endregion

@@ -8,7 +8,6 @@ using System.Collections.Generic;
 using System.Collections.Concurrent;
 using System.Linq;
 using System.Text;
-
 using Jeffijoe.MessageFormat.Formatting;
 using Jeffijoe.MessageFormat.Formatting.Formatters;
 using Jeffijoe.MessageFormat.Helpers;
@@ -113,10 +112,7 @@ namespace Jeffijoe.MessageFormat
         /// </value>
         public IFormatterLibrary Formatters
         {
-            get
-            {
-                return this.library;
-            }
+            get { return this.library; }
         }
 
         /// <summary>
@@ -249,7 +245,7 @@ namespace Jeffijoe.MessageFormat
                 }
 
                 // And we're done.
-                return this.UnescapeLiterals(sourceBuilder);
+                return MessageFormatter.UnescapeLiterals(sourceBuilder);
             }
             finally
             {
@@ -287,7 +283,7 @@ namespace Jeffijoe.MessageFormat
         /// <returns>
         ///     The <see cref="StringBuilder" />.
         /// </returns>
-        protected internal string UnescapeLiterals(StringBuilder sourceBuilder)
+        internal static string UnescapeLiterals(StringBuilder sourceBuilder)
         {
             // If the block is empty, do nothing.
             if (sourceBuilder.Length == 0)
@@ -296,8 +292,6 @@ namespace Jeffijoe.MessageFormat
             }
 
             const char EscapingChar = '\'';
-            const char OpenBrace = '{';
-            const char CloseBrace = '}';
 
             if (!sourceBuilder.Contains(EscapingChar))
             {
@@ -305,7 +299,6 @@ namespace Jeffijoe.MessageFormat
             }
 
             var length = sourceBuilder.Length;
-            var braceBalance = 0;
             var insideEscapeSequence = false;
 
             var dest = StringBuilderPool.Get();
@@ -318,54 +311,39 @@ namespace Jeffijoe.MessageFormat
 
                     if (c == EscapingChar)
                     {
-                        if (braceBalance == 0)
+                        if (i == length - 1)
                         {
-                            if (i == length - 1)
-                            {
-                                if (!insideEscapeSequence)
-                                    dest.Append(EscapingChar);
-                                continue;
-                            }
-
-                            var nextChar = sourceBuilder[i + 1];
-                            if (nextChar == EscapingChar)
-                            {
+                            if (!insideEscapeSequence)
                                 dest.Append(EscapingChar);
-                                ++i;
-                                continue;
-                            }
-
-                            if (insideEscapeSequence)
-                            {
-                                insideEscapeSequence = false;
-                                continue;
-                            }
-
-                            if (nextChar == '{' || nextChar == '}' || nextChar == '#')
-                            {
-                                dest.Append(nextChar);
-                                insideEscapeSequence = true;
-                                ++i;
-                                continue;
-                            }
-
-                            dest.Append(EscapingChar);
                             continue;
                         }
-                    }
-                    else if (insideEscapeSequence)
-                    {
-                        // fall through to append
-                    }
-                    else if (c == OpenBrace)
-                    {
-                        braceBalance++;
-                    }
-                    else if (c == CloseBrace)
-                    {
-                        braceBalance--;
-                    }
 
+                        var nextChar = sourceBuilder[i + 1];
+                        if (nextChar == EscapingChar)
+                        {
+                            dest.Append(EscapingChar);
+                            ++i;
+                            continue;
+                        }
+
+                        if (insideEscapeSequence)
+                        {
+                            insideEscapeSequence = false;
+                            continue;
+                        }
+
+                        if (nextChar == '{' || nextChar == '}' || nextChar == '#')
+                        {
+                            dest.Append(nextChar);
+                            insideEscapeSequence = true;
+                            ++i;
+                            continue;
+                        }
+
+                        dest.Append(EscapingChar);
+                        continue;
+                    }
+                    
                     dest.Append(c);
                 }
 
@@ -409,6 +387,6 @@ namespace Jeffijoe.MessageFormat
             return requests;
         }
 
-#endregion
+        #endregion
     }
 }

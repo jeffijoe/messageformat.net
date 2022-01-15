@@ -71,11 +71,6 @@ namespace Jeffijoe.MessageFormat.Parsing
         /// </exception>
         private static string BuildMessage(int openBraceCount, int closeBraceCount)
         {
-            if (openBraceCount == closeBraceCount)
-            {
-                throw new ArgumentException("Bracket counter was 0, which would indicate success.");
-            }
-
             if (openBraceCount > closeBraceCount)
             {
                 return "There are " + (openBraceCount - closeBraceCount)

@@ -4,14 +4,12 @@
 // Author: Jeff Hansen <jeff@jeffijoe.com>
 // Copyright (C) Jeff Hansen 2015. All rights reserved.
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-
 using Jeffijoe.MessageFormat.Formatting;
 using Jeffijoe.MessageFormat.Parsing;
 using Jeffijoe.MessageFormat.Tests.TestHelpers;
-
 using Xunit;
 using Xunit.Abstractions;
 
@@ -51,7 +49,7 @@ namespace Jeffijoe.MessageFormat.Tests.Formatting
         /// <summary>
         ///     Gets the parse arguments_tests.
         /// </summary>
-        public static IEnumerable<object[]> ParseArguments_tests
+        public static IEnumerable<object[]> ParseArgumentsTests
         {
             get
             {
@@ -80,10 +78,17 @@ namespace Jeffijoe.MessageFormat.Tests.Formatting
         /// <summary>
         ///     Gets the parse keyed blocks_tests.
         /// </summary>
-        public static IEnumerable<object[]> ParseKeyedBlocks_tests
+        public static IEnumerable<object?[]> ParseKeyedBlocksTests
         {
             get
             {
+                yield return
+                    new object?[]
+                    {
+                        null,
+                        Array.Empty<string>(),
+                        Array.Empty<string>()
+                    };
                 yield return
                     new object[]
                     {
@@ -98,18 +103,33 @@ namespace Jeffijoe.MessageFormat.Tests.Formatting
                         new[] { "zero", "other" },
                         new[] { string.Empty, "wee" }
                     };
-                yield return new object[] { @"
+                yield return
+                    new object[]
+                    {
+                        "male {''he''}",
+                        new[] { "male"},
+                        new[] { "''he''" }
+                    };
+                yield return new object[]
+                {
+                    @"
                         male {he} 
                         female {she}
 unknown
     {they}
-", new[] { "male", "female", "unknown" }, new[] { "he", "she", "they" } };
-                yield return new object[] { @"
+",
+                    new[] { "male", "female", "unknown" }, new[] { "he", "she", "they" }
+                };
+                yield return new object[]
+                {
+                    @"
                         male {he} 
                         female {she{dawg}}
 unknown
     {they'{dawg}'}
-", new[] { "male", "female", "unknown" }, new[] { "he", "she{dawg}", @"they'{dawg}'" } };
+",
+                    new[] { "male", "female", "unknown" }, new[] { "he", "she{dawg}", @"they'{dawg}'" }
+                };
             }
         }
 
@@ -136,7 +156,7 @@ unknown
         /// The blocks.
         /// </param>
         [Theory]
-        [MemberData(nameof(ParseArguments_tests))]
+        [MemberData(nameof(ParseArgumentsTests))]
         public void ParseArguments(
             string args,
             string[] extensionKeys,
@@ -185,6 +205,7 @@ unknown
             var subject = new BaseFormatterImpl();
             var req = new FormatterRequest(new Literal(1, 1, 1, 1, ""), string.Empty, null, args);
             var ex = Assert.Throws<MalformedLiteralException>(() => subject.ParseArguments(req));
+            Assert.Equal(args, ex.SourceSnippet);
             this.outputHelper.WriteLine(ex.Message);
         }
 
@@ -206,14 +227,13 @@ unknown
         [Theory]
         [InlineData(" offset:3 boom", "offset", "3", 9)]
         [InlineData("testie:dawg lel", "testie", "dawg", 11)]
-        public void ParseExtensions(string args, string extension, string value, int expectedIndex)
+        public void ParseExtensions(string? args, string extension, string value, int expectedIndex)
         {
             var subject = new BaseFormatterImpl();
-            int index;
             var req = new FormatterRequest(new Literal(1, 1, 1, 1, ""), string.Empty, null, args);
 
             // Warmup
-            subject.ParseExtensions(req, out index);
+            subject.ParseExtensions(req, out var index);
 
             Benchmark.Start("Parsing extensions a few times (warmed up)", this.outputHelper);
             for (int i = 0; i < 1000; i++)
@@ -223,12 +243,28 @@ unknown
 
             Benchmark.End(this.outputHelper);
 
-            var actual = subject.ParseExtensions(req, out index);
+            var actual = subject.ParseExtensions(req, out index).ToList();
             Assert.NotEmpty(actual);
             var first = actual.First();
             Assert.Equal(extension, first.Extension);
             Assert.Equal(value, first.Value);
             Assert.Equal(expectedIndex, index);
+        }
+ 
+        /// <summary>
+        /// The parse extensions returns empty collection when formatter arguments is null.
+        /// </summary>
+        [Fact]
+        public void ParseExtensions_returns_empty_collection_when_formatter_arguments_is_null()
+        {
+            string? args = null;
+            var subject = new BaseFormatterImpl();
+            var req = new FormatterRequest(new Literal(1, 1, 1, 1, ""), string.Empty, null, args);
+            
+            var actual = subject.ParseExtensions(req, out var index);
+
+            Assert.Empty(actual);
+            Assert.Equal(-1, index);
         }
 
         /// <summary>
@@ -238,13 +274,12 @@ unknown
         public void ParseExtensions_multiple()
         {
             var subject = new BaseFormatterImpl();
-            int index;
             var args = " offset:2 code:js ";
             var expectedIndex = 17;
 
             var req = new FormatterRequest(new Literal(1, 1, 1, 1, ""), string.Empty, null, args);
 
-            var actual = subject.ParseExtensions(req, out index);
+            var actual = subject.ParseExtensions(req, out var index).ToList();
             Assert.NotEmpty(actual);
             var result = actual.First();
             Assert.Equal("offset", result.Extension);
@@ -270,8 +305,8 @@ unknown
         /// The values.
         /// </param>
         [Theory]
-        [MemberData(nameof(ParseKeyedBlocks_tests))]
-        public void ParseKeyedBlocks(string args, string[] keys, string[] values)
+        [MemberData(nameof(ParseKeyedBlocksTests))]
+        public void ParseKeyedBlocks(string? args, string[] keys, string[] values)
         {
             var subject = new BaseFormatterImpl();
             var req = new FormatterRequest(new Literal(1, 1, 1, 1, ""), string.Empty, null, args);
@@ -287,7 +322,7 @@ unknown
 
             Benchmark.End(this.outputHelper);
 
-            var actual = subject.ParseKeyedBlocks(req, 0);
+            var actual = subject.ParseKeyedBlocks(req, 0).ToList();
             Assert.Equal(keys.Length, actual.Count());
             this.outputHelper.WriteLine("Input: " + args);
             this.outputHelper.WriteLine("-----");
@@ -313,7 +348,12 @@ unknown
         [Theory]
         [InlineData("male {he} other {'{they}")]
         [InlineData("male {he} other {'# they}")]
-        public void ParseKeyedBlocks_unclosed_escape_sequence(string args)
+        [InlineData("male {he} other }")]
+        [InlineData("male {he} other {'")]
+        [InlineData("male {he} other {'{'")]
+        [InlineData("male{}} female{}")]
+        [InlineData("male haha")]
+        public void ParseKeyedBlocks_bad_formatting(string? args)
         {
             var subject = new BaseFormatterImpl();
             var req = new FormatterRequest(new Literal(1, 1, 1, 1, ""), string.Empty, null, args);

@@ -30,16 +30,18 @@ namespace Jeffijoe.MessageFormat.Parsing
         /// <summary>
         ///     Initializes a new instance of the <see cref="PatternParser" /> class.
         /// </summary>
+        public PatternParser() : this(new LiteralParser())
+        {
+        }
+        
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="PatternParser" /> class.
+        /// </summary>
         /// <param name="literalParser">
         ///     The literal parser.
         /// </param>
         public PatternParser(ILiteralParser literalParser)
         {
-            if (literalParser == null)
-            {
-                throw new ArgumentNullException("literalParser");
-            }
-
             this.literalParser = literalParser;
         }
 
@@ -68,8 +70,7 @@ namespace Jeffijoe.MessageFormat.Parsing
             foreach (var literal in literals)
             {
                 // The first token to follow an opening brace will be the variable name.
-                int lastIndex;
-                string variableName = ReadLiteralSection(literal, 0, false, out lastIndex)!;
+                var variableName = ReadLiteralSection(literal, 0, false, out var lastIndex)!;
 
                 // The next (if any), is the formatter to use. Null is allowed.
                 string? formatterKey = null;
@@ -78,12 +79,13 @@ namespace Jeffijoe.MessageFormat.Parsing
                 string? formatterArgs = null;
                 if (variableName.Length != literal.InnerText.Length)
                 {
-                    formatterKey = ReadLiteralSection(literal, variableName.Length + 1, true, out lastIndex);
+                    formatterKey = ReadLiteralSection(literal, lastIndex + 1, true, out lastIndex);
                     if (formatterKey != null)
                     {
 #if NET5_0_OR_GREATER
                         formatterArgs =
-                            literal.InnerText.AsSpan(lastIndex + 1, literal.InnerText.Length - lastIndex - 1).Trim().ToString();
+                            literal.InnerText.AsSpan(lastIndex + 1, literal.InnerText.Length - lastIndex - 1).Trim()
+                                .ToString();
 #else
                         formatterArgs =
                             literal.InnerText.Substring(lastIndex + 1, literal.InnerText.Length - lastIndex - 1).Trim();
@@ -146,16 +148,19 @@ namespace Jeffijoe.MessageFormat.Parsing
                     }
 
                     // Disregard whitespace.
-                    var whitespace = c == ' ' || c == '\r' || c == '\n' || c == '\t';
+                    var whitespace = char.IsWhiteSpace(c);
                     if (!whitespace)
                     {
                         if (c.IsAlphaNumeric() == false)
                         {
-                            var msg = string.Format("Invalid literal character '{0}'.", c);
+                            var msg = $"Invalid literal character '{c}'.";
 
                             // Line number can't have changed.
-                            throw new MalformedLiteralException(msg, literal.SourceLineNumber, column,
-                                innerText.ToString());
+                            throw new MalformedLiteralException(
+                                msg, 
+                                literal.SourceLineNumber, 
+                                column,
+                                innerText);
                         }
                     }
                     else

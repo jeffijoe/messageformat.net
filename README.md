@@ -60,7 +60,7 @@ Install-Package MessageFormat
 ## Features
 
 * **It's fast.** Everything is hand-written; no parser-generators, *not even regular expressions*.
-* **It's portable.** The library is targeting **.NET Standard 1.1**.
+* **It's portable.** The library is targeting **.NET Standard 2.0**.
 * **It's compatible with other implementations.** I've been peeking a bit at the [MessageFormat.js][0] library to make sure
   the results would be the same.
 * **It's (relatively) small**. For a .NET library, ~25kb is not a lot.

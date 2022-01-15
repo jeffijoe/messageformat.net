@@ -133,7 +133,7 @@ sweet
             var subject = new LiteralParser();
             var actual = subject.ParseLiterals(sb);
             var first = actual.First();
-            string innerText = first.InnerText.ToString();
+            string innerText = first.InnerText;
             Assert.Equal(expectedInnerText, innerText);
             Assert.Equal(position[0], first.StartIndex);
 

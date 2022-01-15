@@ -49,7 +49,7 @@ namespace Jeffijoe.MessageFormat.MetadataGenerator.Plural
 
         private Stream GetRulesContentStream()
         {
-            return typeof(PluralLanguagesGenerator).Assembly.GetManifestResourceStream("Jeffijoe.MessageFormat.MetadataGenerator.data.plurals.xml");
+            return typeof(PluralLanguagesGenerator).Assembly.GetManifestResourceStream("Jeffijoe.MessageFormat.MetadataGenerator.data.plurals.xml")!;
         }
 
         public void Initialize(GeneratorInitializationContext context)

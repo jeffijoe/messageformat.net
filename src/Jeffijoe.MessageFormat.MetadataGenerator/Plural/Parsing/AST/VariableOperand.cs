@@ -14,7 +14,7 @@
             if (obj is VariableOperand op)
                 return op.Operand == Operand;
 
-            return base.Equals(obj);
+            return this == obj;
         }
 
         public override int GetHashCode()

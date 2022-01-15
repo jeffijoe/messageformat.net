@@ -7,7 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Text;
 
 namespace Jeffijoe.MessageFormat.Formatting.Formatters
 {
@@ -105,31 +104,6 @@ namespace Jeffijoe.MessageFormat.Formatting.Formatters
             var result = this.ReplaceNumberLiterals(pluralized, ctx.Number);
             var formatted = messageFormatter.FormatMessage(result, args);
             return formatted;
-        }
-
-        private static PluralContext CreatePluralContext(object? value, double offset)
-        {
-            if (offset == 0)
-            {
-                if (value is string v)
-                {
-                    return new PluralContext(v);
-                }
-
-                if (value is int i)
-                {
-                    return new PluralContext(i);
-                }
-
-                if (value is decimal d)
-                {
-                    return new PluralContext(d);
-                }
-
-                return new PluralContext(Convert.ToDouble(value));
-            }
-
-            return new PluralContext(Convert.ToDouble(value) - offset);
         }
 
         #endregion
@@ -239,6 +213,7 @@ namespace Jeffijoe.MessageFormat.Formatting.Formatters
 
                     if (c == EscapeChar)
                     {
+                        // Append it anyway because the escae
                         sb.Append(EscapeChar);
 
                         if (i == pluralized.Length - 1)
@@ -266,7 +241,7 @@ namespace Jeffijoe.MessageFormat.Formatting.Formatters
                             continue;
                         }
 
-                        if (nextChar == '{' || nextChar == '}' || nextChar == '#')
+                        if (nextChar is '{' or '}' or '#')
                         {
                             sb.Append(nextChar);
                             insideEscapeSequence = true;
@@ -333,6 +308,38 @@ namespace Jeffijoe.MessageFormat.Formatting.Formatters
                     // ReSharper restore CompareOfFloatsByEqualityOperator
                     return "other";
                 });
+        }
+
+        /// <summary>
+        ///     Creates a <see cref="PluralContext"/> for the specified value.
+        /// </summary>
+        /// <param name="value"></param>
+        /// <param name="offset"></param>
+        /// <returns></returns>
+        [ExcludeFromCodeCoverage]
+        private static PluralContext CreatePluralContext(object? value, double offset)
+        {
+            if (offset == 0)
+            {
+                if (value is string v)
+                {
+                    return new PluralContext(v);
+                }
+
+                if (value is int i)
+                {
+                    return new PluralContext(i);
+                }
+
+                if (value is decimal d)
+                {
+                    return new PluralContext(d);
+                }
+
+                return new PluralContext(Convert.ToDouble(value));
+            }
+
+            return new PluralContext(Convert.ToDouble(value) - offset);
         }
 
         #endregion

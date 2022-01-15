@@ -31,7 +31,7 @@ namespace Jeffijoe.MessageFormat.Helpers
             var properties = new List<PropertyInfo>();
             var type = obj.GetType();
             var typeInfo = type.GetTypeInfo();
-            while (typeInfo != null)
+            while (true)
             {
                 properties.AddRange(typeInfo.DeclaredProperties);
                 if (typeInfo.BaseType == null)

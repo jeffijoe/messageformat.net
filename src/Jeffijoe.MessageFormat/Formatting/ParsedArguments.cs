@@ -27,16 +27,6 @@ namespace Jeffijoe.MessageFormat.Formatting
         /// </param>
         public ParsedArguments(IEnumerable<KeyedBlock> keyedBlocks, IEnumerable<FormatterExtension> extensions)
         {
-            if (keyedBlocks == null)
-            {
-                throw new ArgumentNullException("keyedBlocks");
-            }
-
-            if (extensions == null)
-            {
-                throw new ArgumentNullException("extensions");
-            }
-
             this.KeyedBlocks = keyedBlocks.ToList();
             this.Extensions = extensions.ToList();
         }

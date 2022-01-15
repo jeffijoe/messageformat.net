@@ -4,8 +4,6 @@
 // Author: Jeff Hansen <jeff@jeffijoe.com>
 // Copyright (C) Jeff Hansen 2015. All rights reserved.
 
-using System.Text;
-
 using Jeffijoe.MessageFormat.Parsing;
 
 using Xunit;

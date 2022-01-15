@@ -4,10 +4,7 @@
 // Copyright (C) Jeff Hansen 2014. All rights reserved.
 
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text;
-
 using Jeffijoe.MessageFormat.Parsing;
 
 namespace Jeffijoe.MessageFormat.Formatting
@@ -268,15 +265,6 @@ namespace Jeffijoe.MessageFormat.Formatting
                             key.Clear();
                             foundWhitespaceAfterKey = false;
                             continue;
-                        }
-
-                        if (braceBalance < 0)
-                        {
-                            throw new MalformedLiteralException(
-                                "Expected '{', but found '}' - essentially this means there are more close braces than there are open braces.",
-                                0,
-                                0,
-                                request.FormatterArguments);
                         }
                     }
 
