@@ -6,9 +6,7 @@
 
 using Jeffijoe.MessageFormat.Formatting;
 using Jeffijoe.MessageFormat.Parsing;
-
-using Moq;
-
+using Jeffijoe.MessageFormat.Tests.TestHelpers;
 using Xunit;
 
 namespace Jeffijoe.MessageFormat.Tests.Formatting
@@ -27,23 +25,29 @@ namespace Jeffijoe.MessageFormat.Tests.Formatting
         public void GetFormatter()
         {
             var subject = new FormatterLibrary();
-            var mock1 = new Mock<IFormatter>();
-            var mock2 = new Mock<IFormatter>();
-
+            
             var req = new FormatterRequest(new Literal(1, 1, 1, 1, ""), "test", "dawg", null);
-            subject.Add(mock1.Object);
-            subject.Add(mock2.Object);
+            var formatter1 = new FakeFormatter();
+            var formatter2 = new FakeFormatter();
+            
+            subject.Add(formatter1);
+            subject.Add(formatter2);
 
             Assert.Throws<FormatterNotFoundException>(() => subject.GetFormatter(req));
 
-            mock2.Setup(x => x.CanFormat(req)).Returns(true);
+            formatter2.SetCanFormat(true);
+            
             var actual = subject.GetFormatter(req);
-            Assert.Same(mock2.Object, actual);
+            Assert.Same(formatter2, actual);
 
-            mock1.Setup(x => x.CanFormat(req)).Returns(true);
+            formatter1.SetCanFormat(true);
             actual = subject.GetFormatter(req);
-            Assert.Same(mock1.Object, actual);
+            Assert.Same(formatter1, actual);
         }
+
+        #endregion
+
+        #region Fakes
 
         #endregion
     }

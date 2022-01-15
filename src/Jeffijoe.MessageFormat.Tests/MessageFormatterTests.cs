@@ -5,13 +5,10 @@
 // Copyright (C) Jeff Hansen 2015. All rights reserved.
 
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 
 using Jeffijoe.MessageFormat.Formatting;
 using Jeffijoe.MessageFormat.Parsing;
-
-using Moq;
 
 using Xunit;
 
@@ -22,57 +19,6 @@ namespace Jeffijoe.MessageFormat.Tests
     /// </summary>
     public class MessageFormatterTests
     {
-        #region Fields
-
-        /// <summary>
-        /// The collection mock.
-        /// </summary>
-        private readonly Mock<IFormatterRequestCollection> collectionMock;
-
-        /// <summary>
-        /// The formatter mock 1.
-        /// </summary>
-        private readonly Mock<IFormatter> formatterMock1;
-
-        /// <summary>
-        /// The formatter mock 2.
-        /// </summary>
-        private readonly Mock<IFormatter> formatterMock2;
-
-        /// <summary>
-        /// The library mock.
-        /// </summary>
-        private readonly Mock<IFormatterLibrary> libraryMock;
-
-        /// <summary>
-        /// The message formatter.
-        /// </summary>
-        private readonly MessageFormatter subject;
-
-        /// <summary>
-        /// The pattern parser mock.
-        /// </summary>
-        private readonly Mock<IPatternParser> patternParserMock;
-
-        #endregion
-
-        #region Constructors and Destructors
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="MessageFormatterTests"/> class.
-        /// </summary>
-        public MessageFormatterTests()
-        {
-            this.patternParserMock = new Mock<IPatternParser>();
-            this.libraryMock = new Mock<IFormatterLibrary>();
-            this.collectionMock = new Mock<IFormatterRequestCollection>();
-            this.formatterMock1 = new Mock<IFormatter>();
-            this.formatterMock2 = new Mock<IFormatter>();
-            this.subject = new MessageFormatter(this.patternParserMock.Object, this.libraryMock.Object, false);
-        }
-
-        #endregion
-
         #region Public Methods and Operators
 
         /// <summary>
@@ -81,44 +27,12 @@ namespace Jeffijoe.MessageFormat.Tests
         [Fact]
         public void FormatMessage()
         {
-            const string Pattern = "{name} has {messages, plural, 123}.";
+            const string Pattern = "{name} has {messages, plural, other {# messages}}.";
             const string Expected = "Jeff has 123 messages.";
-            var args = new Dictionary<string, object?> { { "name", "Jeff" }, { "messages", 1 } };
-            var requests = new[]
-            {
-                new FormatterRequest(
-                    new Literal(0, 5, 1, 7, "name"),
-                    "name",
-                    null,
-                    null),
-                new FormatterRequest(
-                    new Literal(11, 33, 1, 7, "messages, plural, 123"),
-                    "messages",
-                    "plural",
-                    " 123")
-            };
-
-            this.formatterMock1.Setup(x => x.Format("en", requests[0], args, "Jeff", this.subject)).Returns("Jeff");
-            this.formatterMock2.Setup(x => x.Format("en", requests[1], args, 1, this.subject)).Returns("123 messages");
-            this.collectionMock.Setup(x => x.GetEnumerator()).Returns(requests.AsEnumerable().GetEnumerator());
-            this.collectionMock.Setup(x => x.Count).Returns(requests.Length);
-            this.collectionMock.Setup(x => x[It.IsAny<int>()]).Returns((int i) => requests[i]);
-            this.libraryMock.Setup(x => x.GetFormatter(requests[0])).Returns(this.formatterMock1.Object);
-            this.libraryMock.Setup(x => x.GetFormatter(requests[1])).Returns(this.formatterMock2.Object);
-            this.patternParserMock.Setup(x => x.Parse(It.IsAny<StringBuilder>())).Returns(this.collectionMock.Object);
-
-            // First request, and "name" is 4 chars.
-            this.collectionMock.Setup(x => x.ShiftIndices(0, 4)).Callback(
-
-                // The '- 2' is also done in the used implementation.
-                (int _, int length) => requests[1].SourceLiteral.ShiftIndices(length - 2, requests[0].SourceLiteral));
-
-            var actual = this.subject.FormatMessage(Pattern, args);
-            this.collectionMock.Verify(x => x.ShiftIndices(0, 4), Times.Once);
-            this.libraryMock.VerifyAll();
-            this.formatterMock1.VerifyAll();
-            this.formatterMock2.VerifyAll();
-            this.patternParserMock.VerifyAll();
+            var args = new Dictionary<string, object?> { { "name", "Jeff" }, { "messages", 123} };
+            
+            var actual = MessageFormatter.Format(Pattern, args);
+            
             Assert.Equal(Expected, actual);
         }
 
@@ -134,9 +48,10 @@ namespace Jeffijoe.MessageFormat.Tests
         [Theory]
         [InlineData(@"Hello '{buddy}', how are you '{doing}'?", "Hello {buddy}, how are you {doing}?")]
         [InlineData(@"Hello ''{buddy}'', how are you '{doing}'?", @"Hello '{buddy}', how are you {doing}?")]
+        [InlineData(@"{''}", @"{'}")]
         public void UnescapeLiterals(string source, string expected)
         {
-            var actual = this.subject.UnescapeLiterals(new StringBuilder(source));
+            var actual = MessageFormatter.UnescapeLiterals(new StringBuilder(source));
             Assert.Equal(expected, actual);
         }
 
@@ -146,38 +61,14 @@ namespace Jeffijoe.MessageFormat.Tests
         [Fact]
         public void VerifyFormatMessageThrowsWhenVariablesAreMissingAndTheFormatterRequiresItToExist()
         {
-            const string Pattern = "{name} has {messages, plural, 123}.";
+            const string Pattern = "{name}";
 
             // Note the missing "name" variable.
             var args = new Dictionary<string, object?> { { "messages", 1 } };
-            var requests = new[]
-            {
-                new FormatterRequest(
-                    new Literal(0, 5, 1, 7, "name"),
-                    "name",
-                    null,
-                    null),
-                new FormatterRequest(
-                    new Literal(11, 33, 1, 7, "messages, plural, 123"),
-                    "messages",
-                    "plural",
-                    " 123")
-            };
 
-            this.collectionMock.Setup(x => x.GetEnumerator()).Returns(() => requests.AsEnumerable().GetEnumerator());
-            this.collectionMock.Setup(x => x.Count).Returns(requests.Length);
-            this.collectionMock.Setup(x => x[It.IsAny<int>()]).Returns((int i) => requests[i]);
-            this.patternParserMock.Setup(x => x.Parse(It.IsAny<StringBuilder>())).Returns(this.collectionMock.Object);
-            this.formatterMock1.SetupGet(x => x.VariableMustExist).Returns(true);
-            this.libraryMock.Setup(x => x.GetFormatter(It.IsAny<FormatterRequest>())).Returns(formatterMock1.Object);
+            var subject = new MessageFormatter();
             
-            // First request, and "name" is 4 chars.
-            this.collectionMock.Setup(x => x.ShiftIndices(0, 4)).Callback(
-
-                // The '- 2' is also done in the used implementation.
-                (int _, int length) => requests[1].SourceLiteral.ShiftIndices(length - 2, requests[0].SourceLiteral));
-
-            var ex = Assert.Throws<VariableNotFoundException>(() => this.subject.FormatMessage(Pattern, args));
+            var ex = Assert.Throws<VariableNotFoundException>(() => subject.FormatMessage(Pattern, args));
             Assert.Equal("name", ex.MissingVariable);
         }
         
@@ -187,31 +78,43 @@ namespace Jeffijoe.MessageFormat.Tests
         [Fact]
         public void VerifyFormatMessageAllowsNonExistentVariablesWhenFormatterAllowsIt()
         {
-            const string Pattern = "{name}";
+            const string Pattern = "{name, fake}";
 
             // Note the missing "name" variable.
             var args = new Dictionary<string, object?> ();
-            var requests = new[]
-            {
-                new FormatterRequest(
-                    new Literal(0, 5, 1, 7, "name"),
-                    "name",
-                    null,
-                    null),
-            };
 
-            this.collectionMock.Setup(x => x.GetEnumerator()).Returns(() => requests.AsEnumerable().GetEnumerator());
-            this.collectionMock.Setup(x => x.Count).Returns(requests.Length);
-            this.collectionMock.Setup(x => x[It.IsAny<int>()]).Returns((int i) => requests[i]);
-            this.patternParserMock.Setup(x => x.Parse(It.IsAny<StringBuilder>())).Returns(this.collectionMock.Object);
-            this.libraryMock.Setup(x => x.GetFormatter(It.IsAny<FormatterRequest>())).Returns(formatterMock2.Object);
-            this.formatterMock2.SetupGet(x => x.VariableMustExist).Returns(false);
-            this.formatterMock2.Setup(x => x.Format(It.IsAny<string>(), It.IsAny<FormatterRequest>(),
-                It.IsAny<IDictionary<string, object?>>(), null, It.IsAny<IMessageFormatter>())).Returns("formatted");
+            var library = new FormatterLibrary();
+            library.Add(new TestFormatter(variableMustExist: false, formatterName: "fake"));
+            var subject = new MessageFormatter(new PatternParser(), library, useCache: false);
+
+            var actual = subject.FormatMessage(Pattern, args);
             
-            Assert.Equal("formatted",subject.FormatMessage(Pattern, args));
+            Assert.Equal("formatted", actual);
+        }
+
+        #endregion
+
+        #region Fakes
+
+        private class TestFormatter : IFormatter
+        {
+            private readonly string formatterName;
+
+            public TestFormatter(bool variableMustExist, string formatterName)
+            {
+                this.VariableMustExist = variableMustExist;
+                this.formatterName = formatterName;
+            }
             
-            this.formatterMock2.VerifyAll();
+            public bool VariableMustExist { get; }
+
+            public bool CanFormat(FormatterRequest request) => request.FormatterName == this.formatterName;
+
+            public string Format(string locale, FormatterRequest request, IDictionary<string, object?> args, object? value,
+                IMessageFormatter messageFormatter)
+            {
+                return "formatted";
+            }
         }
 
         #endregion

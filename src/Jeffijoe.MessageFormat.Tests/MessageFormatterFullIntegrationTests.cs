@@ -117,6 +117,20 @@ namespace Jeffijoe.MessageFormat.Tests
                         new Dictionary<string, object?> { { "num", 2 } },
                         "#{2#2}"
                     };
+                yield return
+                    new object[]
+                    {
+                        "'''{'''",
+                        new Dictionary<string, object?>(),
+                        "'{'"
+                    };
+                // yield return
+                //     new object[]
+                //     {
+                //         "{num, plural, =1 {1} other {'''{'''#'''}'''}}",
+                //         new Dictionary<string, object?> { { "num", 2 } },
+                //         "'{'2'}'"
+                //     };
             }
         }
 

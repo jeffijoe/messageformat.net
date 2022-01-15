@@ -266,15 +266,6 @@ namespace Jeffijoe.MessageFormat.Formatting
                             foundWhitespaceAfterKey = false;
                             continue;
                         }
-
-                        if (braceBalance < 0)
-                        {
-                            throw new MalformedLiteralException(
-                                "Expected '{', but found '}' - essentially this means there are more close braces than there are open braces.",
-                                0,
-                                0,
-                                request.FormatterArguments);
-                        }
                     }
 
                     // If we are inside a block, append to the block buffer

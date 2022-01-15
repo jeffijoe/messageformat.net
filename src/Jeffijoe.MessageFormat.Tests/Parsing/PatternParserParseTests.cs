@@ -9,8 +9,6 @@ using System.Text;
 using Jeffijoe.MessageFormat.Parsing;
 using Jeffijoe.MessageFormat.Tests.TestHelpers;
 
-using Moq;
-
 using Xunit;
 using Xunit.Abstractions;
 
@@ -72,13 +70,9 @@ namespace Jeffijoe.MessageFormat.Tests.Parsing
             "stuff {dawg, select, {name is '{'{name}'}'}}")]
         public void Parse(string source, string expectedKey, string expectedFormat, string expectedArgs)
         {
-            var literalParserMock = new Mock<ILiteralParser>();
+            var literalParser = FakeLiteralParser.Of(source);
             var sb = new StringBuilder(source);
-            literalParserMock.Setup(x => x.ParseLiterals(sb));
-            literalParserMock.Setup(x => x.ParseLiterals(sb))
-                             .Returns(new[] { new Literal(0, source.Length, 1, 1, source) });
-
-            var subject = new PatternParser(literalParserMock.Object);
+            var subject = new PatternParser(literalParser);
 
             // Warm up (JIT)
             Benchmark.Start("Parsing formatter patterns (first time before JIT)", this.outputHelper);
@@ -100,12 +94,20 @@ namespace Jeffijoe.MessageFormat.Tests.Parsing
         [Fact]
         public void Parse_exits_early_when_no_literals_have_been_found()
         {
-            var literalParserMock = new Mock<ILiteralParser>();
-            var subject = new PatternParser(literalParserMock.Object);
-            literalParserMock.Setup(x => x.ParseLiterals(It.IsAny<StringBuilder>())).Returns(new Literal[0]);
+            var subject = new PatternParser();
             Assert.Empty(subject.Parse(new StringBuilder()));
         }
-
+        
+        /// <summary>
+        /// The parse_throws_when_only_whitespace_is_present_in_section
+        /// </summary>
+        [Fact]
+        public void Parse_throws_when_only_whitespace_is_present_in_section()
+        {
+            var subject = new PatternParser();
+            Assert.Throws<MalformedLiteralException>(() => subject.Parse(new StringBuilder("{  }")));
+        }
+        
         #endregion
     }
 }

@@ -11,8 +11,7 @@ using System.Text;
 using Jeffijoe.MessageFormat.Formatting;
 using Jeffijoe.MessageFormat.Helpers;
 using Jeffijoe.MessageFormat.Parsing;
-
-using Moq;
+using Jeffijoe.MessageFormat.Tests.TestHelpers;
 
 using Xunit;
 using Xunit.Abstractions;
@@ -56,29 +55,26 @@ namespace Jeffijoe.MessageFormat.Tests
         [Fact]
         public void FormatMessage_caches_reused_pattern()
         {
-            var parserMock = new Mock<IPatternParser>();
-            var realParser = new PatternParser(new LiteralParser());
-            parserMock.Setup(x => x.Parse(It.IsAny<StringBuilder>()))
-                      .Returns((StringBuilder sb) => realParser.Parse(sb));
+            var parser = new TrackingPatternParser();
             var library = new FormatterLibrary();
 
-            var subject = new MessageFormatter(patternParser: parserMock.Object, library: library, useCache: true);
+            var subject = new MessageFormatter(patternParser: parser, library: library, useCache: true);
 
             var pattern = "Hi {gender, select, male {Sir} female {Ma'am}}!";
             var actual = subject.FormatMessage(pattern, new { gender = "male" });
             Assert.Equal("Hi Sir!", actual);
 
             // '2' because it did not format "Ma'am" yet.
-            parserMock.Verify(x => x.Parse(It.IsAny<StringBuilder>()), Times.Exactly(2));
+            Assert.Equal(2, parser.ParseCount);
 
             actual = subject.FormatMessage(pattern, new { gender = "female" });
             Assert.Equal("Hi Ma'am!", actual);
-            parserMock.Verify(x => x.Parse(It.IsAny<StringBuilder>()), Times.Exactly(3));
+            Assert.Equal(3, parser.ParseCount);
 
             // '3' because it has cached all options
             actual = subject.FormatMessage(pattern, new { gender = "female" });
             Assert.Equal("Hi Ma'am!", actual);
-            parserMock.Verify(x => x.Parse(It.IsAny<StringBuilder>()), Times.Exactly(3));
+            Assert.Equal(3, parser.ParseCount);
         }
 
         /// <summary>

@@ -19,6 +19,7 @@ namespace Jeffijoe.MessageFormat.Formatting.Formatters
         /// <summary>
         ///     This formatter requires the input variable to exist.
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
         public bool VariableMustExist => true;
         
         #endregion

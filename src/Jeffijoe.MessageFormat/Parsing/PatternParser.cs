@@ -30,16 +30,18 @@ namespace Jeffijoe.MessageFormat.Parsing
         /// <summary>
         ///     Initializes a new instance of the <see cref="PatternParser" /> class.
         /// </summary>
+        public PatternParser() : this(new LiteralParser())
+        {
+        }
+        
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="PatternParser" /> class.
+        /// </summary>
         /// <param name="literalParser">
         ///     The literal parser.
         /// </param>
         public PatternParser(ILiteralParser literalParser)
         {
-            if (literalParser == null)
-            {
-                throw new ArgumentNullException("literalParser");
-            }
-
             this.literalParser = literalParser;
         }
 
