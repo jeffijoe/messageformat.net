@@ -6,7 +6,7 @@
 	<GenerateAssemblyInfo>False</GenerateAssemblyInfo>
 	<LangVersion>9</LangVersion>
 	<Nullable>enable</Nullable>
-	<TargetFramework>net6.0</TargetFramework>
+	<TargetFramework>net7.0</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>

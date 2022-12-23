@@ -11,7 +11,7 @@
         public int Start { get; }
         public int End { get; }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             if (obj is RangeOperand n)
                 return n.Start == Start && n.End == End;

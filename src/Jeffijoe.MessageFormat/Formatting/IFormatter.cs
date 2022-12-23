@@ -13,7 +13,7 @@ namespace Jeffijoe.MessageFormat.Formatting
     public interface IFormatter
     {
         #region Public Properties
-        
+
         /// <summary>
         ///     Each Formatter must declare whether or not an input variable is required to exist.
         ///     Most of the time that is the case. 
@@ -21,7 +21,7 @@ namespace Jeffijoe.MessageFormat.Formatting
         bool VariableMustExist { get; }
 
         #endregion
-        
+
         #region Public Methods and Operators
 
         /// <summary>
@@ -50,9 +50,9 @@ namespace Jeffijoe.MessageFormat.Formatting
         /// The <see cref="string" />.
         /// </returns>
         string Format(
-            string locale, 
+            string locale,
             FormatterRequest request,
-            IDictionary<string, object?> args,
+            IReadOnlyDictionary<string, object?> args,
             object? value,
             IMessageFormatter messageFormatter);
 

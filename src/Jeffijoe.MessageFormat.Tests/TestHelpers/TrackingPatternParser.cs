@@ -26,7 +26,7 @@ namespace Jeffijoe.MessageFormat.Tests.TestHelpers
         /// </summary>
         public int ParseCount { get; private set; }
 
-        /// <inheritdoc cref=""/>
+        /// <inheritdoc />
         public IFormatterRequestCollection Parse(StringBuilder source)
         {
             ParseCount++;

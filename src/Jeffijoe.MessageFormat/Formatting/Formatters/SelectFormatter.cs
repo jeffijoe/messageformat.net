@@ -19,7 +19,7 @@ namespace Jeffijoe.MessageFormat.Formatting.Formatters
         /// <summary>
         ///     This formatter requires the input variable to exist.
         /// </summary>
-        [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
+        [ExcludeFromCodeCoverage]
         public bool VariableMustExist => true;
         
         #endregion
@@ -59,10 +59,9 @@ namespace Jeffijoe.MessageFormat.Formatting.Formatters
         /// <exception cref="MessageFormatterException">'other' option not found in pattern, and variable was not present in collection.</exception>
         [SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1126:PrefixCallsCorrectly",
             Justification = "Reviewed. Suppression is OK here.")]
-        public string Format(
-            string locale,
+        public string Format(string locale,
             FormatterRequest request,
-            IDictionary<string, object?> args,
+            IReadOnlyDictionary<string, object?> args,
             object? value,
             IMessageFormatter messageFormatter)
         {

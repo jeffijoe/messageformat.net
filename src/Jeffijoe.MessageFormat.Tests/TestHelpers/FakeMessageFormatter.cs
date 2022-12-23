@@ -7,7 +7,7 @@ namespace Jeffijoe.MessageFormat.Tests.TestHelpers
     /// </summary>
     internal class FakeMessageFormatter : IMessageFormatter
     {
-        public string FormatMessage(string pattern, IDictionary<string, object?> argsMap) => pattern;
+        public string FormatMessage(string pattern, IReadOnlyDictionary<string, object?> argsMap) => pattern;
 
         public string FormatMessage(string pattern, object args) => pattern;
     }

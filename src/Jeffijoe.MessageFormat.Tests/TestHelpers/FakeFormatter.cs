@@ -28,7 +28,7 @@ namespace Jeffijoe.MessageFormat.Tests.TestHelpers
             this.canFormat = canFormat;
             this.formatResult = formatResult;
         }
-        
+
         /// <inheritdoc />
         public bool VariableMustExist => false;
 
@@ -42,7 +42,11 @@ namespace Jeffijoe.MessageFormat.Tests.TestHelpers
         public void SetCanFormat(bool value) => this.canFormat = value;
 
         /// <inheritdoc />
-        public string Format(string locale, FormatterRequest request, IDictionary<string, object?> args, object? value,
+        public string Format(
+            string locale,
+            FormatterRequest request,
+            IReadOnlyDictionary<string, object?> args,
+            object? value,
             IMessageFormatter messageFormatter) =>
             formatResult;
     }

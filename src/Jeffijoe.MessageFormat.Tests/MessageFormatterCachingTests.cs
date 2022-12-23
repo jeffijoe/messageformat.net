@@ -10,7 +10,6 @@ using System.Text;
 
 using Jeffijoe.MessageFormat.Formatting;
 using Jeffijoe.MessageFormat.Helpers;
-using Jeffijoe.MessageFormat.Parsing;
 using Jeffijoe.MessageFormat.Tests.TestHelpers;
 
 using Xunit;
