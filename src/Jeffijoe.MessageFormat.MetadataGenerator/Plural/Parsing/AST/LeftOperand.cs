@@ -11,7 +11,7 @@
         public OperandSymbol Operand { get; }
         public int ModValue { get; }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             if (obj is ModuloOperand op)
                 return op.Operand == Operand && op.ModValue == ModValue;

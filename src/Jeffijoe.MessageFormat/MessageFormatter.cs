@@ -146,7 +146,7 @@ namespace Jeffijoe.MessageFormat
         ///     Formats the specified pattern with the specified data.
         /// </summary>
         /// <remarks>
-        ///     This method calls <see cref="Format(string, IDictionary{string, object})"/>
+        ///     This method calls <see cref="Format(string, IReadOnlyDictionary{string, object})"/>
         ///     on a singleton instance using a lock.
         ///     Do not use in a tight loop, as a lock is being used to ensure thread safety.
         /// </remarks>
@@ -159,7 +159,7 @@ namespace Jeffijoe.MessageFormat
         /// <returns>
         ///     The formatted message.
         /// </returns>
-        public static string Format(string pattern, IDictionary<string, object?> data)
+        public static string Format(string pattern, IReadOnlyDictionary<string, object?> data)
         {
             lock (Lock)
             {
@@ -203,7 +203,7 @@ namespace Jeffijoe.MessageFormat
         /// <returns>
         ///     The <see cref="string" />.
         /// </returns>
-        public string FormatMessage(string pattern, IDictionary<string, object?> args)
+        public string FormatMessage(string pattern, IReadOnlyDictionary<string, object?> args)
         {
             /*
              * We are assuming the formatters are ordered correctly
@@ -231,7 +231,7 @@ namespace Jeffijoe.MessageFormat
                     var result = formatter.Format(this.Locale, request, args, value, this);
 
                     // First, we remove the literal from the source.
-                    Literal sourceLiteral = request.SourceLiteral;
+                    var sourceLiteral = request.SourceLiteral;
 
                     // +1 because we want to include the last index.
                     var length = (sourceLiteral.EndIndex - sourceLiteral.StartIndex) + 1;
@@ -343,7 +343,7 @@ namespace Jeffijoe.MessageFormat
                         dest.Append(EscapingChar);
                         continue;
                     }
-                    
+
                     dest.Append(c);
                 }
 

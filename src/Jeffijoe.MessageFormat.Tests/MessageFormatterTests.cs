@@ -29,7 +29,7 @@ namespace Jeffijoe.MessageFormat.Tests
         {
             const string Pattern = "{name} has {messages, plural, other {# messages}}.";
             const string Expected = "Jeff has 123 messages.";
-            var args = new Dictionary<string, object?> { { "name", "Jeff" }, { "messages", 123} };
+            IReadOnlyDictionary<string, object?> args = new Dictionary<string, object?> { { "name", "Jeff" }, { "messages", 123} };
             
             var actual = MessageFormatter.Format(Pattern, args);
             
@@ -110,7 +110,7 @@ namespace Jeffijoe.MessageFormat.Tests
 
             public bool CanFormat(FormatterRequest request) => request.FormatterName == this.formatterName;
 
-            public string Format(string locale, FormatterRequest request, IDictionary<string, object?> args, object? value,
+            public string Format(string locale, FormatterRequest request, IReadOnlyDictionary<string, object?> args, object? value,
                 IMessageFormatter messageFormatter)
             {
                 return "formatted";

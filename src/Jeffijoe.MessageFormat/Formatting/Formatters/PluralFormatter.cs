@@ -84,10 +84,9 @@ namespace Jeffijoe.MessageFormat.Formatting.Formatters
         /// <returns>
         ///     The <see cref="string" />.
         /// </returns>
-        public string Format(
-            string locale,
+        public string Format(string locale,
             FormatterRequest request,
-            IDictionary<string, object?> args,
+            IReadOnlyDictionary<string, object?> args,
             object? value,
             IMessageFormatter messageFormatter)
         {

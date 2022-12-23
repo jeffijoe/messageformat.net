@@ -9,7 +9,7 @@
 
         public int Number { get; }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             if (obj is NumberOperand n)
                 return n.Number == Number;

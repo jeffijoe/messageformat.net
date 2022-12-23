@@ -43,7 +43,7 @@ namespace Jeffijoe.MessageFormat.MetadataGenerator.Plural.Parsing
 
         private PluralRule? ParseSingleRule(XmlNode rule)
         {
-            var locales = rule.Attributes!["locales"].Value.Split(' ');
+            var locales = rule.Attributes!["locales"]!.Value.Split(' ');
 
             if (locales.All(l => _excludedLocales.Contains(l)))
             {
@@ -55,7 +55,7 @@ namespace Jeffijoe.MessageFormat.MetadataGenerator.Plural.Parsing
             {
                 if (condition.Name == "pluralRule")
                 {
-                    var count = condition.Attributes!["count"].Value;
+                    var count = condition.Attributes!["count"]!.Value;
 
                     // Ignore other, because other is basically everything else except for the conditions present
                     if (count == "other")

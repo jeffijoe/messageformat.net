@@ -9,7 +9,7 @@
 
         public OperandSymbol Operand { get; }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             if (obj is VariableOperand op)
                 return op.Operand == Operand;
