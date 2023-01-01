@@ -28,20 +28,6 @@ namespace Jeffijoe.MessageFormat
         /// </returns>
         string FormatMessage(string pattern, IReadOnlyDictionary<string, object?> argsMap);
 
-        /// <summary>
-        ///     Formats the message, and uses reflection to create a dictionary of property values from the specified object.
-        /// </summary>
-        /// <param name="pattern">
-        ///     The pattern.
-        /// </param>
-        /// <param name="args">
-        ///     The arguments.
-        /// </param>
-        /// <returns>
-        ///     The <see cref="string" />.
-        /// </returns>
-        string FormatMessage(string pattern, object args);
-
         #endregion
     }
 }

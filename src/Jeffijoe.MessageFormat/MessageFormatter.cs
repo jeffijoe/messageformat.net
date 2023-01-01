@@ -171,7 +171,7 @@ namespace Jeffijoe.MessageFormat
         ///     Formats the specified pattern with the specified data.
         /// </summary>
         /// This method calls
-        /// <see cref="FormatMessage(string, object)" />
+        /// <see cref="MessageFormatterExtensions.FormatMessage(Jeffijoe.MessageFormat.IMessageFormatter,string,object)" />
         /// on a singleton instance using a lock.
         /// Do not use in a tight loop, as a lock is being used to ensure thread safety.
         /// <param name="pattern">
@@ -251,23 +251,6 @@ namespace Jeffijoe.MessageFormat
             {
                 StringBuilderPool.Return(sourceBuilder);
             }
-        }
-
-        /// <summary>
-        ///     Formats the message, and uses reflection to create a dictionary of property values from the specified object.
-        /// </summary>
-        /// <param name="pattern">
-        ///     The pattern.
-        /// </param>
-        /// <param name="args">
-        ///     The arguments.
-        /// </param>
-        /// <returns>
-        ///     The <see cref="string" />.
-        /// </returns>
-        public string FormatMessage(string pattern, object args)
-        {
-            return this.FormatMessage(pattern, args.ToDictionary());
         }
 
         #endregion
