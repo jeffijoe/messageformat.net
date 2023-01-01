@@ -46,7 +46,7 @@ namespace Jeffijoe.MessageFormat.Formatting.Formatters
         /// Using the specified parameters and arguments, a formatted string shall be returned.
         /// The <see cref="IMessageFormatter" /> is being provided as well, to enable
         /// nested formatting. This is only called if <see cref="CanFormat" /> returns true.
-        /// The argswill always contain the <see cref="FormatterRequest.Variable" />.
+        /// The args will always contain the <see cref="FormatterRequest.Variable" />.
         /// </summary>
         /// <param name="locale">The locale being used. It is up to the formatter what they do with this information.</param>
         /// <param name="request">The parameters.</param>

@@ -12,6 +12,15 @@ namespace Jeffijoe.MessageFormat
     /// </summary>
     public interface IMessageFormatter
     {
+        #region Public properties
+
+        /// <summary>
+        ///     The custom value formatter to use for formats like `number`, `date`, `time` etc.
+        /// </summary>
+        CustomValueFormatter? CustomValueFormatter { get; }
+
+        #endregion
+
         #region Public Methods and Operators
 
         /// <summary>

@@ -2,7 +2,7 @@
 
 #### - better UI strings.
 
-![Build](https://github.com/jeffijoe/messageformat.net/workflows/.NET%20Core/badge.svg)
+[![Build & Test](https://github.com/jeffijoe/messageformat.net/actions/workflows/ci.yml/badge.svg)](https://github.com/jeffijoe/messageformat.net/actions/workflows/ci.yml)
 
 This is an implementation of the ICU Message Format in .NET. For official information about the format, go to:
 http://userguide.icu-project.org/formatparse/messages
@@ -61,8 +61,6 @@ Install-Package MessageFormat
 
 * **It's fast.** Everything is hand-written; no parser-generators, *not even regular expressions*.
 * **It's portable.** The library is targeting **.NET Standard 2.0**.
-* **It's compatible with other implementations.** I've been peeking a bit at the [MessageFormat.js][0] library to make sure
-  the results would be the same.
 * **It's (relatively) small**. For a .NET library, ~25kb is not a lot.
 * **It's very white-space tolerant.** You can structure your blocks so they are more readable - look at the example above.
 * **Nesting is supported.** You can nest your blocks as you please, there's no special structure required to do this, just ensure your braces match.
@@ -74,7 +72,7 @@ Install-Package MessageFormat
   and if you are reusing the same instance of `MessageFormatter`, the formatter will cache the tokens of each pattern (nested, too),
   so it won't have to spend CPU time to parse out literals every time. I benchmarked it, and on my monster machine,
   it didn't make much of a difference (10000 iterations).
-* **Built-in pluralization formatters**. Generated from the [CLDR pluralization rule data](http://cldr.unicode.org/index/downloads).
+* **Built-in pluralization formatters**. Generated from the [CLDR pluralization rule data][plural-cldr].
 
 ## Performance
 
@@ -85,13 +83,60 @@ and about 3 seconds (3236ms) without it. **These results are with a debug build,
 
 ## Supported formats
 
-Basically, it should be able to do anything that [MessageFormat.js][0] can do.
+MessageFormat.NET supports the most commonly used formats:
 
 * Select Format: `{gender, select, male{He likes} female{She likes} other{They like}} cheeseburgers`
 * Plural Format: `There {msgCount, plural, zero {are no unread messages} one {is 1 unread message} other{are # unread messages}}.` (where `#` is the actual number, with the offset (if any) subtracted).
 * Simple variable replacement: `Your name is {name}`
+* Numbers: `Your age is {age, number}`
+* Dates: `You were born {birthday, date}` 
+* Time: `The time is {now, time}` 
+
+You can also specify a _predefined style_, for example `{birthday, date, short}`. The supported predefined styles are:
+
+* For the `number` format: `integer`, `currency`, `percent`
+* For the `date` format: `short`, `full`
+* For the `time` format: `short`, `medium`
+
+These are currently mapped to the built-in .NET format specifiers. This package does not ship with
+any locale data beyond the pluralizers that are generated based on [CLDR data][plural-cldr], so if you wish
+to provide your own localized formatting, read the section below.
+
+## Customize formatting
+
+If you wish to control exactly how `number`, `date` and `time` are formatted, you can either:
+* Derive `CustomValueFormatter` and override the format methods
+* Instantiate a `CustomValueFormatters` and assign a lambda to the desired properties
+Then pass it in as the `customValueFormatter` parameter to `new MessageFormatter`.
+
+**Example**: A custom formatter that allows the use of .NET's formatting tokens. This is for illustration purposes only and 
+is not recommended for use in real apps.
+
+```csharp
+// This is using the lambda-based approach.
+var custom = new CustomValueFormatters
+{
+    // The formatter must set the `formatted` out parameter and return `true`
+    // If the formatter returns `false`, the built-in formatting is used.
+    Number = (CultureInfo _, object? value, string? style, out string? formatted) =>
+    {
+        formatted = string.Format($"{{0:{style}}}", value);
+        return true;
+    }
+};
+
+// Create a MessageFormatter with the custom value formatter.
+var formatter = new MessageFormatter(locale: "en-US", customValueFormatter: custom);
+
+// Format a message.
+var message = formatter.FormatMessage("{value, number, $0.0}", new { value = 23 });
+// "$23.0"
+```
 
 ## Adding your own pluralizer functions
+
+> Since MessageFormat 5.0, pluralizers based on the [official CLDR data][plural-cldr] ship
+> with the package, so this is no longer needed.
 
 Same thing as with [MessageFormat.js][0], you can add your own pluralizer function.
 The `Pluralizers` property is a `IDictionary<string, Pluralizer>`, so you can remove the built-in
@@ -159,3 +204,4 @@ You can find me on Twitter: [@jeffijoe][1].
 
   [0]: https://github.com/SlexAxton/messageformat.js
   [1]: https://twitter.com/jeffijoe
+  [plural-cldr]: https://cldr.unicode.org/index/downloads
