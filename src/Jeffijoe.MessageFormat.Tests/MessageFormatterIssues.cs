@@ -4,6 +4,7 @@
 // Author: Jeff Hansen <jeff@jeffijoe.com>
 // Copyright (C) Jeff Hansen 2015. All rights reserved.
 
+using System.Collections.Generic;
 using Xunit;
 
 namespace Jeffijoe.MessageFormat.Tests
@@ -35,6 +36,25 @@ namespace Jeffijoe.MessageFormat.Tests
             });
 
             Assert.Equal("2 things", result);
+        }
+
+        [Fact]
+        public void Issue31_IDictionary_interface_support()
+        {
+            var subject = new MessageFormatter(locale: "en-US");
+
+            IDictionary<string, object> idict = new Dictionary<string, object>
+            {
+                ["string"] = "value"
+            };
+            
+            IDictionary<string, object?> idictNullable = new Dictionary<string, object?>
+            {
+                ["string"] = "value"
+            };
+
+            Assert.Equal("value", subject.FormatMessage("{string}", idict));
+            Assert.Equal("value", subject.FormatMessage("{string}", idictNullable!));
         }
     }
 }
