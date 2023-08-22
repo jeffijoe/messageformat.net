@@ -56,5 +56,21 @@ namespace Jeffijoe.MessageFormat.Tests
             Assert.Equal("value", subject.FormatMessage("{string}", idict));
             Assert.Equal("value", subject.FormatMessage("{string}", idictNullable!));
         }
+        
+        [Fact]
+        public void Issue34_Newlines_are_stripped()
+        {
+            var subject = new MessageFormatter(locale: "en-US");
+
+            const string Expected = "Single text which will not change.\nSummary:\nAccepted\nData:\n-X\n-Y\n-Z";
+            
+            var result = subject.FormatMessage(
+                "Single text which will not change.\nSummary:{acceptedData, select, NONE {} other {\nAccepted\nData:{acceptedData}}}",
+                new
+                {
+                    acceptedData = "\n-X\n-Y\n-Z"
+                });
+            Assert.Equal(Expected, result);
+        }
     }
 }

@@ -122,11 +122,17 @@ namespace Jeffijoe.MessageFormat.Tests.Parsing
         [InlineData(@"{
 sweet
 
-}, right?", new[] { 0, 9 }, @"sweet")]
+}, right?", new[] { 0, 9 }, @"
+sweet
+
+")]
         [InlineData(@"{
 '{sweet}'
 
-}, right?", new[] { 0, 13 }, @"'{sweet}'")]
+}, right?", new[] { 0, 13 }, @"
+'{sweet}'
+
+")]
         public void ParseLiterals_position_and_inner_text(string source, int[] position, string expectedInnerText)
         {
             var sb = new StringBuilder(source);

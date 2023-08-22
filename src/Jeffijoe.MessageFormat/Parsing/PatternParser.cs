@@ -3,7 +3,9 @@
 // Author: Jeff Hansen <jeff@jeffijoe.com>
 // Copyright (C) Jeff Hansen 2014. All rights reserved.
 
+#if NET5_0_OR_GREATER
 using System;
+#endif
 using System.Linq;
 using System.Text;
 using Jeffijoe.MessageFormat.Formatting;

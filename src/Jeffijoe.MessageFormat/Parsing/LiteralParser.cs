@@ -52,19 +52,22 @@ namespace Jeffijoe.MessageFormat.Parsing
                 for (var i = 0; i < sb.Length; i++)
                 {
                     var c = sb[i];
-                    if (c == Lf)
-                    {
-                        lineNumber++;
-                        columnNumber = 0;
-                        continue;
-                    }
-
+                    
                     if (c == Cr)
                     {
                         continue;
                     }
-
-                    columnNumber++;
+                    
+                    if (c == Lf)
+                    {
+                        lineNumber++;
+                        columnNumber = 0;
+                        
+                    }
+                    else
+                    {
+                        columnNumber++;    
+                    }
 
                     if (c == EscapingChar)
                     {
