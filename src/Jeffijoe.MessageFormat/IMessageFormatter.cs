@@ -35,7 +35,7 @@ namespace Jeffijoe.MessageFormat
         /// <returns>
         ///     The <see cref="string" />.
         /// </returns>
-        string FormatMessage(string pattern, IReadOnlyDictionary<string, object?> argsMap);
+        string FormatMessage(string pattern, IReadOnlyDictionary<string, object?> argsMap, bool ignoreMissingVariables = false);
 
         #endregion
     }
