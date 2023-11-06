@@ -4,6 +4,7 @@
 // Author: Jeff Hansen <jeff@jeffijoe.com>
 // Copyright (C) Jeff Hansen 2015. All rights reserved.
 
+using System;
 using System.Linq;
 using System.Text;
 
@@ -135,6 +136,11 @@ sweet
 ")]
         public void ParseLiterals_position_and_inner_text(string source, int[] position, string expectedInnerText)
         {
+            // It seems that depending on platform this is compiled on, the actual representation of new lines in the
+            // string literals can differ, which can make this test fail due to differences.
+            // This will normalize those changes.
+            expectedInnerText = expectedInnerText.Replace("\r\n", "\n");
+
             var sb = new StringBuilder(source);
             var subject = new LiteralParser();
             var actual = subject.ParseLiterals(sb);

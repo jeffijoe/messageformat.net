@@ -30,9 +30,9 @@ namespace Jeffijoe.MessageFormat.Tests.Formatting.Formatters
         {
             var formatters = new CustomValueFormatters
             {
-                Number = (CultureInfo _, object? value, string? style, out string? formatted) =>
+                Number = (CultureInfo culture, object? value, string? style, out string? formatted) =>
                 {
-                    formatted = string.Format($"{{0:{style}}}", value);
+                    formatted = string.Format(culture, $"{{0:{style}}}", value);
                     return true;
                 }
             };
