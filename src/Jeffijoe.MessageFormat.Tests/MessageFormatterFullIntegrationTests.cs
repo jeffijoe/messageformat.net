@@ -472,6 +472,9 @@ namespace Jeffijoe.MessageFormat.Tests
             var ex = Assert.Throws<VariableNotFoundException>(() => subject.FormatMessage(Pattern, new { }));
             Assert.Equal("UnreadCount", ex.MissingVariable);
 
+            actual = subject.FormatMessage(Pattern, new { }, true);
+            Assert.Equal("You have no unread messages today.", actual);
+
             actual = subject.FormatMessage(Pattern, new { UnreadCount = 1 });
             Assert.Equal("You have just one unread message today.", actual);
             actual = subject.FormatMessage(Pattern, new { UnreadCount = 2 });
