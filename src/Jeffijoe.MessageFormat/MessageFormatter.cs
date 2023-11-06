@@ -222,7 +222,7 @@ public class MessageFormatter : IMessageFormatter
     /// <returns>
     ///     The <see cref="string" />.
     /// </returns>
-    public string FormatMessage(string pattern, IReadOnlyDictionary<string, object?> args)
+    public string FormatMessage(string pattern, IReadOnlyDictionary<string, object?> args, bool ignoreMissingVariables = false)
     {
         /*
          * We are assuming the formatters are ordered correctly
@@ -241,7 +241,7 @@ public class MessageFormatter : IMessageFormatter
 
                 var formatter = this.Formatters.GetFormatter(request);
 
-                if (args.TryGetValue(request.Variable, out var value) == false && formatter.VariableMustExist)
+                if (args.TryGetValue(request.Variable, out var value) == false && !ignoreMissingVariables && formatter.VariableMustExist)
                 {
                     throw new VariableNotFoundException(request.Variable);
                 }

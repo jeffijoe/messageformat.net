@@ -51,10 +51,10 @@ namespace Jeffijoe.MessageFormat.Tests.Formatting.Formatters
         {
             var formatter = new CustomValueFormatters
             {
-                Date = (CultureInfo _, object? value, string? _, out string? formatted) =>
+                Date = (CultureInfo culture, object? value, string? _, out string? formatted) =>
                 {
                     // This is just a test, you probably shouldn't be doing this in real workloads.
-                    formatted = $"{value:MMMM d 'in the year' yyyy}";
+                    formatted = ((FormattableString)$"{value:MMMM d 'in the year' yyyy}").ToString(culture);
                     return true;
                 }
             };

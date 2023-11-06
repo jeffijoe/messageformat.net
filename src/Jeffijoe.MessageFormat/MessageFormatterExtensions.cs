@@ -46,8 +46,8 @@ public static class MessageFormatterExtensions
     /// <returns>
     ///     The <see cref="string" />.
     /// </returns>
-    public static string FormatMessage(this IMessageFormatter formatter, string pattern, object args)
+    public static string FormatMessage(this IMessageFormatter formatter, string pattern, object args, bool ignoreMissingVariables = false)
     {
-        return formatter.FormatMessage(pattern, args.ToDictionary());
+        return formatter.FormatMessage(pattern, args.ToDictionary(), ignoreMissingVariables);
     }
 }

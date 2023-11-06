@@ -9,7 +9,7 @@ namespace Jeffijoe.MessageFormat.Tests.TestHelpers
     {
         public CustomValueFormatter? CustomValueFormatter { get; set; }
 
-        public string FormatMessage(string pattern, IReadOnlyDictionary<string, object?> argsMap) => pattern;
+        public string FormatMessage(string pattern, IReadOnlyDictionary<string, object?> argsMap, bool ignoreMissingVariables = false) => pattern;
 
         public string FormatMessage(string pattern, object args) => pattern;
     }
