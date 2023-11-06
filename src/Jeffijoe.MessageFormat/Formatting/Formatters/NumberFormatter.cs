@@ -55,7 +55,7 @@ public class NumberFormatter : BaseValueFormatter, IFormatter
         value switch
         {
             decimal or float or double => string.Format(cultureInfo, "{0}", Convert.ToInt64(value)),
-            string s => decimal.TryParse(s, out var parsed) ? FormatInteger(cultureInfo, parsed) : s,
+            string s => decimal.TryParse(s, NumberStyles.Any, cultureInfo, out var parsed) ? FormatInteger(cultureInfo, parsed) : s,
             _ => string.Format(cultureInfo, "{0}", value)
         };
 }
