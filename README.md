@@ -5,7 +5,7 @@
 [![Build & Test](https://github.com/jeffijoe/messageformat.net/actions/workflows/ci.yml/badge.svg)](https://github.com/jeffijoe/messageformat.net/actions/workflows/ci.yml)
 
 This is an implementation of the ICU Message Format in .NET. For official information about the format, go to:
-http://userguide.icu-project.org/formatparse/messages
+https://unicode-org.github.io/icu/userguide/format_parse/messages/
 
 ## Quickstart
 
