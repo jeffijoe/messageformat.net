@@ -5,7 +5,7 @@
     <AssemblyOriginatorKeyFile>../Jeffijoe.MessageFormat/MessageFormat.snk</AssemblyOriginatorKeyFile>
     <LangVersion>default</LangVersion>
     <Nullable>enable</Nullable>
-    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
