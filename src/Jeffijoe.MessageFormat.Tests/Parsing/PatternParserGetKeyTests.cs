@@ -136,7 +136,7 @@ namespace Jeffijoe.MessageFormat.Tests.Parsing
         [InlineData("SupDawg,yeah ", "yeah", 8)]
         [InlineData("SupDawg, ", null, 8)]
         [InlineData("SupDawg,", null, 8)]
-        public void ReadLiteralSection_with_offset(string source, string expected, int offset)
+        public void ReadLiteralSection_with_offset(string source, string? expected, int offset)
         {
             var literal = new Literal(10, 10, 1, 1, source);
             Assert.Equal(expected, PatternParser.ReadLiteralSection(literal, offset, true, out _));
