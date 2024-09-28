@@ -32,7 +32,7 @@ namespace Jeffijoe.MessageFormat.Tests
             var t1 = Task.Run(() => MessageFormatter.Format(pattern, new { fileCount = 1 }));
             var t2 = Task.Run(() => MessageFormatter.Format(pattern, new { fileCount = 1 }));
             var t3 = Task.Run(() => MessageFormatter.Format(pattern, new { fileCount = 5 }));
-            await Task.WhenAll(t1, t2);
+            await Task.WhenAll(t1, t2, t3);
 
             Assert.Equal("Copying one file.", t1.Result);
             Assert.Equal("Copying one file.", t2.Result);
