@@ -1,36 +1,35 @@
 using System.Text;
 using Jeffijoe.MessageFormat.Parsing;
 
-namespace Jeffijoe.MessageFormat.Tests.TestHelpers
+namespace Jeffijoe.MessageFormat.Tests.TestHelpers;
+
+/// <summary>
+///     Tracks the amount of times Parse is called.
+/// </summary>
+internal class TrackingPatternParser : IPatternParser
 {
     /// <summary>
-    ///     Tracks the amount of times Parse is called.
+    ///     The real parser.
     /// </summary>
-    internal class TrackingPatternParser : IPatternParser
+    private readonly PatternParser parser;
+
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="TrackingPatternParser"/> class.
+    /// </summary>
+    public TrackingPatternParser()
     {
-        /// <summary>
-        ///     The real parser.
-        /// </summary>
-        private readonly PatternParser parser;
+        parser = new PatternParser();
+    }
 
-        /// <summary>
-        ///     Initializes a new instance of the <see cref="TrackingPatternParser"/> class.
-        /// </summary>
-        public TrackingPatternParser()
-        {
-            parser = new PatternParser();
-        }
+    /// <summary>
+    ///     The amount of times Parse was called.
+    /// </summary>
+    public int ParseCount { get; private set; }
 
-        /// <summary>
-        ///     The amount of times Parse was called.
-        /// </summary>
-        public int ParseCount { get; private set; }
-
-        /// <inheritdoc />
-        public IFormatterRequestCollection Parse(StringBuilder source)
-        {
-            ParseCount++;
-            return parser.Parse(source);
-        }
+    /// <inheritdoc />
+    public IFormatterRequestCollection Parse(StringBuilder source)
+    {
+        ParseCount++;
+        return parser.Parse(source);
     }
 }

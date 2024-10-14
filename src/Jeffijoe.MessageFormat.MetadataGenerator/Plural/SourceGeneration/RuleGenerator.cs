@@ -2,134 +2,133 @@
 using System.Text;
 using Jeffijoe.MessageFormat.MetadataGenerator.Plural.Parsing.AST;
 
-namespace Jeffijoe.MessageFormat.MetadataGenerator.Plural.SourceGeneration
+namespace Jeffijoe.MessageFormat.MetadataGenerator.Plural.SourceGeneration;
+
+public class RuleGenerator
 {
-    public class RuleGenerator
+    private readonly PluralRule _rule;
+    private int _innerIndent;
+
+    public RuleGenerator(PluralRule rule)
     {
-        private readonly PluralRule _rule;
-        private int _innerIndent;
+        _rule = rule;
+        _innerIndent = 0;
+    }
 
-        public RuleGenerator(PluralRule rule)
+    public void WriteTo(StringBuilder builder, int indent)
+    {
+        foreach(var condition in _rule.Conditions)
         {
-            _rule = rule;
-            _innerIndent = 0;
+            WriteNext(condition, builder, indent);
         }
 
-        public void WriteTo(StringBuilder builder, int indent)
+        WriteOther(builder, indent);
+    }
+
+    private void WriteOther(StringBuilder builder, int indent)
+    {
+        WriteLine(builder, "return \"other\";", indent);
+    }
+
+    private void WriteNext(Condition condition, StringBuilder builder, int indent)
+    {
+        if(condition.OrConditions.Count > 0)
         {
-            foreach(var condition in _rule.Conditions)
+            builder.Append(' ', _innerIndent + indent);
+            builder.Append("if (");
+
+            for (int orIdx = 0; orIdx < condition.OrConditions.Count; orIdx++)
             {
-                WriteNext(condition, builder, indent);
-            }
+                OrCondition orCondition = condition.OrConditions[orIdx];
+                var orIsLast = orIdx == condition.OrConditions.Count - 1;
 
-            WriteOther(builder, indent);
-        }
+                WriteOrCondition(builder, orCondition);
 
-        private void WriteOther(StringBuilder builder, int indent)
-        {
-            WriteLine(builder, "return \"other\";", indent);
-        }
-
-        private void WriteNext(Condition condition, StringBuilder builder, int indent)
-        {
-            if(condition.OrConditions.Count > 0)
-            {
-                builder.Append(' ', _innerIndent + indent);
-                builder.Append("if (");
-
-                for (int orIdx = 0; orIdx < condition.OrConditions.Count; orIdx++)
+                if (!orIsLast)
                 {
-                    OrCondition orCondition = condition.OrConditions[orIdx];
-                    var orIsLast = orIdx == condition.OrConditions.Count - 1;
-
-                    WriteOrCondition(builder, orCondition);
-
-                    if (!orIsLast)
-                    {
-                        builder.Append(" || ");
-                    }
+                    builder.Append(" || ");
                 }
-
-                builder.AppendLine(")");
-
-                _innerIndent += 4;
-                WriteLine(builder, $"return \"{condition.Count}\";", indent);
-                _innerIndent -= 4;
-
-                WriteLine(builder, string.Empty, indent);
             }
-            else
-            {
-                throw new InvalidOperationException("Expected to have at least one or condition, but got none");
-            }
+
+            builder.AppendLine(")");
+
+            _innerIndent += 4;
+            WriteLine(builder, $"return \"{condition.Count}\";", indent);
+            _innerIndent -= 4;
+
+            WriteLine(builder, string.Empty, indent);
         }
-
-        private void WriteOrCondition(StringBuilder builder, OrCondition orCondition)
+        else
         {
-            for (int andIdx = 0; andIdx < orCondition.AndConditions.Count; andIdx++)
+            throw new InvalidOperationException("Expected to have at least one or condition, but got none");
+        }
+    }
+
+    private void WriteOrCondition(StringBuilder builder, OrCondition orCondition)
+    {
+        for (int andIdx = 0; andIdx < orCondition.AndConditions.Count; andIdx++)
+        {
+            var andIsLast = andIdx == orCondition.AndConditions.Count - 1;
+            Operation andCondition = orCondition.AndConditions[andIdx];
+            builder.Append('(');
+
+            for (int innerOrIdx = 0; innerOrIdx < andCondition.OperandRight.Count; innerOrIdx++)
             {
-                var andIsLast = andIdx == orCondition.AndConditions.Count - 1;
-                Operation andCondition = orCondition.AndConditions[andIdx];
-                builder.Append('(');
+                var isLast = innerOrIdx == andCondition.OperandRight.Count - 1;
 
-                for (int innerOrIdx = 0; innerOrIdx < andCondition.OperandRight.Count; innerOrIdx++)
+                var leftVariable = andCondition.OperandLeft switch
                 {
-                    var isLast = innerOrIdx == andCondition.OperandRight.Count - 1;
+                    VariableOperand op => $"context.{OperandToVariable(op.Operand)}",
+                    ModuloOperand op => $"context.{OperandToVariable(op.Operand)} % {op.ModValue}",
+                    var otherOp => throw new InvalidOperationException($"Unknown operation {otherOp.GetType()}")
+                };
 
-                    var leftVariable = andCondition.OperandLeft switch
-                    {
-                        VariableOperand op => $"context.{OperandToVariable(op.Operand)}",
-                        ModuloOperand op => $"context.{OperandToVariable(op.Operand)} % {op.ModValue}",
-                        var otherOp => throw new InvalidOperationException($"Unknown operation {otherOp.GetType()}")
-                    };
-
-                    var line = andCondition.OperandRight[innerOrIdx] switch
-                    {
-                        RangeOperand range => andCondition.Relation == Relation.Equals
-                            ? $"{leftVariable} >= {range.Start} && {leftVariable} <= {range.End}"
-                            : $"({leftVariable} < {range.Start} || {leftVariable} > {range.End})",
-                        NumberOperand number => andCondition.Relation == Relation.Equals
-                            ? $"{leftVariable} == {number.Number}"
-                            : $"{leftVariable} != {number.Number}",
-                        var otherOperand => throw new InvalidOperationException($"Unknown right operand {otherOperand.GetType()}")
-                    };
+                var line = andCondition.OperandRight[innerOrIdx] switch
+                {
+                    RangeOperand range => andCondition.Relation == Relation.Equals
+                        ? $"{leftVariable} >= {range.Start} && {leftVariable} <= {range.End}"
+                        : $"({leftVariable} < {range.Start} || {leftVariable} > {range.End})",
+                    NumberOperand number => andCondition.Relation == Relation.Equals
+                        ? $"{leftVariable} == {number.Number}"
+                        : $"{leftVariable} != {number.Number}",
+                    var otherOperand => throw new InvalidOperationException($"Unknown right operand {otherOperand.GetType()}")
+                };
                     
-                    builder.Append(line);
+                builder.Append(line);
 
-                    if (!isLast)
-                    {
-                        builder.Append(andCondition.Relation == Relation.Equals ? " || " : " && ");
-                    }
-                }
-                builder.Append(')');
-
-                if (!andIsLast)
+                if (!isLast)
                 {
-                    builder.Append(" && ");
+                    builder.Append(andCondition.Relation == Relation.Equals ? " || " : " && ");
                 }
             }
-        }
+            builder.Append(')');
 
-        private char OperandToVariable(OperandSymbol operand)
-        {
-            return operand switch
+            if (!andIsLast)
             {
-                OperandSymbol.AbsoluteValue => 'N',
-                OperandSymbol.IntegerDigits => 'I',
-                OperandSymbol.VisibleFractionDigitNumber => 'V',
-                OperandSymbol.VisibleFractionDigitNumberWithoutTrailingZeroes => 'W',
-                OperandSymbol.VisibleFractionDigits => 'F',
-                OperandSymbol.VisibleFractionDigitsWithoutTrailingZeroes => 'T',
-                OperandSymbol.ExponentC => 'C',
-                OperandSymbol.ExponentE => 'E',
-                _ => throw new InvalidOperationException($"Unknown variable {operand}")
-            };
+                builder.Append(" && ");
+            }
         }
+    }
 
-        private void WriteLine(StringBuilder builder, string value, int indent)
+    private char OperandToVariable(OperandSymbol operand)
+    {
+        return operand switch
         {
-            builder.Append(' ', indent + _innerIndent);
-            builder.AppendLine(value);
-        }
+            OperandSymbol.AbsoluteValue => 'N',
+            OperandSymbol.IntegerDigits => 'I',
+            OperandSymbol.VisibleFractionDigitNumber => 'V',
+            OperandSymbol.VisibleFractionDigitNumberWithoutTrailingZeroes => 'W',
+            OperandSymbol.VisibleFractionDigits => 'F',
+            OperandSymbol.VisibleFractionDigitsWithoutTrailingZeroes => 'T',
+            OperandSymbol.ExponentC => 'C',
+            OperandSymbol.ExponentE => 'E',
+            _ => throw new InvalidOperationException($"Unknown variable {operand}")
+        };
+    }
+
+    private void WriteLine(StringBuilder builder, string value, int indent)
+    {
+        builder.Append(' ', indent + _innerIndent);
+        builder.AppendLine(value);
     }
 }

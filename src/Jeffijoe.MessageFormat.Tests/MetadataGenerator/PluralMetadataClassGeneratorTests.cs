@@ -3,16 +3,16 @@ using Jeffijoe.MessageFormat.MetadataGenerator.Plural.SourceGeneration;
 
 using Xunit;
 
-namespace Jeffijoe.MessageFormat.Tests.MetadataGenerator
+namespace Jeffijoe.MessageFormat.Tests.MetadataGenerator;
+
+public class PluralMetadataClassGeneratorTests
 {
-    public class PluralMetadataClassGeneratorTests
+    [Fact]
+    public void CanGenerateClassFromRules()
     {
-        [Fact]
-        public void CanGenerateClassFromRules()
+        var rules = new[]
         {
-            var rules = new[]
-            {
-                new PluralRule(new[] {"en", "uk"},
+            new PluralRule(new[] {"en", "uk"},
                 new[]
                 {
                     new Condition("one", string.Empty, new []
@@ -23,12 +23,12 @@ namespace Jeffijoe.MessageFormat.Tests.MetadataGenerator
                         })
                     })
                 })
-            };
-            var generator = new PluralRulesMetadataGenerator(rules);
+        };
+        var generator = new PluralRulesMetadataGenerator(rules);
 
-            var actual = generator.GenerateClass();
+        var actual = generator.GenerateClass();
 
-            var expected = @"
+        var expected = @"
 using System;
 using System.Collections.Generic;
 namespace Jeffijoe.MessageFormat.Formatting.Formatters
@@ -62,7 +62,6 @@ namespace Jeffijoe.MessageFormat.Formatting.Formatters
 }
 ".TrimStart();
 
-            Assert.Equal(expected, actual);
-        }
+        Assert.Equal(expected, actual);
     }
 }

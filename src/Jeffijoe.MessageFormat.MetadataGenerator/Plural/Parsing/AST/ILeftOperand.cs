@@ -1,6 +1,5 @@
-﻿namespace Jeffijoe.MessageFormat.MetadataGenerator.Plural.Parsing.AST
+﻿namespace Jeffijoe.MessageFormat.MetadataGenerator.Plural.Parsing.AST;
+
+public interface ILeftOperand
 {
-    public interface ILeftOperand
-    {
-    }
 }

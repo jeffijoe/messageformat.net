@@ -1,7 +1,6 @@
-﻿namespace Jeffijoe.MessageFormat.MetadataGenerator.Plural.Parsing.AST
+﻿namespace Jeffijoe.MessageFormat.MetadataGenerator.Plural.Parsing.AST;
+
+public enum Relation
 {
-    public enum Relation
-    {
-        Equals, NotEquals
-    }
+    Equals, NotEquals
 }
