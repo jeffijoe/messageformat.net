@@ -5,26 +5,25 @@
 
 using System;
 
-namespace Jeffijoe.MessageFormat
+namespace Jeffijoe.MessageFormat;
+
+/// <summary>
+///     Thrown when an issue has occured in the message formatting process.
+/// </summary>
+public class MessageFormatterException : Exception
 {
+    #region Constructors and Destructors
+
     /// <summary>
-    ///     Thrown when an issue has occured in the message formatting process.
+    ///     Initializes a new instance of the <see cref="MessageFormatterException" /> class.
     /// </summary>
-    public class MessageFormatterException : Exception
+    /// <param name="message">
+    ///     The message that describes the error.
+    /// </param>
+    public MessageFormatterException(string message)
+        : base(message)
     {
-        #region Constructors and Destructors
-
-        /// <summary>
-        ///     Initializes a new instance of the <see cref="MessageFormatterException" /> class.
-        /// </summary>
-        /// <param name="message">
-        ///     The message that describes the error.
-        /// </param>
-        public MessageFormatterException(string message)
-            : base(message)
-        {
-        }
-
-        #endregion
     }
+
+    #endregion
 }

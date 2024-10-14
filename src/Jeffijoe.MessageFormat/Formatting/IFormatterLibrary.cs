@@ -5,26 +5,25 @@
 
 using System.Collections.Generic;
 
-namespace Jeffijoe.MessageFormat.Formatting
+namespace Jeffijoe.MessageFormat.Formatting;
+
+/// <summary>
+///     Manages formatters to use.
+/// </summary>
+public interface IFormatterLibrary : IList<IFormatter>
 {
+    #region Public Methods and Operators
+
     /// <summary>
-    ///     Manages formatters to use.
+    ///     Gets the formatter to use. If none was found, throws an exception.
     /// </summary>
-    public interface IFormatterLibrary : IList<IFormatter>
-    {
-        #region Public Methods and Operators
+    /// <param name="request">
+    ///     The request.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="IFormatter" />.
+    /// </returns>
+    IFormatter GetFormatter(FormatterRequest request);
 
-        /// <summary>
-        ///     Gets the formatter to use. If none was found, throws an exception.
-        /// </summary>
-        /// <param name="request">
-        ///     The request.
-        /// </param>
-        /// <returns>
-        ///     The <see cref="IFormatter" />.
-        /// </returns>
-        IFormatter GetFormatter(FormatterRequest request);
-
-        #endregion
-    }
+    #endregion
 }

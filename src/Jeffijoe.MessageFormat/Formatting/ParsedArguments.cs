@@ -6,50 +6,49 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Jeffijoe.MessageFormat.Formatting
+namespace Jeffijoe.MessageFormat.Formatting;
+
+/// <summary>
+///     Container class for formatter argument parsing result.
+/// </summary>
+public class ParsedArguments
 {
+    #region Constructors and Destructors
+
     /// <summary>
-    ///     Container class for formatter argument parsing result.
+    ///     Initializes a new instance of the <see cref="ParsedArguments" /> class.
     /// </summary>
-    public class ParsedArguments
+    /// <param name="keyedBlocks">
+    ///     The keyed Blocks.
+    /// </param>
+    /// <param name="extensions">
+    ///     The extensions.
+    /// </param>
+    public ParsedArguments(IEnumerable<KeyedBlock> keyedBlocks, IEnumerable<FormatterExtension> extensions)
     {
-        #region Constructors and Destructors
-
-        /// <summary>
-        ///     Initializes a new instance of the <see cref="ParsedArguments" /> class.
-        /// </summary>
-        /// <param name="keyedBlocks">
-        ///     The keyed Blocks.
-        /// </param>
-        /// <param name="extensions">
-        ///     The extensions.
-        /// </param>
-        public ParsedArguments(IEnumerable<KeyedBlock> keyedBlocks, IEnumerable<FormatterExtension> extensions)
-        {
-            this.KeyedBlocks = keyedBlocks.ToList();
-            this.Extensions = extensions.ToList();
-        }
-
-        #endregion
-
-        #region Public Properties
-
-        /// <summary>
-        ///     Gets the extensions.
-        /// </summary>
-        /// <value>
-        ///     The extensions.
-        /// </value>
-        public IEnumerable<FormatterExtension> Extensions { get; private set; }
-
-        /// <summary>
-        ///     Gets the keyed blocks.
-        /// </summary>
-        /// <value>
-        ///     The keyed blocks.
-        /// </value>
-        public IEnumerable<KeyedBlock> KeyedBlocks { get; private set; }
-
-        #endregion
+        this.KeyedBlocks = keyedBlocks.ToList();
+        this.Extensions = extensions.ToList();
     }
+
+    #endregion
+
+    #region Public Properties
+
+    /// <summary>
+    ///     Gets the extensions.
+    /// </summary>
+    /// <value>
+    ///     The extensions.
+    /// </value>
+    public IEnumerable<FormatterExtension> Extensions { get; private set; }
+
+    /// <summary>
+    ///     Gets the keyed blocks.
+    /// </summary>
+    /// <value>
+    ///     The keyed blocks.
+    /// </value>
+    public IEnumerable<KeyedBlock> KeyedBlocks { get; private set; }
+
+    #endregion
 }

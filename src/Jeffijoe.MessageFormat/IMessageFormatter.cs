@@ -5,38 +5,37 @@
 
 using System.Collections.Generic;
 
-namespace Jeffijoe.MessageFormat
+namespace Jeffijoe.MessageFormat;
+
+/// <summary>
+///     The magical Message Formatter.
+/// </summary>
+public interface IMessageFormatter
 {
+    #region Public properties
+
     /// <summary>
-    ///     The magical Message Formatter.
+    ///     The custom value formatter to use for formats like `number`, `date`, `time` etc.
     /// </summary>
-    public interface IMessageFormatter
-    {
-        #region Public properties
+    CustomValueFormatter? CustomValueFormatter { get; }
 
-        /// <summary>
-        ///     The custom value formatter to use for formats like `number`, `date`, `time` etc.
-        /// </summary>
-        CustomValueFormatter? CustomValueFormatter { get; }
+    #endregion
 
-        #endregion
+    #region Public Methods and Operators
 
-        #region Public Methods and Operators
+    /// <summary>
+    ///     Formats the message with the specified arguments. It's so magical.
+    /// </summary>
+    /// <param name="pattern">
+    ///     The pattern.
+    /// </param>
+    /// <param name="argsMap">
+    ///     The arguments.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="string" />.
+    /// </returns>
+    string FormatMessage(string pattern, IReadOnlyDictionary<string, object?> argsMap);
 
-        /// <summary>
-        ///     Formats the message with the specified arguments. It's so magical.
-        /// </summary>
-        /// <param name="pattern">
-        ///     The pattern.
-        /// </param>
-        /// <param name="argsMap">
-        ///     The arguments.
-        /// </param>
-        /// <returns>
-        ///     The <see cref="string" />.
-        /// </returns>
-        string FormatMessage(string pattern, IReadOnlyDictionary<string, object?> argsMap);
-
-        #endregion
-    }
+    #endregion
 }

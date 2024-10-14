@@ -5,27 +5,26 @@
 
 using System.Text;
 
-namespace Jeffijoe.MessageFormat.Parsing
+namespace Jeffijoe.MessageFormat.Parsing;
+
+/// <summary>
+///     The pattern parser extracts patterns from a string.
+/// </summary>
+public interface IPatternParser
 {
+    #region Public Methods and Operators
+
     /// <summary>
-    ///     The pattern parser extracts patterns from a string.
+    ///     Parses the source, extracting formatter parameters
+    ///     describing what formatter to use, as well as it's options.
     /// </summary>
-    public interface IPatternParser
-    {
-        #region Public Methods and Operators
+    /// <param name="source">
+    ///     The source.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="IFormatterRequestCollection" />.
+    /// </returns>
+    IFormatterRequestCollection Parse(StringBuilder source);
 
-        /// <summary>
-        ///     Parses the source, extracting formatter parameters
-        ///     describing what formatter to use, as well as it's options.
-        /// </summary>
-        /// <param name="source">
-        ///     The source.
-        /// </param>
-        /// <returns>
-        ///     The <see cref="IFormatterRequestCollection" />.
-        /// </returns>
-        IFormatterRequestCollection Parse(StringBuilder source);
-
-        #endregion
-    }
+    #endregion
 }
