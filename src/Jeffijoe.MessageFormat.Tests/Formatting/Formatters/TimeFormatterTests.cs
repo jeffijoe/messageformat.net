@@ -1,12 +1,14 @@
 using System;
 using System.Globalization;
+using System.Text.RegularExpressions;
 using Jeffijoe.MessageFormat.Formatting;
 using Xunit;
 
 namespace Jeffijoe.MessageFormat.Tests.Formatting.Formatters
 {
-    public class TimeFormatterTests
+    public partial class TimeFormatterTests
     {
+
         [Theory]
         [InlineData("en-US", "1994-09-06T15:01:23Z", "3:01 PM")]
         [InlineData("da-DK", "1994-09-06T15:01:23Z", "15.01")]
@@ -19,8 +21,8 @@ namespace Jeffijoe.MessageFormat.Tests.Formatting.Formatters
             });
 
             // Replacing all whitespace due to a difference in formatting on macOS vs Linux.
-            expected = expected.Replace(" ", "");
-            actual = actual.Replace(" ", "");
+            expected = Normalize(expected);
+            actual = Normalize(actual);
             Assert.Equal(expected, actual);
         }
 
@@ -36,8 +38,8 @@ namespace Jeffijoe.MessageFormat.Tests.Formatting.Formatters
             });
 
             // Replacing all whitespace due to a difference in formatting on macOS vs Linux.
-            expected = expected.Replace(" ", "");
-            actual = actual.Replace(" ", "");
+            expected = Normalize(expected);
+            actual = Normalize(actual);
             Assert.Equal(expected, actual);
         }
 
@@ -70,6 +72,14 @@ namespace Jeffijoe.MessageFormat.Tests.Formatting.Formatters
             });
 
             Assert.Equal("420 nice", actual);
+        }
+
+        [GeneratedRegex("\\s")]
+        private static partial Regex WhitespaceRegex();
+
+        private static string Normalize(string input)
+        {
+            return WhitespaceRegex().Replace(input, string.Empty);
         }
     }
 }

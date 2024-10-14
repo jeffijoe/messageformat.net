@@ -4,7 +4,7 @@
     <SignAssembly>True</SignAssembly>
     <AssemblyOriginatorKeyFile>MessageFormat.snk</AssemblyOriginatorKeyFile>
 	<GenerateAssemblyInfo>False</GenerateAssemblyInfo>
-	<LangVersion>9</LangVersion>
+	<LangVersion>12</LangVersion>
 	<Nullable>enable</Nullable>
 	<TargetFramework>net8.0</TargetFramework>
   </PropertyGroup>
