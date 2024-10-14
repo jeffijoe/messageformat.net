@@ -57,21 +57,22 @@ namespace Jeffijoe.MessageFormat.Formatting
                 return Enumerable.Empty<FormatterExtension>();
             }
             
-            int length = request.FormatterArguments.Length;
+            var length = request.FormatterArguments.Length;
             index = 0;
             const char Colon = ':';
-            bool foundExtension = false;
+            const char OpenBrace = '{';
+            var foundExtension = false;
 
             var extension = StringBuilderPool.Get();
             var value = StringBuilderPool.Get();
             try
             {
-                for (int i = 0; i < length; i++)
+                for (var i = 0; i < length; i++)
                 {
                     var c = request.FormatterArguments[i];
 
                     // Whitespace is tolerated at the beginning.
-                    bool isWhiteSpace = char.IsWhiteSpace(c);
+                    var isWhiteSpace = char.IsWhiteSpace(c);
                     if (isWhiteSpace)
                     {
                         // We've reached the end
@@ -104,6 +105,12 @@ namespace Jeffijoe.MessageFormat.Formatting
                     {
                         value.Append(c);
                         continue;
+                    }
+
+                    if (c == OpenBrace)
+                    {
+                        // It's not an extension.
+                        break;
                     }
 
                     extension.Append(c);

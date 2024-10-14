@@ -65,11 +65,11 @@ namespace Jeffijoe.MessageFormat.Formatting.Formatters
             object? value,
             IMessageFormatter messageFormatter)
         {
+            var str = Convert.ToString(value);
             var parsed = this.ParseArguments(request);
             KeyedBlock? other = null;
             foreach (var keyedBlock in parsed.KeyedBlocks)
             {
-                var str = Convert.ToString(value);
                 if (str == keyedBlock.Key)
                 {
                     return messageFormatter.FormatMessage(keyedBlock.BlockText, args);
