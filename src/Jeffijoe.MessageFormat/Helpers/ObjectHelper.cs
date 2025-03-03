@@ -5,6 +5,7 @@
 
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 
@@ -26,6 +27,7 @@ internal static class ObjectHelper
     /// <returns>
     ///     The <see cref="IEnumerable" />.
     /// </returns>
+    [RequiresUnreferencedCode("This method uses reflection to read property information on object")]
     internal static IEnumerable<PropertyInfo> GetProperties(object obj)
     {
         var properties = new List<PropertyInfo>();
@@ -54,6 +56,7 @@ internal static class ObjectHelper
     /// <returns>
     ///     The <see cref="IDictionary" />.
     /// </returns>
+    [RequiresUnreferencedCode("This method uses reflection to convert object into dictionary")]
     internal static Dictionary<string, object?> ToDictionary(this object obj)
     {
         // We want to be able to read the property, and it should not be an indexer.

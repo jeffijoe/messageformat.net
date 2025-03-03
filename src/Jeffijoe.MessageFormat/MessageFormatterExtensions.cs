@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 using Jeffijoe.MessageFormat.Helpers;
 
 namespace Jeffijoe.MessageFormat;
@@ -46,6 +48,8 @@ public static class MessageFormatterExtensions
     /// <returns>
     ///     The <see cref="string" />.
     /// </returns>
+    [OverloadResolutionPriority(-1)]
+    [RequiresUnreferencedCode("This method uses the ToDictionary extension which uses reflection to convert object into dictionary")]
     public static string FormatMessage(this IMessageFormatter formatter, string pattern, object args)
     {
         return formatter.FormatMessage(pattern, args.ToDictionary());

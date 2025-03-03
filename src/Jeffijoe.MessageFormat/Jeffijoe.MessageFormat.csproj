@@ -4,13 +4,15 @@
     <SignAssembly>True</SignAssembly>
     <AssemblyOriginatorKeyFile>MessageFormat.snk</AssemblyOriginatorKeyFile>
     <PackageId>MessageFormat</PackageId>
-  	<GenerateAssemblyInfo>True</GenerateAssemblyInfo>
-  	<Authors>Jeff Hansen</Authors>
-  	<PackageTags>messageformat,messageformatter,xamarin,ui,messages,formatting,plural,pluralization,singular,select,strings,stringformat,format</PackageTags>
-  	<RepositoryUrl>https://github.com/jeffijoe/messageformat.net</RepositoryUrl>
-  	<LangVersion>latest</LangVersion>
-  	<Nullable>enable</Nullable>
-  	<TargetFrameworks>net6.0;net8.0;netstandard2.0;netstandard2.1</TargetFrameworks>
+    <GenerateAssemblyInfo>True</GenerateAssemblyInfo>
+    <Authors>Jeff Hansen</Authors>
+    <PackageTags>messageformat,messageformatter,xamarin,ui,messages,formatting,plural,pluralization,singular,select,strings,stringformat,format</PackageTags>
+    <RepositoryUrl>https://github.com/jeffijoe/messageformat.net</RepositoryUrl>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <TargetFrameworks>net6.0;net8.0;netstandard2.0;netstandard2.1</TargetFrameworks>
+    <PolySharpIncludeRuntimeSupportedAttributes>true</PolySharpIncludeRuntimeSupportedAttributes>
+    <IsTrimmable>true</IsTrimmable>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -22,6 +24,10 @@
     <PackageReference Include="MinVer" Version="6.0.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="PolySharp" Version="1.15.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
   </ItemGroup>
 
