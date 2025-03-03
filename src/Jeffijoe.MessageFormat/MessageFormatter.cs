@@ -6,6 +6,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Concurrent;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using Jeffijoe.MessageFormat.Formatting;
@@ -202,6 +203,7 @@ public class MessageFormatter : IMessageFormatter
     /// <returns>
     ///     The formatted message.
     /// </returns>
+    [RequiresUnreferencedCode("This method uses the FormatMessage extension which uses reflection to convert object into dictionary")]
     public static string Format(string pattern, object data)
     {
         lock (Lock)
