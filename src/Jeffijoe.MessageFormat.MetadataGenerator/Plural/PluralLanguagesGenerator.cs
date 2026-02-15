@@ -1,13 +1,10 @@
 ﻿using Jeffijoe.MessageFormat.MetadataGenerator.Plural.Parsing;
-using Jeffijoe.MessageFormat.MetadataGenerator.Plural.Parsing.AST;
 using Jeffijoe.MessageFormat.MetadataGenerator.Plural.SourceGeneration;
 
 using Microsoft.CodeAnalysis;
 
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Xml;
 
 namespace Jeffijoe.MessageFormat.MetadataGenerator.Plural;
@@ -36,20 +33,26 @@ public class PluralLanguagesGenerator : ISourceGenerator
         return Array.Empty<string>();
     }
 
-    private IReadOnlyList<PluralRule> GetRules(string[] excludedLocales)
+    private PluralRuleSet GetRules(string[] excludedLocales)
     {
-        using var rulesStream = GetRulesContentStream();
-        var xml = new XmlDocument();
-        xml.Load(rulesStream);
+        PluralRuleSet ruleIndex = new();
+        foreach (var ruleset in new[] { "plurals.xml", "ordinals.xml" })
+        {
+            using var rulesStream = GetRulesContentStream(ruleset);
+            var xml = new XmlDocument();
+            xml.Load(rulesStream);
 
-        var parser = new PluralParser(xml, excludedLocales);
-        return parser.Parse().ToArray();
+            var parser = new PluralParser(xml, excludedLocales);
+            parser.ParseInto(ruleIndex);
+        }
+
+        return ruleIndex;
     }
 
 
-    private Stream GetRulesContentStream()
+    private Stream GetRulesContentStream(string cldrFileName)
     {
-        return typeof(PluralLanguagesGenerator).Assembly.GetManifestResourceStream("Jeffijoe.MessageFormat.MetadataGenerator.data.plurals.xml")!;
+        return typeof(PluralLanguagesGenerator).Assembly.GetManifestResourceStream($"Jeffijoe.MessageFormat.MetadataGenerator.data.{cldrFileName}")!;
     }
 
     public void Initialize(GeneratorInitializationContext context)
