@@ -1,3 +1,3 @@
-CLDR supplemental data files obtained from https://cldr.unicode.org/downloads/cldr-47
+CLDR supplemental data files obtained from https://cldr.unicode.org/downloads/cldr-48
 
-CLDR v47 was released 2025-03-13; refer to https://cldr.unicode.org/index/downloads
+CLDR v48.1 was released 2025-01-08; refer to https://cldr.unicode.org/index/downloads
