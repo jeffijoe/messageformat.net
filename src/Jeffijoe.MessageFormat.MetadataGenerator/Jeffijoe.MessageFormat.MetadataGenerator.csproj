@@ -11,6 +11,7 @@
 
   <ItemGroup>
     <EmbeddedResource Include="data/plurals.xml" />
+    <EmbeddedResource Include="data/ordinals.xml" />
   </ItemGroup>
 
   <ItemGroup>
