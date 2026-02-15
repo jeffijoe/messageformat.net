@@ -1,16 +1,15 @@
-﻿using System.Collections.Generic;
-using System.Text;
-using Jeffijoe.MessageFormat.MetadataGenerator.Plural.Parsing.AST;
+﻿using System.Text;
+using Jeffijoe.MessageFormat.MetadataGenerator.Plural.Parsing;
 
 namespace Jeffijoe.MessageFormat.MetadataGenerator.Plural.SourceGeneration;
 
 public class PluralRulesMetadataGenerator
 {
-    private readonly IReadOnlyList<PluralRule> _rules;
+    private readonly PluralRuleSet _rules;
     private readonly StringBuilder _sb;
     private int _indent;
 
-    public PluralRulesMetadataGenerator(IReadOnlyList<PluralRule> rules)
+    public PluralRulesMetadataGenerator(PluralRuleSet rules)
     {
         _rules = rules;
         _sb = new StringBuilder();
@@ -29,17 +28,13 @@ public class PluralRulesMetadataGenerator
         WriteLine("{");
         AddIndent();
 
-        for (var ruleIdx = 0; ruleIdx < _rules.Count; ruleIdx++)
+        // Generate a method for each unique rule, by index, that chooses the plural form
+        // for a given input source number (the PluralContext) according to that rule.
+        var uniqueRules = _rules.UniqueRules;
+        for (var ruleIdx = 0; ruleIdx < uniqueRules.Count; ruleIdx++)
         {
-            var rule = _rules[ruleIdx];
-
+            var rule = uniqueRules[ruleIdx];
             var ruleGenerator = new RuleGenerator(rule);
-
-            foreach(var locale in rule.Locales)
-            {
-                WriteLine($"public static string Locale_{locale.ToUpper()}(PluralContext context) => Rule{ruleIdx}(context);");
-                WriteLine(string.Empty);
-            }
 
             WriteLine($"private static string Rule{ruleIdx}(PluralContext context)");
             WriteLine("{");
@@ -52,18 +47,19 @@ public class PluralRulesMetadataGenerator
             WriteLine(string.Empty);
         }
 
-        WriteLine("private static readonly Dictionary<string, ContextPluralizer> Pluralizers = new Dictionary<string, ContextPluralizer>()");
+        // Generate a static lookup dictionary of each (locale, plural type) to the corresponding rule method
+        // to use for that locale and type.
+        WriteLine("private static readonly Dictionary<PluralLookupKey, ContextPluralizer> Pluralizers = new Dictionary<PluralLookupKey, ContextPluralizer>()");
         WriteLine("{");
         AddIndent();
 
-        for (int ruleIdx = 0; ruleIdx < _rules.Count; ruleIdx++)
+        foreach (var kvp in _rules.RuleIndicesByKey)
         {
-            PluralRule rule = _rules[ruleIdx];
-            foreach (var locale in rule.Locales)
-            {
-                WriteLine($"{{\"{locale}\", Rule{ruleIdx}}},");
-            }
-
+            string locale = kvp.Key.Locale;
+            string pluralType = kvp.Key.PluralType;
+            int ruleIdx = kvp.Value;
+            
+            WriteLine($"{{new PluralLookupKey(Locale: \"{locale}\", PluralType: \"{pluralType}\"), Rule{ruleIdx}}},");
             WriteLine(string.Empty);
         }
 
@@ -71,11 +67,13 @@ public class PluralRulesMetadataGenerator
         WriteLine("};");
         WriteLine(string.Empty);
 
-        WriteLine("public static partial bool TryGetRuleByLocale(string locale, out ContextPluralizer contextPluralizer)");
+        // Finally generate our public API to the rest of the library, that takes a locale and pluralType
+        // and tries to retrieve an appropriate localizer to map an input source number to the form for the request.
+        WriteLine("public static partial bool TryGetRuleByLocale(PluralLookupKey key, out ContextPluralizer contextPluralizer)");
         WriteLine("{");
         AddIndent();
 
-        WriteLine("return Pluralizers.TryGetValue(locale, out contextPluralizer);");
+        WriteLine("return Pluralizers.TryGetValue(key, out contextPluralizer);");
 
         DecreaseIndent();
         WriteLine("}");
