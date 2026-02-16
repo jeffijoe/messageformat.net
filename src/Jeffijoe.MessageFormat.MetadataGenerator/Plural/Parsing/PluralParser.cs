@@ -18,8 +18,7 @@ public class PluralParser
     }
 
     /// <summary>
-    /// Parses the represented XML document into a new <see cref="PluralRuleSet"/>,
-    /// and returns it.
+    ///     Parses the represented XML document into a new <see cref="PluralRuleSet"/>, and returns it.
     /// </summary>
     /// <returns>A <see cref="PluralRuleSet"/> containing the parsed plural rules of a single type.</returns>
     public PluralRuleSet Parse()

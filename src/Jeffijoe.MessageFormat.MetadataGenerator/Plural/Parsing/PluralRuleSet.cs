@@ -52,16 +52,7 @@ public class PluralRuleSet
     /// <summary>
     /// Used to retrieve a specific <see cref="PluralRule"/>.
     /// </summary>
-    public readonly record struct PluralRuleKey(string PluralType, string Locale)
-    {
-        /// <summary>
-        /// e.g., 'cardinal' or 'ordinal'.
-        /// </summary>
-        public string PluralType { get; } = PluralType;
-
-        /// <summary>
-        /// The language to query.
-        /// </summary>
-        public string Locale { get; } = Locale;
-    }
+    /// <param name="PluralType">e.g., 'cardinal' or 'ordinal'.</param>
+    /// <param name="Locale">Two-letter language tag.</param>
+    public readonly record struct PluralRuleKey(string PluralType, string Locale);
 }

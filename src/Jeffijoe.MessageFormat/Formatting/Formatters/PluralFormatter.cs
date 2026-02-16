@@ -335,7 +335,7 @@ public class PluralFormatter : BaseFormatter, IFormatter
     /// <summary>
     ///     Adds the standard pluralizers.
     /// </summary>
-    protected virtual void AddStandardPluralizers()
+    private void AddStandardPluralizers()
     {
         this.Pluralizers.Add(
             PluralRuleKey.Cardinal("en"),
