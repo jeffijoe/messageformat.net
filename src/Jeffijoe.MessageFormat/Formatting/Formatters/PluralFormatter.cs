@@ -28,12 +28,12 @@ public class PluralFormatter : BaseFormatter, IFormatter
     /// <summary>
     ///     ICU MessageFormat function name for "default" pluralization, based on cardinal numbers.
     /// </summary>
-    private const string PluralFunction = "plural";
+    internal const string PluralFunction = "plural";
 
     /// <summary>
     ///     ICU MessageFormat function name for ordinal pluralization.
     /// </summary>
-    private const string OrdinalFunction = "selectordinal";
+    internal const string OrdinalFunction = "selectordinal";
 
     /// <summary>
     ///     Maps supported parser names to CLDR plural types.
@@ -64,7 +64,6 @@ public class PluralFormatter : BaseFormatter, IFormatter
     ///     This formatter requires the input variable to exist.
     /// </summary>
     public bool VariableMustExist => true;
-
 
     /// <summary>
     ///     Gets the pluralizers dictionary. Key is the locale and plural type.
