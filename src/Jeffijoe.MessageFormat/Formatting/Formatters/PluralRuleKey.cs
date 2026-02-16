@@ -5,7 +5,7 @@
     /// </summary>
     /// <param name="PluralType">e.g., 'cardinal' or 'ordinal'.</param>
     /// <param name="Locale"></param>
-    public record struct PluralRuleKey(string PluralType, string Locale)
+    public readonly record struct PluralRuleKey(string PluralType, string Locale)
     {
         /// <summary>
         /// Helper to generate a cardinal rule look up for a locale, suitable for the 'plural' MessageFormat function.

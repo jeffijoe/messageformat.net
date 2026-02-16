@@ -43,11 +43,7 @@ public class PluralRuleSet
         foreach (var locale in rule.Locales)
         {
             this._byLocaleAndType.Add(
-                new PluralRuleKey
-                {
-                    PluralType = pluralType,
-                    Locale = locale,
-                },
+                new PluralRuleKey(PluralType: pluralType, Locale: locale),
                 newRuleIndex
             );
         }
@@ -56,7 +52,16 @@ public class PluralRuleSet
     /// <summary>
     /// Used to retrieve a specific <see cref="PluralRule"/>.
     /// </summary>
-    /// <param name="PluralType">e.g., 'cardinal' or 'ordinal'.</param>
-    /// <param name="Locale"></param>
-    public record struct PluralRuleKey(string PluralType, string Locale);
+    public readonly record struct PluralRuleKey(string PluralType, string Locale)
+    {
+        /// <summary>
+        /// e.g., 'cardinal' or 'ordinal'.
+        /// </summary>
+        public string PluralType { get; } = PluralType;
+
+        /// <summary>
+        /// The language to query.
+        /// </summary>
+        public string Locale { get; } = Locale;
+    }
 }
