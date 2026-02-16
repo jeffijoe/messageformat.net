@@ -30,7 +30,7 @@ public class GeneratedPluralRulesTests
                 },
                 new FormatterExtension[0]);
         var request = new FormatterRequest(new Literal(1, 1, 1, 1, ""), "test", "plural", null);
-        var actual = subject.Pluralize("uk", arguments, new PluralContext(Convert.ToDecimal(Convert.ToDouble(args[request.Variable]))), 0);
+        var actual = subject.Pluralize(PluralRuleKey.Cardinal("uk"), arguments, new PluralContext(Convert.ToDecimal(Convert.ToDouble(args[request.Variable]))), 0);
         Assert.Equal(expected, actual);
     }
 
@@ -55,7 +55,7 @@ public class GeneratedPluralRulesTests
                 },
                 new FormatterExtension[0]);
         var request = new FormatterRequest(new Literal(1, 1, 1, 1, ""), "test", "plural", null);
-        var actual = subject.Pluralize("ru", arguments, new PluralContext(Convert.ToDecimal(args[request.Variable])), 0);
+        var actual = subject.Pluralize(PluralRuleKey.Cardinal("ru"), arguments, new PluralContext(Convert.ToDecimal(args[request.Variable])), 0);
         Assert.Equal(expected, actual);
     }
         
@@ -78,7 +78,7 @@ public class GeneratedPluralRulesTests
                 },
                 new FormatterExtension[0]);
         var request = new FormatterRequest(new Literal(1, 1, 1, 1, ""), "test", "plural", null);
-        var actual = subject.Pluralize("en", arguments, new PluralContext(Convert.ToDecimal(args[request.Variable])), 0);
+        var actual = subject.Pluralize(PluralRuleKey.Cardinal("en"), arguments, new PluralContext(Convert.ToDecimal(args[request.Variable])), 0);
         Assert.Equal(expected, actual);
     }
 }

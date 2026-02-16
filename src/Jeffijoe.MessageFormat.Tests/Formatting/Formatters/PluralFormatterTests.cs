@@ -48,7 +48,7 @@ public class PluralFormatterTests
                 },
                 Array.Empty<FormatterExtension>());
         var request = new FormatterRequest(new Literal(1, 1, 1, 1, ""), "test", "plural", null);
-        var actual = subject.Pluralize("en", arguments, new PluralContext(Convert.ToDecimal(Convert.ToDouble(args[request.Variable]))), 0);
+        var actual = subject.Pluralize(PluralRuleKey.Cardinal("en"), arguments, new PluralContext(Convert.ToDecimal(Convert.ToDouble(args[request.Variable]))), 0);
         Assert.Equal(expected, actual);
     }
 
@@ -70,7 +70,7 @@ public class PluralFormatterTests
                 },
                 Array.Empty<FormatterExtension>());
         var request = new FormatterRequest(new Literal(1, 1, 1, 1, ""), "test", "plural", null);
-        var actual = subject.Pluralize("unknown", arguments, new PluralContext(Convert.ToDecimal(Convert.ToDouble(args[request.Variable]))), 0);
+        var actual = subject.Pluralize(PluralRuleKey.Cardinal("unknown"), arguments, new PluralContext(Convert.ToDecimal(Convert.ToDouble(args[request.Variable]))), 0);
         Assert.Equal("just one", actual);
     }
         
@@ -91,7 +91,7 @@ public class PluralFormatterTests
                 },
                 Array.Empty<FormatterExtension>());
         var request = new FormatterRequest(new Literal(1, 1, 1, 1, ""), "test", "plural", null);
-        Assert.Throws<MessageFormatterException>(() => subject.Pluralize("unknown", arguments, new PluralContext(Convert.ToDecimal(Convert.ToDouble(args[request.Variable]))), 0));
+        Assert.Throws<MessageFormatterException>(() => subject.Pluralize(PluralRuleKey.Cardinal("unknown"), arguments, new PluralContext(Convert.ToDecimal(Convert.ToDouble(args[request.Variable]))), 0));
     }
 
     /// <summary>

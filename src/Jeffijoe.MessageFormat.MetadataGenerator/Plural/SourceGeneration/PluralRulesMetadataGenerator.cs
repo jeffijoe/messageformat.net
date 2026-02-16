@@ -49,7 +49,7 @@ public class PluralRulesMetadataGenerator
 
         // Generate a static lookup dictionary of each (locale, plural type) to the corresponding rule method
         // to use for that locale and type.
-        WriteLine("private static readonly Dictionary<PluralLookupKey, ContextPluralizer> Pluralizers = new Dictionary<PluralLookupKey, ContextPluralizer>()");
+        WriteLine("private static readonly Dictionary<PluralRuleKey, ContextPluralizer> Pluralizers = new Dictionary<PluralRuleKey, ContextPluralizer>()");
         WriteLine("{");
         AddIndent();
 
@@ -59,8 +59,7 @@ public class PluralRulesMetadataGenerator
             string pluralType = kvp.Key.PluralType;
             int ruleIdx = kvp.Value;
             
-            WriteLine($"{{new PluralLookupKey(Locale: \"{locale}\", PluralType: \"{pluralType}\"), Rule{ruleIdx}}},");
-            WriteLine(string.Empty);
+            WriteLine($"{{new PluralRuleKey(Locale: \"{locale}\", PluralType: \"{pluralType}\"), Rule{ruleIdx}}},");
         }
 
         DecreaseIndent();
@@ -69,7 +68,7 @@ public class PluralRulesMetadataGenerator
 
         // Finally generate our public API to the rest of the library, that takes a locale and pluralType
         // and tries to retrieve an appropriate localizer to map an input source number to the form for the request.
-        WriteLine("public static partial bool TryGetRuleByLocale(PluralLookupKey key, out ContextPluralizer contextPluralizer)");
+        WriteLine("public static partial bool TryGetRuleByLocale(PluralRuleKey key, out ContextPluralizer contextPluralizer)");
         WriteLine("{");
         AddIndent();
 

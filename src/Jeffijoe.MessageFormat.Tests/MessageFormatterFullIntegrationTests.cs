@@ -6,6 +6,7 @@
 
 using System.Collections.Generic;
 using Jeffijoe.MessageFormat.Formatting;
+using Jeffijoe.MessageFormat.Formatting.Formatters;
 using Jeffijoe.MessageFormat.Tests.TestHelpers;
 using Xunit;
 using Xunit.Abstractions;
@@ -603,7 +604,7 @@ public class MessageFormatterFullIntegrationTests
 
         {
             var mf = new MessageFormatter(useCache: true, locale: "en");
-            mf.Pluralizers!["en"] = n =>
+            mf.Pluralizers![PluralRuleKey.Cardinal("en")] = n =>
             {
                 // ´n´ is the number being pluralized.
                 // ReSharper disable once CompareOfFloatsByEqualityOperator

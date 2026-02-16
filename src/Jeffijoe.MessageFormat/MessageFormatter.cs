@@ -145,12 +145,12 @@ public class MessageFormatter : IMessageFormatter
     public string Locale { get; set; }
 
     /// <summary>
-    ///     Gets the pluralizers dictionary from the <see cref="PluralFormatter" />, if set. Key is the locale.
+    ///     Gets the pluralizers dictionary from the <see cref="PluralFormatter" />, if set. Key is the locale, then the plural type.
     /// </summary>
     /// <value>
     ///     The pluralizers, or <c>null</c> if the plural formatter has not been added.
     /// </value>
-    public IDictionary<string, Pluralizer>? Pluralizers
+    public IDictionary<PluralRuleKey, Pluralizer>? Pluralizers
     {
         get
         {

@@ -15,6 +15,36 @@ namespace Jeffijoe.MessageFormat.Formatting.Formatters;
 /// </summary>
 public class PluralFormatter : BaseFormatter, IFormatter
 {
+    /// <summary>
+    ///     CLDR plural type attribute for counting number ruleset.
+    /// </summary>
+    internal const string CardinalType = "cardinal";
+
+    /// <summary>
+    ///     CLDR plural type attribute for ordered number ruleset.
+    /// </summary>
+    internal const string OrdinalType = "ordinal";
+
+    /// <summary>
+    ///     ICU MessageFormat function name for "default" pluralization, based on cardinal numbers.
+    /// </summary>
+    private const string PluralFunction = "plural";
+
+    /// <summary>
+    ///     ICU MessageFormat function name for ordinal pluralization.
+    /// </summary>
+    private const string OrdinalFunction = "selectordinal";
+
+    /// <summary>
+    ///     Maps supported parser names to CLDR plural types.
+    ///     The plural language rule schema is identical between these types and we just need to pick the correct set.
+    /// </summary>
+    private static readonly Dictionary<string, string> CldrTypeForFunction = new()
+    {
+        { PluralFunction, CardinalType },
+        { OrdinalFunction, OrdinalType }
+    };
+
     #region Constructors and Destructors
 
     /// <summary>
@@ -22,7 +52,7 @@ public class PluralFormatter : BaseFormatter, IFormatter
     /// </summary>
     public PluralFormatter()
     {
-        this.Pluralizers = new Dictionary<string, Pluralizer>();
+        this.Pluralizers = new Dictionary<PluralRuleKey, Pluralizer>();
         this.AddStandardPluralizers();
     }
 
@@ -37,12 +67,12 @@ public class PluralFormatter : BaseFormatter, IFormatter
 
 
     /// <summary>
-    ///     Gets the pluralizers dictionary. Key is the locale.
+    ///     Gets the pluralizers dictionary. Key is the locale and plural type.
     /// </summary>
     /// <value>
     ///     The pluralizers.
     /// </value>
-    public IDictionary<string, Pluralizer> Pluralizers { get; private set; }
+    public IDictionary<PluralRuleKey, Pluralizer> Pluralizers { get; private set; }
 
     #endregion
 
@@ -59,7 +89,12 @@ public class PluralFormatter : BaseFormatter, IFormatter
     /// </returns>
     public bool CanFormat(FormatterRequest request)
     {
-        return request.FormatterName == "plural";
+        if (request.FormatterName is null)
+        {
+            return false;
+        }
+
+        return CldrTypeForFunction.ContainsKey(request.FormatterName);
     }
 
     /// <summary>
@@ -84,6 +119,9 @@ public class PluralFormatter : BaseFormatter, IFormatter
     /// <returns>
     ///     The <see cref="string" />.
     /// </returns>
+    /// <exception cref="MessageFormatterException">
+    ///     If <paramref name="request"/> does not specify a formatter name supported by <see cref="CanFormat(FormatterRequest)"/>.
+    /// </exception>
     public string Format(string locale,
         FormatterRequest request,
         IReadOnlyDictionary<string, object?> args,
@@ -98,8 +136,19 @@ public class PluralFormatter : BaseFormatter, IFormatter
             offset = Convert.ToDouble(offsetExtension.Value);
         }
 
+        // Get CLDR plural ruleset from request.
+        // CanFormat() should have guaranteed this is valid, but we'll be defensive just in case.
+        if (!CldrTypeForFunction.TryGetValue(request.FormatterName ?? string.Empty, out var pluralType))
+        {
+            throw new MessageFormatterException($"Unsupported plural formatter name: {request.FormatterName}");
+        }
+
         var ctx = CreatePluralContext(value, offset);
-        var pluralized = this.Pluralize(locale, arguments, ctx, offset);
+        var pluralized = this.Pluralize(
+            new PluralRuleKey(PluralType: pluralType, Locale: locale),
+            arguments,
+            ctx,
+            offset);
         var result = this.ReplaceNumberLiterals(pluralized, ctx.Number);
         var formatted = messageFormatter.FormatMessage(result, args);
         return formatted;
@@ -112,8 +161,8 @@ public class PluralFormatter : BaseFormatter, IFormatter
     /// <summary>
     ///     Returns the correct plural block.
     /// </summary>
-    /// <param name="locale">
-    ///     The locale.
+    /// <param name="ruleKey">
+    ///     The locale and pluralType.
     /// </param>
     /// <param name="arguments">
     ///     The parsed arguments string.
@@ -132,20 +181,20 @@ public class PluralFormatter : BaseFormatter, IFormatter
     /// </exception>
     [SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1126:PrefixCallsCorrectly",
         Justification = "Reviewed. Suppression is OK here.")]
-    internal string Pluralize(string locale, ParsedArguments arguments, PluralContext context, double offset)
+    internal string Pluralize(PluralRuleKey ruleKey, ParsedArguments arguments, PluralContext context, double offset)
     {
         string pluralForm;
-        if (this.Pluralizers.TryGetValue(locale, out var pluralizer))
+        if (this.Pluralizers.TryGetValue(ruleKey, out var pluralizer))
         {
             pluralForm = pluralizer(context.Number);
         }
-        else if (PluralRulesMetadata.TryGetRuleByLocale(locale, out var contextPluralizer))
+        else if (PluralRulesMetadata.TryGetRuleByLocale(ruleKey, out var contextPluralizer))
         {
-            pluralForm= contextPluralizer(context);
+            pluralForm = contextPluralizer(context);
         }
         else
         {
-            pluralForm = this.Pluralizers["en"](context.Number);
+            pluralForm = this.Pluralizers[new PluralRuleKey(Locale: "en", PluralType: ruleKey.PluralType)](context.Number);
         }
             
         KeyedBlock? other = null;
@@ -287,10 +336,10 @@ public class PluralFormatter : BaseFormatter, IFormatter
     /// <summary>
     ///     Adds the standard pluralizers.
     /// </summary>
-    private void AddStandardPluralizers()
+    protected virtual void AddStandardPluralizers()
     {
         this.Pluralizers.Add(
-            "en",
+            PluralRuleKey.Cardinal("en"),
             n =>
             {
                 // ReSharper disable CompareOfFloatsByEqualityOperator
@@ -306,7 +355,34 @@ public class PluralFormatter : BaseFormatter, IFormatter
 
                 // ReSharper restore CompareOfFloatsByEqualityOperator
                 return "other";
-            });
+            }
+        );
+        this.Pluralizers.Add(
+            PluralRuleKey.Ordinal("en"),
+            n =>
+            {
+                // e.g., 1st
+                if (n % 10 == 1 && n % 100 != 11)
+                {
+                    return "one";
+                }
+
+                // e.g., 2nd
+                if (n % 10 == 2 && n % 100 != 12)
+                {
+                    return "two";
+                }
+
+                // e.g., 3rd
+                if (n % 10 == 3 && n % 100 != 13)
+                {
+                    return "few";
+                }
+
+                // e.g., 4th, 11th, etc
+                return "other";
+            }
+        );
     }
 
     /// <summary>
