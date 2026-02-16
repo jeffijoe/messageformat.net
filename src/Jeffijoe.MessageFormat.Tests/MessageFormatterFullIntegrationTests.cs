@@ -579,6 +579,16 @@ public class MessageFormatterFullIntegrationTests
 
         {
             var mf = new MessageFormatter(false);
+            const string Str = @"You are the {position, selectordinal, one {#st} two {#nd} few {#rd} other {#th}} person in line.";
+            var formatted = mf.FormatMessage(Str, new Dictionary<string, object?> { {  "position", 23 } });
+            Assert.Equal("You are the 23rd person in line.", formatted);
+
+            formatted = mf.FormatMessage(Str, new Dictionary<string, object?> { { "position", 1 } });
+            Assert.Equal("You are the 1st person in line.", formatted);
+        }
+
+        {
+            var mf = new MessageFormatter(false);
             const string Str = @"His name is {LAST_NAME}... {FIRST_NAME} {LAST_NAME}";
             var formatted = mf.FormatMessage(
                 Str,

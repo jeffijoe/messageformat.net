@@ -87,6 +87,7 @@ MessageFormat.NET supports the most commonly used formats:
 
 * Select Format: `{gender, select, male{He likes} female{She likes} other{They like}} cheeseburgers`
 * Plural Format: `There {msgCount, plural, zero {are no unread messages} one {is 1 unread message} other{are # unread messages}}.` (where `#` is the actual number, with the offset (if any) subtracted).
+* Ordinal Format: `You are the {position, selectordinal, one {#st} two {#nd} few {#rd} other {#th}} person in line.`
 * Simple variable replacement: `Your name is {name}`
 * Numbers: `Your age is {age, number}`
 * Dates: `You were born {birthday, date}` 
