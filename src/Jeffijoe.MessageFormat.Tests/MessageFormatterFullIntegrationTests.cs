@@ -203,6 +203,14 @@ public class MessageFormatterFullIntegrationTests
                                         other {and # others added this to their profiles}
                                         }.";
 
+            const string Case7 = @"Your {count, selectordinal,
+                                        =0 {nonexistent}
+                                        one {#st}
+                                        two {#nd}
+                                        few {#rd}
+                                        other {#th}
+                                        } notification is the most recent one.";
+
             yield return
                 new object[]
                 {
@@ -348,6 +356,20 @@ public class MessageFormatterFullIntegrationTests
                     Case6,
                     new Dictionary<string, object?> { { "count", 3 } },
                     "You and 2 others added this to their profiles."
+                };
+            yield return
+                new object[]
+                {
+                    Case7,
+                    new Dictionary<string, object?> { { "count", 0 } },
+                    "Your nonexistent notification is the most recent one."
+                };
+            yield return
+                new object[]
+                {
+                    Case7,
+                    new Dictionary<string, object?> { { "count", 2 } },
+                    "Your 2nd notification is the most recent one."
                 };
             yield return
                 new object[]
