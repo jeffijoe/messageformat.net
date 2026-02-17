@@ -13,7 +13,7 @@ public class PluralMetadataClassGeneratorTests
     {
         var rules = new[]
         {
-            new PluralRule(new[] {"en", "uk"},
+            new PluralRule(new[] {"root", "en", "uk"},
                 new[]
                 {
                     new Condition("one", string.Empty, new []
@@ -24,7 +24,7 @@ public class PluralMetadataClassGeneratorTests
                         })
                     })
                 }),
-            new PluralRule(new[] {"en"},
+            new PluralRule(new[] {"root", "en", "pt_PT"},
                 new[]
                 {
                     new Condition("many", string.Empty, new []
@@ -46,12 +46,15 @@ public class PluralMetadataClassGeneratorTests
         var actual = generator.GenerateClass();
 
         var expected = @"
+#nullable enable
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 namespace Jeffijoe.MessageFormat.Formatting.Formatters
 {
     internal static partial class PluralRulesMetadata
     {
+        public static readonly string RootLocale = ""root"";
         private static string Rule0(PluralContext context)
         {
             if ((context.N == 3))
@@ -68,17 +71,38 @@ namespace Jeffijoe.MessageFormat.Formatting.Formatters
             return ""other"";
         }
         
-        private static readonly Dictionary<PluralRuleKey, ContextPluralizer> Pluralizers = new Dictionary<PluralRuleKey, ContextPluralizer>()
+        private static readonly Dictionary<string, LocalePluralizers> Pluralizers = new(StringComparer.OrdinalIgnoreCase)
         {
-            {new PluralRuleKey(Locale: ""en"", PluralType: ""cardinal""), Rule0},
-            {new PluralRuleKey(Locale: ""uk"", PluralType: ""cardinal""), Rule0},
-            {new PluralRuleKey(Locale: ""en"", PluralType: ""ordinal""), Rule1},
+            {""root"", new LocalePluralizers(Cardinal: Rule0, Ordinal: Rule1)},
+            {""en"", new LocalePluralizers(Cardinal: Rule0, Ordinal: Rule1)},
+            {""uk"", new LocalePluralizers(Cardinal: Rule0, Ordinal: null)},
+            {""pt-PT"", new LocalePluralizers(Cardinal: null, Ordinal: Rule1)},
+            {""pt_PT"", new LocalePluralizers(Cardinal: null, Ordinal: Rule1)},
         };
         
-        public static partial bool TryGetRuleByLocale(PluralRuleKey key, out ContextPluralizer contextPluralizer)
+        public static partial bool TryGetCardinalRuleByLocale(string locale, [NotNullWhen(true)] out ContextPluralizer? contextPluralizer)
         {
-            return Pluralizers.TryGetValue(key, out contextPluralizer);
+            if (!Pluralizers.TryGetValue(locale, out var pluralizersForLocale))
+            {
+                contextPluralizer = null;
+                return false;
+            }
+            contextPluralizer = pluralizersForLocale.Cardinal;
+            return contextPluralizer != null;
         }
+        
+        public static partial bool TryGetOrdinalRuleByLocale(string locale, [NotNullWhen(true)] out ContextPluralizer? contextPluralizer)
+        {
+            if (!Pluralizers.TryGetValue(locale, out var pluralizersForLocale))
+            {
+                contextPluralizer = null;
+                return false;
+            }
+            contextPluralizer = pluralizersForLocale.Ordinal;
+            return contextPluralizer != null;
+        }
+        
+        private record LocalePluralizers(ContextPluralizer? Cardinal, ContextPluralizer? Ordinal);
     }
 }
 ".TrimStart();

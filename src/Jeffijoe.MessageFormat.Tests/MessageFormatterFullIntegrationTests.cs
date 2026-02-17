@@ -403,6 +403,24 @@ public class MessageFormatterFullIntegrationTests
     {
         var subject = new MessageFormatter(false);
 
+        // Historically these tests relied on a default English pluralizer that mapped
+        // 0 to "zero"; adding that back in manually to ensure we maintain test coverage
+        // for multiple forms.
+        subject.Pluralizers!.Add("en", (number) =>
+        {
+            if (number == 0)
+            {
+                return "zero";
+            } else if (number == 1)
+            {
+                return "one";
+            }
+            else
+            {
+                return "other";
+            }
+        });
+
         // Warmup
         subject.FormatMessage(source, args);
         Benchmark.Start("Formatting", this.outputHelper);
@@ -486,7 +504,7 @@ public class MessageFormatterFullIntegrationTests
     {
         var subject = new MessageFormatter(false);
         const string Pattern = "You have {UnreadCount, plural, "
-                               + "zero {no unread messages}"
+                               + "=0 {no unread messages}"
                                + "one {just one unread message}" + "other {# unread messages}" + "} today.";
         var actual = subject.FormatMessage(Pattern, new { UnreadCount = 0 });
         Assert.Equal("You have no unread messages today.", actual);
@@ -513,7 +531,7 @@ public class MessageFormatterFullIntegrationTests
         {
             var mf = new MessageFormatter(false);
             const string Str = @"You have {notifications, plural,
-                              zero {no notifications}
+                              =0 {no notifications}
                               one {one notification}
                               =42 {a universal amount of notifications}
                               other {# notifications}
@@ -528,7 +546,7 @@ public class MessageFormatterFullIntegrationTests
             var mf = new MessageFormatter(false);
             const string Str = @"You {NUM_ADDS, plural, offset:1
                               =0{didnt add this to your profile} 
-                              zero{added this to your profile}
+                              =1{added this to your profile}
                               one{and one other person added this to their profile}
                               other{and # others added this to their profiles}
                           }.";
@@ -636,7 +654,7 @@ public class MessageFormatterFullIntegrationTests
 
         {
             var mf = new MessageFormatter(useCache: true, locale: "en");
-            mf.Pluralizers![PluralRuleKey.Cardinal("en")] = n =>
+            mf.Pluralizers!["en"] = n =>
             {
                 // ´n´ is the number being pluralized.
                 // ReSharper disable once CompareOfFloatsByEqualityOperator

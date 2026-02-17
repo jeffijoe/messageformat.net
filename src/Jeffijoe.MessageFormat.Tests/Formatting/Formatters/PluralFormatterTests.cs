@@ -42,13 +42,13 @@ public class PluralFormatterTests
             new ParsedArguments(
                 new[]
                 {
-                    new KeyedBlock("zero", "nothing"),
+                    new KeyedBlock("=0", "nothing"),
                     new KeyedBlock("one", "just one"),
                     new KeyedBlock("other", "wow")
                 },
                 Array.Empty<FormatterExtension>());
         var request = new FormatterRequest(new Literal(1, 1, 1, 1, ""), "test", "plural", null);
-        var actual = subject.Pluralize(PluralRuleKey.Cardinal("en"), arguments, new PluralContext(Convert.ToDecimal(Convert.ToDouble(args[request.Variable]))), 0);
+        var actual = subject.Pluralize("en", PluralRulesMetadata.TryGetCardinalRuleByLocale, subject.Pluralizers, arguments, new PluralContext(Convert.ToDecimal(Convert.ToDouble(args[request.Variable]))), 0);
         Assert.Equal(expected, actual);
     }
 
@@ -56,7 +56,7 @@ public class PluralFormatterTests
     /// The pluralize_defaults_to_en_locale_when_specified_locale_is_not_found
     /// </summary>
     [Fact]
-    public void Pluralize_defaults_to_en_locale_when_specified_locale_is_not_found()
+    public void Pluralize_defaults_to_root_locale_when_specified_locale_is_not_found()
     {
         var subject = new PluralFormatter();
         var args = new Dictionary<string, object> { { "test", 1 } };
@@ -64,14 +64,14 @@ public class PluralFormatterTests
             new ParsedArguments(
                 new[]
                 {
-                    new KeyedBlock("zero", "nothing"),
+                    new KeyedBlock("=0", "nothing"),
                     new KeyedBlock("one", "just one"),
-                    new KeyedBlock("other", "wow")
+                    new KeyedBlock("other", "wow") // Root locale should resolve "1" to "other"
                 },
                 Array.Empty<FormatterExtension>());
         var request = new FormatterRequest(new Literal(1, 1, 1, 1, ""), "test", "plural", null);
-        var actual = subject.Pluralize(PluralRuleKey.Cardinal("unknown"), arguments, new PluralContext(Convert.ToDecimal(Convert.ToDouble(args[request.Variable]))), 0);
-        Assert.Equal("just one", actual);
+        var actual = subject.Pluralize("unknown", PluralRulesMetadata.TryGetCardinalRuleByLocale, subject.Pluralizers, arguments, new PluralContext(Convert.ToDecimal(Convert.ToDouble(args[request.Variable]))), 0);
+        Assert.Equal("wow", actual);
     }
         
     /// <summary>
@@ -86,12 +86,12 @@ public class PluralFormatterTests
             new ParsedArguments(
                 new[]
                 {
-                    new KeyedBlock("zero", "nothing"),
+                    new KeyedBlock("=0", "nothing"),
                     new KeyedBlock("one", "just one")
                 },
                 Array.Empty<FormatterExtension>());
         var request = new FormatterRequest(new Literal(1, 1, 1, 1, ""), "test", "plural", null);
-        Assert.Throws<MessageFormatterException>(() => subject.Pluralize(PluralRuleKey.Cardinal("unknown"), arguments, new PluralContext(Convert.ToDecimal(Convert.ToDouble(args[request.Variable]))), 0));
+        Assert.Throws<MessageFormatterException>(() => subject.Pluralize(PluralRulesMetadata.RootLocale, PluralRulesMetadata.TryGetCardinalRuleByLocale, subject.Pluralizers, arguments, new PluralContext(Convert.ToDecimal(Convert.ToDouble(args[request.Variable]))), 0));
     }
 
     /// <summary>

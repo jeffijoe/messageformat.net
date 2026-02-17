@@ -145,17 +145,32 @@ public class MessageFormatter : IMessageFormatter
     public string Locale { get; set; }
 
     /// <summary>
-    ///     Gets the pluralizers dictionary from the <see cref="PluralFormatter" />, if set. Key is the locale, then the plural type.
+    ///     Gets the pluralizers dictionary from the <see cref="PluralFormatter" />, if set. Key is the locale.
     /// </summary>
     /// <value>
     ///     The pluralizers, or <c>null</c> if the plural formatter has not been added.
     /// </value>
-    public IDictionary<PluralRuleKey, Pluralizer>? Pluralizers
+    public IDictionary<string, Pluralizer>? Pluralizers
     {
         get
         {
             var pluralFormatter = this.Formatters.OfType<PluralFormatter>().FirstOrDefault();
             return pluralFormatter?.Pluralizers;
+        }
+    }
+
+    /// <summary>
+    ///     Gets the ordinal number pluralizers dictionary from the <see cref="PluralFormatter" />, if set. Key is the locale.
+    /// </summary>
+    /// <value>
+    ///     The pluralizers, or <c>null</c> if the plural formatter has not been added.
+    /// </value>
+    public IDictionary<string, Pluralizer>? OrdinalPluralizers
+    {
+        get
+        {
+            var pluralFormatter = this.Formatters.OfType<PluralFormatter>().FirstOrDefault();
+            return pluralFormatter?.OrdinalPluralizers;
         }
     }
 

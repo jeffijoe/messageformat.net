@@ -13,7 +13,7 @@ https://unicode-org.github.io/icu/userguide/format_parse/messages/
 var mf = new MessageFormatter();
 
 var str = @"You have {notifications, plural,
-              zero {no notifications}
+                =0 {no notifications}
                one {one notification}
                =42 {a universal amount of notifications}
              other {# notifications}
@@ -86,7 +86,7 @@ and about 3 seconds (3236ms) without it. **These results are with a debug build,
 MessageFormat.NET supports the most commonly used formats:
 
 * Select Format: `{gender, select, male{He likes} female{She likes} other{They like}} cheeseburgers`
-* Plural Format: `There {msgCount, plural, zero {are no unread messages} one {is 1 unread message} other{are # unread messages}}.` (where `#` is the actual number, with the offset (if any) subtracted).
+* Plural Format: `There {msgCount, plural, =0 {are no unread messages} one {is 1 unread message} other{are # unread messages}}.` (where `#` is the actual number, with the offset (if any) subtracted).
 * Ordinal Format: `You are the {position, selectordinal, one {#st} two {#nd} few {#rd} other {#th}} person in line.`
 * Simple variable replacement: `Your name is {name}`
 * Numbers: `Your age is {age, number}`
@@ -140,8 +140,11 @@ var message = formatter.FormatMessage("{value, number, $0.0}", new { value = 23 
 > with the package, so this is no longer needed.
 
 Same thing as with [MessageFormat.js][0], you can add your own pluralizer function.
-The `Pluralizers` property is a `IDictionary<string, Pluralizer>`, so you can remove the built-in
-ones if you want.
+The `Pluralizers` property is a `IDictionary<string, Pluralizer>` that starts empty, along
+with `OrdinalPluralizers` for ordinal numbers.
+
+Adding to these Dictionaries will take precedence over the CLDR data for exact matches on
+the input locales.
 
 ````csharp
 var mf = new MessageFormatter();
@@ -163,8 +166,6 @@ var mf = new MessageFormatter(true, "en"); // true = use cache
 mf.Pluralizers["en"] = n =>
 {
     // ´n´ is the number being pluralized.
-    if (n == 0)
-        return "zero";
     if (n == 1)
         return "one";
     if (n > 1000)

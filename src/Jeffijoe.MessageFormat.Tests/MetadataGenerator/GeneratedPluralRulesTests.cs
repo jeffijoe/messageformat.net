@@ -32,7 +32,7 @@ public class GeneratedPluralRulesTests
                 },
                 new FormatterExtension[0]);
         var request = new FormatterRequest(new Literal(1, 1, 1, 1, ""), "test", PluralFormatter.PluralFunction, null);
-        var actual = subject.Pluralize(PluralRuleKey.Cardinal("uk"), arguments, new PluralContext(Convert.ToDecimal(Convert.ToDouble(args[request.Variable]))), 0);
+        var actual = subject.Pluralize("uk", PluralRulesMetadata.TryGetCardinalRuleByLocale, subject.Pluralizers, arguments, new PluralContext(Convert.ToDecimal(Convert.ToDouble(args[request.Variable]))), 0);
         Assert.Equal(expected, actual);
     }
 
@@ -59,7 +59,7 @@ public class GeneratedPluralRulesTests
                 },
                 new FormatterExtension[0]);
         var request = new FormatterRequest(new Literal(1, 1, 1, 1, ""), "test", PluralFormatter.PluralFunction, null);
-        var actual = subject.Pluralize(PluralRuleKey.Cardinal("ru"), arguments, new PluralContext(Convert.ToDecimal(args[request.Variable])), 0);
+        var actual = subject.Pluralize("ru", PluralRulesMetadata.TryGetCardinalRuleByLocale, subject.Pluralizers, arguments, new PluralContext(Convert.ToDecimal(args[request.Variable])), 0);
         Assert.Equal(expected, actual);
     }
         
@@ -87,7 +87,7 @@ public class GeneratedPluralRulesTests
                 },
                 new FormatterExtension[0]);
         var request = new FormatterRequest(new Literal(1, 1, 1, 1, ""), "test", PluralFormatter.PluralFunction, null);
-        var actual = subject.Pluralize(PluralRuleKey.Cardinal("en"), arguments, new PluralContext(Convert.ToDecimal(args[request.Variable])), 0);
+        var actual = subject.Pluralize("en", PluralRulesMetadata.TryGetCardinalRuleByLocale, subject.Pluralizers, arguments, new PluralContext(Convert.ToDecimal(args[request.Variable])), 0);
         Assert.Equal(expected, actual);
     }
 
@@ -117,7 +117,7 @@ public class GeneratedPluralRulesTests
                 },
                 new FormatterExtension[0]);
         var request = new FormatterRequest(new Literal(1, 1, 1, 1, ""), "test", PluralFormatter.OrdinalFunction, null);
-        var pluralized = subject.Pluralize(PluralRuleKey.Ordinal("en"), arguments, new PluralContext(Convert.ToDecimal(args[request.Variable])), 0);
+        var pluralized = subject.Pluralize("en", PluralRulesMetadata.TryGetOrdinalRuleByLocale, subject.OrdinalPluralizers, arguments, new PluralContext(Convert.ToDecimal(args[request.Variable])), 0);
         var actual = subject.ReplaceNumberLiterals(pluralized, n);
         Assert.Equal(expected, actual);
     }

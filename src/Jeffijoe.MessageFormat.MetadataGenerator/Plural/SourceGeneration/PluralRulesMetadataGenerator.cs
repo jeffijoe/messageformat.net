@@ -17,8 +17,10 @@ public class PluralRulesMetadataGenerator
 
     public string GenerateClass()
     {
+        WriteLine("#nullable enable");
         WriteLine("using System;");
         WriteLine("using System.Collections.Generic;");
+        WriteLine("using System.Diagnostics.CodeAnalysis;");
 
         WriteLine("namespace Jeffijoe.MessageFormat.Formatting.Formatters");
         WriteLine("{");
@@ -27,6 +29,12 @@ public class PluralRulesMetadataGenerator
         WriteLine("internal static partial class PluralRulesMetadata");
         WriteLine("{");
         AddIndent();
+
+        // Export a constant for the normalized root locale to match the logic we're using internally.
+        // This way the rest of the lib's locale chaining can continue to work if we swap out
+        // normalization internally.
+        var rootRules = _rules.RuleIndicesByLocale[PluralRuleSet.RootLocale];
+        WriteLine($"public static readonly string RootLocale = \"{PluralRuleSet.RootLocale}\";");
 
         // Generate a method for each unique rule, by index, that chooses the plural form
         // for a given input source number (the PluralContext) according to that rule.
@@ -47,19 +55,29 @@ public class PluralRulesMetadataGenerator
             WriteLine(string.Empty);
         }
 
-        // Generate a static lookup dictionary of each (locale, plural type) to the corresponding rule method
-        // to use for that locale and type.
-        WriteLine("private static readonly Dictionary<PluralRuleKey, ContextPluralizer> Pluralizers = new Dictionary<PluralRuleKey, ContextPluralizer>()");
+        // Generate a static lookup dictionary of locale (case-insensitive) to LocalePluralizers for that locale.
+        // e.g.,
+        // en -> {
+        //     Cardinal = Rule0,
+        //     Ordinal = Rule1,
+        // },
+        // [etc for other locales, with some null values for unmapped locales]
+        WriteLine("private static readonly Dictionary<string, LocalePluralizers> Pluralizers = new(StringComparer.OrdinalIgnoreCase)");
         WriteLine("{");
         AddIndent();
 
-        foreach (var kvp in _rules.RuleIndicesByKey)
+        foreach (var kvp in _rules.RuleIndicesByLocale)
         {
-            string locale = kvp.Key.Locale;
-            string pluralType = kvp.Key.PluralType;
-            int ruleIdx = kvp.Value;
-            
-            WriteLine($"{{new PluralRuleKey(Locale: \"{locale}\", PluralType: \"{pluralType}\"), Rule{ruleIdx}}},");
+            string locale = kvp.Key;
+
+            // When index is defined, we want "Rule#" as a reference to the delegate generated above;
+            // otherwise we want null.
+            int? cardinalIdx = kvp.Value.CardinalRuleIndex;
+            int? ordinalIdx = kvp.Value.OrdinalRuleIndex;
+            string cardinalValue = cardinalIdx is not null ? $"Rule{cardinalIdx}" : "null";
+            string ordinalValue = ordinalIdx is not null ? $"Rule{ordinalIdx}" : "null";
+
+            WriteLine($"{{\"{locale}\", new LocalePluralizers(Cardinal: {cardinalValue}, Ordinal: {ordinalValue})}},");
         }
 
         DecreaseIndent();
@@ -68,14 +86,45 @@ public class PluralRulesMetadataGenerator
 
         // Finally generate our public API to the rest of the library, that takes a locale and pluralType
         // and tries to retrieve an appropriate localizer to map an input source number to the form for the request.
-        WriteLine("public static partial bool TryGetRuleByLocale(PluralRuleKey key, out ContextPluralizer contextPluralizer)");
+        WriteLine("public static partial bool TryGetCardinalRuleByLocale(string locale, [NotNullWhen(true)] out ContextPluralizer? contextPluralizer)");
         WriteLine("{");
         AddIndent();
 
-        WriteLine("return Pluralizers.TryGetValue(key, out contextPluralizer);");
+        WriteLine("if (!Pluralizers.TryGetValue(locale, out var pluralizersForLocale))");
+        WriteLine("{");
+        AddIndent();
+        WriteLine("contextPluralizer = null;");
+        WriteLine("return false;");
+        DecreaseIndent();
+        WriteLine("}");
+        WriteLine("contextPluralizer = pluralizersForLocale.Cardinal;");
+        WriteLine("return contextPluralizer != null;");
 
         DecreaseIndent();
         WriteLine("}");
+        WriteLine(string.Empty);
+
+        // Repeat the above for ordinal rules.
+        WriteLine("public static partial bool TryGetOrdinalRuleByLocale(string locale, [NotNullWhen(true)] out ContextPluralizer? contextPluralizer)");
+        WriteLine("{");
+        AddIndent();
+
+        WriteLine("if (!Pluralizers.TryGetValue(locale, out var pluralizersForLocale))");
+        WriteLine("{");
+        AddIndent();
+        WriteLine("contextPluralizer = null;");
+        WriteLine("return false;");
+        DecreaseIndent();
+        WriteLine("}");
+        WriteLine("contextPluralizer = pluralizersForLocale.Ordinal;");
+        WriteLine("return contextPluralizer != null;");
+
+        DecreaseIndent();
+        WriteLine("}");
+
+        // Generate the helper record and then clean up.
+        WriteLine(string.Empty);
+        WriteLine("private record LocalePluralizers(ContextPluralizer? Cardinal, ContextPluralizer? Ordinal);");
 
         DecreaseIndent();
         WriteLine("}");

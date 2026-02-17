@@ -16,16 +16,6 @@ namespace Jeffijoe.MessageFormat.Formatting.Formatters;
 public class PluralFormatter : BaseFormatter, IFormatter
 {
     /// <summary>
-    ///     CLDR plural type attribute for counting number ruleset.
-    /// </summary>
-    internal const string CardinalType = "cardinal";
-
-    /// <summary>
-    ///     CLDR plural type attribute for ordered number ruleset.
-    /// </summary>
-    internal const string OrdinalType = "ordinal";
-
-    /// <summary>
     ///     ICU MessageFormat function name for "default" pluralization, based on cardinal numbers.
     /// </summary>
     internal const string PluralFunction = "plural";
@@ -36,14 +26,9 @@ public class PluralFormatter : BaseFormatter, IFormatter
     internal const string OrdinalFunction = "selectordinal";
 
     /// <summary>
-    ///     Maps supported parser names to CLDR plural types.
-    ///     The plural language rule schema is identical between these types and we just need to pick the correct set.
+    ///     Delegate type to try to look up a specific plural rule for a given locale.
     /// </summary>
-    private static readonly Dictionary<string, string> CldrTypeForFunction = new()
-    {
-        { PluralFunction, CardinalType },
-        { OrdinalFunction, OrdinalType }
-    };
+    internal delegate bool TryGetRuleForLocale(string locale, [NotNullWhen(true)] out ContextPluralizer? contextPluralizer);
 
     #region Constructors and Destructors
 
@@ -52,8 +37,8 @@ public class PluralFormatter : BaseFormatter, IFormatter
     /// </summary>
     public PluralFormatter()
     {
-        this.Pluralizers = new Dictionary<PluralRuleKey, Pluralizer>();
-        this.AddStandardPluralizers();
+        this.Pluralizers = new Dictionary<string, Pluralizer>();
+        this.OrdinalPluralizers = new Dictionary<string, Pluralizer>();
     }
 
     #endregion
@@ -66,12 +51,20 @@ public class PluralFormatter : BaseFormatter, IFormatter
     public bool VariableMustExist => true;
 
     /// <summary>
-    ///     Gets the pluralizers dictionary. Key is the locale and plural type.
+    ///     Gets the pluralizers dictionary to use for cardinal numbers. Key is the locale.
     /// </summary>
     /// <value>
     ///     The pluralizers.
     /// </value>
-    public IDictionary<PluralRuleKey, Pluralizer> Pluralizers { get; private set; }
+    public IDictionary<string, Pluralizer> Pluralizers { get; private set; }
+
+    /// <summary>
+    ///     Gets the pluralizers dictionary to use for ordinal numbers. Key is the locale.
+    /// </summary>
+    /// <value>
+    ///     The ordinal pluralizers.
+    /// </value>
+    public IDictionary<string, Pluralizer> OrdinalPluralizers { get; private set; }
 
     #endregion
 
@@ -93,7 +86,7 @@ public class PluralFormatter : BaseFormatter, IFormatter
             return false;
         }
 
-        return CldrTypeForFunction.ContainsKey(request.FormatterName);
+        return request.FormatterName == PluralFunction || request.FormatterName == OrdinalFunction;
     }
 
     /// <summary>
@@ -137,14 +130,28 @@ public class PluralFormatter : BaseFormatter, IFormatter
 
         // Get CLDR plural ruleset from request.
         // CanFormat() should have guaranteed this is valid, but we'll be defensive just in case.
-        if (!CldrTypeForFunction.TryGetValue(request.FormatterName ?? string.Empty, out var pluralType))
+        TryGetRuleForLocale cldrPluralLookup;
+        IDictionary<string, Pluralizer> customLookup;
+        if (request.FormatterName == PluralFunction)
+        {
+            cldrPluralLookup = PluralRulesMetadata.TryGetCardinalRuleByLocale;
+            customLookup = this.Pluralizers;
+        }
+        else if (request.FormatterName == OrdinalFunction)
+        {
+            cldrPluralLookup = PluralRulesMetadata.TryGetOrdinalRuleByLocale;
+            customLookup = this.OrdinalPluralizers;
+        }
+        else
         {
             throw new MessageFormatterException($"Unsupported plural formatter name: {request.FormatterName}");
         }
 
         var ctx = CreatePluralContext(value, offset);
         var pluralized = this.Pluralize(
-            new PluralRuleKey(PluralType: pluralType, Locale: locale),
+            locale,
+            cldrPluralLookup,
+            customLookup,
             arguments,
             ctx,
             offset);
@@ -160,8 +167,15 @@ public class PluralFormatter : BaseFormatter, IFormatter
     /// <summary>
     ///     Returns the correct plural block.
     /// </summary>
-    /// <param name="ruleKey">
-    ///     The locale and pluralType.
+    /// <param name="locale">
+    ///     The locale.
+    /// </param>
+    /// <param name="cldrPluralLookup">
+    ///     Delegate to retrieve a <see cref="ContextPluralizer"/> for a given locale.
+    /// </param>
+    /// <param name="customLookup">
+    ///     Dictionary to retrieve a <see cref="Pluralizer"/> for a given locale, to be evaluated
+    ///     before resolving against <paramref name="cldrPluralLookup"/>.
     /// </param>
     /// <param name="arguments">
     ///     The parsed arguments string.
@@ -176,27 +190,38 @@ public class PluralFormatter : BaseFormatter, IFormatter
     ///     The <see cref="string" />.
     /// </returns>
     /// <exception cref="MessageFormatterException">
-    ///     The 'other' option was not found in pattern.
+    ///     The 'other' option was not found in pattern, or <paramref name="cldrPluralLookup"/> is missing
+    ///     both the provided locale and the CLDR root locale.
     /// </exception>
     [SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1126:PrefixCallsCorrectly",
         Justification = "Reviewed. Suppression is OK here.")]
-    internal string Pluralize(PluralRuleKey ruleKey, ParsedArguments arguments, PluralContext context, double offset)
+    internal string Pluralize(
+        string locale,
+        TryGetRuleForLocale cldrPluralLookup,
+        IDictionary<string, Pluralizer> customLookup,
+        ParsedArguments arguments,
+        PluralContext context,
+        double offset)
     {
         string pluralForm;
-        if (this.Pluralizers.TryGetValue(ruleKey, out var pluralizer))
+        if (customLookup.TryGetValue(locale, out var pluralizer))
         {
             pluralForm = pluralizer(context.Number);
         }
-        else if (PluralRulesMetadata.TryGetRuleByLocale(ruleKey, out var contextPluralizer))
+        else if (cldrPluralLookup(locale, out var contextPluralizer))
         {
             pluralForm = contextPluralizer(context);
         }
+        else if (cldrPluralLookup(PluralRulesMetadata.RootLocale, out var rootPluralizer))
+        {
+            pluralForm = rootPluralizer(context);
+        }
         else
         {
-            pluralForm = this.Pluralizers[new PluralRuleKey(Locale: "en", PluralType: ruleKey.PluralType)](context.Number);
+            throw new MessageFormatterException($"Could not find either locale {locale} or root locale {PluralRulesMetadata.RootLocale} in specified plural rule lookup");
         }
-            
-        KeyedBlock? other = null;
+
+            KeyedBlock? other = null;
         foreach (var keyedBlock in arguments.KeyedBlocks)
         {
             if (keyedBlock.Key == OtherKey)
@@ -330,58 +355,6 @@ public class PluralFormatter : BaseFormatter, IFormatter
         {
             StringBuilderPool.Return(sb);
         }
-    }
-
-    /// <summary>
-    ///     Adds the standard pluralizers.
-    /// </summary>
-    private void AddStandardPluralizers()
-    {
-        this.Pluralizers.Add(
-            PluralRuleKey.Cardinal("en"),
-            n =>
-            {
-                // ReSharper disable CompareOfFloatsByEqualityOperator
-                if (n == 0)
-                {
-                    return "zero";
-                }
-
-                if (n == 1)
-                {
-                    return "one";
-                }
-
-                // ReSharper restore CompareOfFloatsByEqualityOperator
-                return "other";
-            }
-        );
-        this.Pluralizers.Add(
-            PluralRuleKey.Ordinal("en"),
-            n =>
-            {
-                // e.g., 1st
-                if (n % 10 == 1 && n % 100 != 11)
-                {
-                    return "one";
-                }
-
-                // e.g., 2nd
-                if (n % 10 == 2 && n % 100 != 12)
-                {
-                    return "two";
-                }
-
-                // e.g., 3rd
-                if (n % 10 == 3 && n % 100 != 13)
-                {
-                    return "few";
-                }
-
-                // e.g., 4th, 11th, etc
-                return "other";
-            }
-        );
     }
 
     /// <summary>
