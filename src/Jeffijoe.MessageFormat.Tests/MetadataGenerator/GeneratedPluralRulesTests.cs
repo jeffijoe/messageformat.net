@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Jeffijoe.MessageFormat.Formatting;
 using Jeffijoe.MessageFormat.Formatting.Formatters;
-using Jeffijoe.MessageFormat.Helpers;
 using Jeffijoe.MessageFormat.Parsing;
 using Xunit;
 
@@ -20,8 +18,6 @@ public class GeneratedPluralRulesTests
     public void Uk_PluralizerTests(double n, string expected)
     {
         var subject = new PluralFormatter();
-        subject.CardinalPluralizers.Clear();
-
         var args = new Dictionary<string, object> { { "test", n } };
         var arguments =
             new ParsedArguments(
@@ -47,8 +43,6 @@ public class GeneratedPluralRulesTests
     public void Ru_PluralizerTests(double n, string expected)
     {
         var subject = new PluralFormatter();
-        subject.CardinalPluralizers.Clear();
-
         var args = new Dictionary<string, object> { { "test", n } };
         var arguments =
             new ParsedArguments(
@@ -74,8 +68,6 @@ public class GeneratedPluralRulesTests
     public void EnUS_Cardinal_PluralizerTests(double n, string expected)
     {
         var subject = new PluralFormatter();
-        subject.CardinalPluralizers.Clear();
-
         var args = new Dictionary<string, object> { { "test", n } };
         var arguments =
             new ParsedArguments(
@@ -104,8 +96,6 @@ public class GeneratedPluralRulesTests
     public void EnUS_Ordinal_PluralizerTests(double n, string expected)
     {
         var subject = new PluralFormatter();
-        subject.CardinalPluralizers.Clear();
-
         var args = new Dictionary<string, object> { { "test", n } };
         var arguments =
             new ParsedArguments(
