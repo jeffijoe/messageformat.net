@@ -29,7 +29,7 @@ public class PluralParser
     }
 
     /// <summary>
-    /// Parses the represented XML document and merges the rules into the given <see cref="PluralRuleSet"/>.
+    ///     Parses the represented XML document and merges the rules into the given <see cref="PluralRuleSet"/>.
     /// </summary>
     /// <param name="ruleIndex"></param>
     /// <exception cref="ArgumentException">If the CLDR XML is missing expected attributes.</exception>
@@ -76,7 +76,6 @@ public class PluralParser
         }
 
         var conditions = new List<Condition>();
-
         foreach (XmlNode condition in rule.ChildNodes)
         {
             if (condition.Name == "pluralRule")

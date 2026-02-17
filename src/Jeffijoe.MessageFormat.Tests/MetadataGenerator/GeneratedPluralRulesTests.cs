@@ -81,8 +81,7 @@ public class GeneratedPluralRulesTests
             new ParsedArguments(
                 new[]
                 {
-                    // 'zero' is a red herring to confirm CLDR rules are used instead of built-in;
-                    // CLDR does not specify an English 'zero' form, so 0 should fallthrough to 'other'.
+                    // Regression test to ensure 0 does not match 'zero' for English
                     new KeyedBlock("zero", "FAIL"),
                     new KeyedBlock("one", "day"),
                     new KeyedBlock("other", "days")
