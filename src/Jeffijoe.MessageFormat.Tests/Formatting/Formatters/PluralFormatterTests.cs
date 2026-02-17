@@ -48,7 +48,7 @@ public class PluralFormatterTests
                 },
                 Array.Empty<FormatterExtension>());
         var request = new FormatterRequest(new Literal(1, 1, 1, 1, ""), "test", "plural", null);
-        var actual = subject.Pluralize("en", PluralRulesMetadata.TryGetCardinalRuleByLocale, subject.Pluralizers, arguments, new PluralContext(Convert.ToDecimal(Convert.ToDouble(args[request.Variable]))), 0);
+        var actual = subject.Pluralize("en", PluralRulesMetadata.TryGetCardinalRuleByLocale, subject.CardinalPluralizers, arguments, new PluralContext(Convert.ToDecimal(Convert.ToDouble(args[request.Variable]))), 0);
         Assert.Equal(expected, actual);
     }
 
@@ -70,7 +70,7 @@ public class PluralFormatterTests
                 },
                 Array.Empty<FormatterExtension>());
         var request = new FormatterRequest(new Literal(1, 1, 1, 1, ""), "test", "plural", null);
-        var actual = subject.Pluralize("unknown", PluralRulesMetadata.TryGetCardinalRuleByLocale, subject.Pluralizers, arguments, new PluralContext(Convert.ToDecimal(Convert.ToDouble(args[request.Variable]))), 0);
+        var actual = subject.Pluralize("unknown", PluralRulesMetadata.TryGetCardinalRuleByLocale, subject.CardinalPluralizers, arguments, new PluralContext(Convert.ToDecimal(Convert.ToDouble(args[request.Variable]))), 0);
         Assert.Equal("wow", actual);
     }
         
@@ -91,7 +91,7 @@ public class PluralFormatterTests
                 },
                 Array.Empty<FormatterExtension>());
         var request = new FormatterRequest(new Literal(1, 1, 1, 1, ""), "test", "plural", null);
-        Assert.Throws<MessageFormatterException>(() => subject.Pluralize(PluralRulesMetadata.RootLocale, PluralRulesMetadata.TryGetCardinalRuleByLocale, subject.Pluralizers, arguments, new PluralContext(Convert.ToDecimal(Convert.ToDouble(args[request.Variable]))), 0));
+        Assert.Throws<MessageFormatterException>(() => subject.Pluralize(PluralRulesMetadata.RootLocale, PluralRulesMetadata.TryGetCardinalRuleByLocale, subject.CardinalPluralizers, arguments, new PluralContext(Convert.ToDecimal(Convert.ToDouble(args[request.Variable]))), 0));
     }
 
     /// <summary>

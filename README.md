@@ -137,10 +137,10 @@ var message = formatter.FormatMessage("{value, number, $0.0}", new { value = 23 
 ## Adding your own pluralizer functions
 
 > Since MessageFormat 5.0, pluralizers based on the [official CLDR data][plural-cldr] ship
-> with the package, so this is no longer needed.
+> with the package, so this is no longer needed except when overriding specific custom locales.
 
 Same thing as with [MessageFormat.js][0], you can add your own pluralizer function.
-The `Pluralizers` property is a `IDictionary<string, Pluralizer>` that starts empty, along
+The `CardinalPluralizers` property is a `IDictionary<string, Pluralizer>` that starts empty, along
 with `OrdinalPluralizers` for ordinal numbers.
 
 Adding to these Dictionaries will take precedence over the CLDR data for exact matches on
@@ -148,7 +148,7 @@ the input locales.
 
 ````csharp
 var mf = new MessageFormatter();
-mf.Pluralizers.Add("<locale>", n => {
+mf.CardinalPluralizers.Add("<locale>", n => {
   // ´n´ is the number being pluralized.
   if(n == 0)
     return "zero";
@@ -163,7 +163,7 @@ you may use in your pluralization block.
 
 ````csharp
 var mf = new MessageFormatter(true, "en"); // true = use cache
-mf.Pluralizers["en"] = n =>
+mf.CardinalPluralizers["en"] = n =>
 {
     // ´n´ is the number being pluralized.
     if (n == 1)

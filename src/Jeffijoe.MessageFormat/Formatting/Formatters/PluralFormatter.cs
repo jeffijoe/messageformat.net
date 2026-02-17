@@ -38,7 +38,7 @@ public class PluralFormatter : BaseFormatter, IFormatter
     /// </summary>
     public PluralFormatter()
     {
-        this.Pluralizers = new Dictionary<string, Pluralizer>();
+        this.CardinalPluralizers = new Dictionary<string, Pluralizer>();
         this.OrdinalPluralizers = new Dictionary<string, Pluralizer>();
     }
 
@@ -57,7 +57,7 @@ public class PluralFormatter : BaseFormatter, IFormatter
     /// <value>
     ///     The pluralizers.
     /// </value>
-    public IDictionary<string, Pluralizer> Pluralizers { get; private set; }
+    public IDictionary<string, Pluralizer> CardinalPluralizers { get; }
 
     /// <summary>
     ///     Gets the pluralizers dictionary to use for ordinal numbers. Key is the locale.
@@ -65,7 +65,7 @@ public class PluralFormatter : BaseFormatter, IFormatter
     /// <value>
     ///     The ordinal pluralizers.
     /// </value>
-    public IDictionary<string, Pluralizer> OrdinalPluralizers { get; private set; }
+    public IDictionary<string, Pluralizer> OrdinalPluralizers { get; }
 
     #endregion
 
@@ -136,7 +136,7 @@ public class PluralFormatter : BaseFormatter, IFormatter
         if (request.FormatterName == PluralFunction)
         {
             cldrPluralLookup = PluralRulesMetadata.TryGetCardinalRuleByLocale;
-            customLookup = this.Pluralizers;
+            customLookup = this.CardinalPluralizers;
         }
         else if (request.FormatterName == OrdinalFunction)
         {

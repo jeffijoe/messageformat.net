@@ -406,7 +406,7 @@ public class MessageFormatterFullIntegrationTests
         // Historically these tests relied on a default English pluralizer that mapped
         // 0 to "zero"; adding that back in manually to ensure we maintain test coverage
         // for multiple forms.
-        subject.Pluralizers!.Add("en", (number) =>
+        subject.CardinalPluralizers!.Add("en", (number) =>
         {
             if (number == 0)
             {
@@ -654,7 +654,7 @@ public class MessageFormatterFullIntegrationTests
 
         {
             var mf = new MessageFormatter(useCache: true, locale: "en");
-            mf.Pluralizers!["en"] = n =>
+            mf.CardinalPluralizers!["en"] = n =>
             {
                 // ´n´ is the number being pluralized.
                 // ReSharper disable once CompareOfFloatsByEqualityOperator

@@ -20,7 +20,7 @@ public class GeneratedPluralRulesTests
     public void Uk_PluralizerTests(double n, string expected)
     {
         var subject = new PluralFormatter();
-        subject.Pluralizers.Clear();
+        subject.CardinalPluralizers.Clear();
 
         var args = new Dictionary<string, object> { { "test", n } };
         var arguments =
@@ -34,7 +34,7 @@ public class GeneratedPluralRulesTests
                 },
                 new FormatterExtension[0]);
         var request = new FormatterRequest(new Literal(1, 1, 1, 1, ""), "test", PluralFormatter.PluralFunction, null);
-        var actual = subject.Pluralize("uk", PluralRulesMetadata.TryGetCardinalRuleByLocale, subject.Pluralizers, arguments, new PluralContext(Convert.ToDecimal(Convert.ToDouble(args[request.Variable]))), 0);
+        var actual = subject.Pluralize("uk", PluralRulesMetadata.TryGetCardinalRuleByLocale, subject.CardinalPluralizers, arguments, new PluralContext(Convert.ToDecimal(Convert.ToDouble(args[request.Variable]))), 0);
         Assert.Equal(expected, actual);
     }
 
@@ -47,7 +47,7 @@ public class GeneratedPluralRulesTests
     public void Ru_PluralizerTests(double n, string expected)
     {
         var subject = new PluralFormatter();
-        subject.Pluralizers.Clear();
+        subject.CardinalPluralizers.Clear();
 
         var args = new Dictionary<string, object> { { "test", n } };
         var arguments =
@@ -61,7 +61,7 @@ public class GeneratedPluralRulesTests
                 },
                 new FormatterExtension[0]);
         var request = new FormatterRequest(new Literal(1, 1, 1, 1, ""), "test", PluralFormatter.PluralFunction, null);
-        var actual = subject.Pluralize("ru", PluralRulesMetadata.TryGetCardinalRuleByLocale, subject.Pluralizers, arguments, new PluralContext(Convert.ToDecimal(args[request.Variable])), 0);
+        var actual = subject.Pluralize("ru", PluralRulesMetadata.TryGetCardinalRuleByLocale, subject.CardinalPluralizers, arguments, new PluralContext(Convert.ToDecimal(args[request.Variable])), 0);
         Assert.Equal(expected, actual);
     }
         
@@ -74,7 +74,7 @@ public class GeneratedPluralRulesTests
     public void EnUS_Cardinal_PluralizerTests(double n, string expected)
     {
         var subject = new PluralFormatter();
-        subject.Pluralizers.Clear();
+        subject.CardinalPluralizers.Clear();
 
         var args = new Dictionary<string, object> { { "test", n } };
         var arguments =
@@ -88,7 +88,7 @@ public class GeneratedPluralRulesTests
                 },
                 new FormatterExtension[0]);
         var request = new FormatterRequest(new Literal(1, 1, 1, 1, ""), "test", PluralFormatter.PluralFunction, null);
-        var actual = subject.Pluralize("en_US", PluralRulesMetadata.TryGetCardinalRuleByLocale, subject.Pluralizers, arguments, new PluralContext(Convert.ToDecimal(args[request.Variable])), 0);
+        var actual = subject.Pluralize("en_US", PluralRulesMetadata.TryGetCardinalRuleByLocale, subject.CardinalPluralizers, arguments, new PluralContext(Convert.ToDecimal(args[request.Variable])), 0);
         Assert.Equal(expected, actual);
     }
 
@@ -104,7 +104,7 @@ public class GeneratedPluralRulesTests
     public void EnUS_Ordinal_PluralizerTests(double n, string expected)
     {
         var subject = new PluralFormatter();
-        subject.Pluralizers.Clear();
+        subject.CardinalPluralizers.Clear();
 
         var args = new Dictionary<string, object> { { "test", n } };
         var arguments =

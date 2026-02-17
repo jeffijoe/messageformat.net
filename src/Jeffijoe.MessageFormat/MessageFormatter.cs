@@ -145,23 +145,33 @@ public class MessageFormatter : IMessageFormatter
     public string Locale { get; set; }
 
     /// <summary>
-    ///     Gets the pluralizers dictionary from the <see cref="PluralFormatter" />, if set. Key is the locale.
+    ///     Gets the custom cardinal pluralizers dictionary from the <see cref="PluralFormatter" />, if set. Key is the locale.
+    ///     These are the pluralizers used to translate e.g., {count, plural, one {1 book} other {# books}}
     /// </summary>
+    /// <remarks>
+    ///     The library relies on Unicode CLDR rules for locales by default, and any values in this dictionary override those behaviors
+    ///     for the specified locales.
+    /// </remarks>
     /// <value>
     ///     The pluralizers, or <c>null</c> if the plural formatter has not been added.
     /// </value>
-    public IDictionary<string, Pluralizer>? Pluralizers
+    public IDictionary<string, Pluralizer>? CardinalPluralizers
     {
         get
         {
             var pluralFormatter = this.Formatters.OfType<PluralFormatter>().FirstOrDefault();
-            return pluralFormatter?.Pluralizers;
+            return pluralFormatter?.CardinalPluralizers;
         }
     }
 
     /// <summary>
-    ///     Gets the ordinal number pluralizers dictionary from the <see cref="PluralFormatter" />, if set. Key is the locale.
+    ///     Gets the custom ordinal number pluralizers dictionary from the <see cref="PluralFormatter" />, if set. Key is the locale.
+    ///     These are the pluralizers used to translate e.g., {count, selectordinal, one {#st} two {#nd} few {#rd} other {#th}}
     /// </summary>
+    /// <remarks>
+    ///     The library relies on Unicode CLDR rules for locales by default, and any values in this dictionary override those behaviors
+    ///     for the specified locales.
+    /// </remarks>
     /// <value>
     ///     The pluralizers, or <c>null</c> if the plural formatter has not been added.
     /// </value>
