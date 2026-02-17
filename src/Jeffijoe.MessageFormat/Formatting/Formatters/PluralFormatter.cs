@@ -3,6 +3,7 @@
 // Author: Jeff Hansen <jeff@jeffijoe.com>
 // Copyright (C) Jeff Hansen 2014. All rights reserved.
 
+using Jeffijoe.MessageFormat.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -203,25 +204,30 @@ public class PluralFormatter : BaseFormatter, IFormatter
         PluralContext context,
         double offset)
     {
-        string pluralForm;
+        string? pluralForm = null;
         if (customLookup.TryGetValue(locale, out var pluralizer))
         {
             pluralForm = pluralizer(context.Number);
         }
-        else if (cldrPluralLookup(locale, out var contextPluralizer))
-        {
-            pluralForm = contextPluralizer(context);
-        }
-        else if (cldrPluralLookup(PluralRulesMetadata.RootLocale, out var rootPluralizer))
-        {
-            pluralForm = rootPluralizer(context);
-        }
         else
         {
-            throw new MessageFormatterException($"Could not find either locale {locale} or root locale {PluralRulesMetadata.RootLocale} in specified plural rule lookup");
+            foreach (var candidate in LocaleHelper.GetInheritanceChain(locale))
+            {
+                if (cldrPluralLookup(candidate, out var contextPluralizer))
+                {
+                    pluralForm = contextPluralizer(context);
+                    break;
+                }
+            }
         }
 
-            KeyedBlock? other = null;
+        if (pluralForm is null)
+        {
+            // GetInheritanceChain should resolve the root CLDR locale as a last attempt, so this should never happen...
+            throw new MessageFormatterException($"Could not find locale {locale} in specified plural rule lookup");
+        }
+
+        KeyedBlock? other = null;
         foreach (var keyedBlock in arguments.KeyedBlocks)
         {
             if (keyedBlock.Key == OtherKey)
