@@ -3,6 +3,7 @@
 // Author: Jeff Hansen <jeff@jeffijoe.com>
 // Copyright (C) Jeff Hansen 2014. All rights reserved.
 
+using Jeffijoe.MessageFormat.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -15,6 +16,21 @@ namespace Jeffijoe.MessageFormat.Formatting.Formatters;
 /// </summary>
 public class PluralFormatter : BaseFormatter, IFormatter
 {
+    /// <summary>
+    ///     ICU MessageFormat function name for "default" pluralization, based on cardinal numbers.
+    /// </summary>
+    internal const string PluralFunction = "plural";
+
+    /// <summary>
+    ///     ICU MessageFormat function name for ordinal pluralization.
+    /// </summary>
+    internal const string OrdinalFunction = "selectordinal";
+
+    /// <summary>
+    ///     Delegate type to try to look up a specific plural rule for a given locale.
+    /// </summary>
+    internal delegate bool TryGetRuleForLocale(string locale, [NotNullWhen(true)] out ContextPluralizer? contextPluralizer);
+
     #region Constructors and Destructors
 
     /// <summary>
@@ -22,8 +38,8 @@ public class PluralFormatter : BaseFormatter, IFormatter
     /// </summary>
     public PluralFormatter()
     {
-        this.Pluralizers = new Dictionary<string, Pluralizer>();
-        this.AddStandardPluralizers();
+        this.CardinalPluralizers = new Dictionary<string, Pluralizer>();
+        this.OrdinalPluralizers = new Dictionary<string, Pluralizer>();
     }
 
     #endregion
@@ -35,14 +51,21 @@ public class PluralFormatter : BaseFormatter, IFormatter
     /// </summary>
     public bool VariableMustExist => true;
 
-
     /// <summary>
-    ///     Gets the pluralizers dictionary. Key is the locale.
+    ///     Gets the pluralizers dictionary to use for cardinal numbers. Key is the locale.
     /// </summary>
     /// <value>
     ///     The pluralizers.
     /// </value>
-    public IDictionary<string, Pluralizer> Pluralizers { get; private set; }
+    public IDictionary<string, Pluralizer> CardinalPluralizers { get; }
+
+    /// <summary>
+    ///     Gets the pluralizers dictionary to use for ordinal numbers. Key is the locale.
+    /// </summary>
+    /// <value>
+    ///     The ordinal pluralizers.
+    /// </value>
+    public IDictionary<string, Pluralizer> OrdinalPluralizers { get; }
 
     #endregion
 
@@ -59,7 +82,12 @@ public class PluralFormatter : BaseFormatter, IFormatter
     /// </returns>
     public bool CanFormat(FormatterRequest request)
     {
-        return request.FormatterName == "plural";
+        if (request.FormatterName is null)
+        {
+            return false;
+        }
+
+        return request.FormatterName == PluralFunction || request.FormatterName == OrdinalFunction;
     }
 
     /// <summary>
@@ -84,6 +112,9 @@ public class PluralFormatter : BaseFormatter, IFormatter
     /// <returns>
     ///     The <see cref="string" />.
     /// </returns>
+    /// <exception cref="MessageFormatterException">
+    ///     If <paramref name="request"/> does not specify a formatter name supported by <see cref="CanFormat(FormatterRequest)"/>.
+    /// </exception>
     public string Format(string locale,
         FormatterRequest request,
         IReadOnlyDictionary<string, object?> args,
@@ -98,8 +129,33 @@ public class PluralFormatter : BaseFormatter, IFormatter
             offset = Convert.ToDouble(offsetExtension.Value);
         }
 
+        // Get CLDR plural ruleset from request.
+        // CanFormat() should have guaranteed this is valid, but we'll be defensive just in case.
+        TryGetRuleForLocale cldrPluralLookup;
+        IDictionary<string, Pluralizer> customLookup;
+        if (request.FormatterName == PluralFunction)
+        {
+            cldrPluralLookup = PluralRulesMetadata.TryGetCardinalRuleByLocale;
+            customLookup = this.CardinalPluralizers;
+        }
+        else if (request.FormatterName == OrdinalFunction)
+        {
+            cldrPluralLookup = PluralRulesMetadata.TryGetOrdinalRuleByLocale;
+            customLookup = this.OrdinalPluralizers;
+        }
+        else
+        {
+            throw new MessageFormatterException($"Unsupported plural formatter name: {request.FormatterName}");
+        }
+
         var ctx = CreatePluralContext(value, offset);
-        var pluralized = this.Pluralize(locale, arguments, ctx, offset);
+        var pluralized = this.Pluralize(
+            locale,
+            cldrPluralLookup,
+            customLookup,
+            arguments,
+            ctx,
+            offset);
         var result = this.ReplaceNumberLiterals(pluralized, ctx.Number);
         var formatted = messageFormatter.FormatMessage(result, args);
         return formatted;
@@ -115,6 +171,13 @@ public class PluralFormatter : BaseFormatter, IFormatter
     /// <param name="locale">
     ///     The locale.
     /// </param>
+    /// <param name="cldrPluralLookup">
+    ///     Delegate to retrieve a <see cref="ContextPluralizer"/> for a given locale.
+    /// </param>
+    /// <param name="customLookup">
+    ///     Dictionary to retrieve a <see cref="Pluralizer"/> for a given locale, to be evaluated
+    ///     before resolving against <paramref name="cldrPluralLookup"/>.
+    /// </param>
     /// <param name="arguments">
     ///     The parsed arguments string.
     /// </param>
@@ -128,26 +191,42 @@ public class PluralFormatter : BaseFormatter, IFormatter
     ///     The <see cref="string" />.
     /// </returns>
     /// <exception cref="MessageFormatterException">
-    ///     The 'other' option was not found in pattern.
+    ///     The 'other' option was not found in pattern, or <paramref name="cldrPluralLookup"/> is missing
+    ///     both the provided locale and the CLDR root locale.
     /// </exception>
     [SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1126:PrefixCallsCorrectly",
         Justification = "Reviewed. Suppression is OK here.")]
-    internal string Pluralize(string locale, ParsedArguments arguments, PluralContext context, double offset)
+    internal string Pluralize(
+        string locale,
+        TryGetRuleForLocale cldrPluralLookup,
+        IDictionary<string, Pluralizer> customLookup,
+        ParsedArguments arguments,
+        PluralContext context,
+        double offset)
     {
-        string pluralForm;
-        if (this.Pluralizers.TryGetValue(locale, out var pluralizer))
+        string? pluralForm = null;
+        if (customLookup.TryGetValue(locale, out var pluralizer))
         {
             pluralForm = pluralizer(context.Number);
         }
-        else if (PluralRulesMetadata.TryGetRuleByLocale(locale, out var contextPluralizer))
-        {
-            pluralForm= contextPluralizer(context);
-        }
         else
         {
-            pluralForm = this.Pluralizers["en"](context.Number);
+            foreach (var candidate in LocaleHelper.GetInheritanceChain(locale))
+            {
+                if (cldrPluralLookup(candidate, out var contextPluralizer))
+                {
+                    pluralForm = contextPluralizer(context);
+                    break;
+                }
+            }
         }
-            
+
+        if (pluralForm is null)
+        {
+            // GetInheritanceChain should resolve the root CLDR locale as a last attempt, so this should never happen...
+            throw new MessageFormatterException($"Could not find locale {locale} in specified plural rule lookup");
+        }
+
         KeyedBlock? other = null;
         foreach (var keyedBlock in arguments.KeyedBlocks)
         {
@@ -282,31 +361,6 @@ public class PluralFormatter : BaseFormatter, IFormatter
         {
             StringBuilderPool.Return(sb);
         }
-    }
-
-    /// <summary>
-    ///     Adds the standard pluralizers.
-    /// </summary>
-    private void AddStandardPluralizers()
-    {
-        this.Pluralizers.Add(
-            "en",
-            n =>
-            {
-                // ReSharper disable CompareOfFloatsByEqualityOperator
-                if (n == 0)
-                {
-                    return "zero";
-                }
-
-                if (n == 1)
-                {
-                    return "one";
-                }
-
-                // ReSharper restore CompareOfFloatsByEqualityOperator
-                return "other";
-            });
     }
 
     /// <summary>

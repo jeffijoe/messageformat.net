@@ -29,8 +29,8 @@ public class GeneratedPluralRulesTests
                     new KeyedBlock("other", "дня")
                 },
                 new FormatterExtension[0]);
-        var request = new FormatterRequest(new Literal(1, 1, 1, 1, ""), "test", "plural", null);
-        var actual = subject.Pluralize("uk", arguments, new PluralContext(Convert.ToDecimal(Convert.ToDouble(args[request.Variable]))), 0);
+        var request = new FormatterRequest(new Literal(1, 1, 1, 1, ""), "test", PluralFormatter.PluralFunction, null);
+        var actual = subject.Pluralize("uk", PluralRulesMetadata.TryGetCardinalRuleByLocale, subject.CardinalPluralizers, arguments, new PluralContext(Convert.ToDecimal(Convert.ToDouble(args[request.Variable]))), 0);
         Assert.Equal(expected, actual);
     }
 
@@ -54,8 +54,8 @@ public class GeneratedPluralRulesTests
                     new KeyedBlock("other", "дня")
                 },
                 new FormatterExtension[0]);
-        var request = new FormatterRequest(new Literal(1, 1, 1, 1, ""), "test", "plural", null);
-        var actual = subject.Pluralize("ru", arguments, new PluralContext(Convert.ToDecimal(args[request.Variable])), 0);
+        var request = new FormatterRequest(new Literal(1, 1, 1, 1, ""), "test", PluralFormatter.PluralFunction, null);
+        var actual = subject.Pluralize("ru", PluralRulesMetadata.TryGetCardinalRuleByLocale, subject.CardinalPluralizers, arguments, new PluralContext(Convert.ToDecimal(args[request.Variable])), 0);
         Assert.Equal(expected, actual);
     }
         
@@ -65,7 +65,7 @@ public class GeneratedPluralRulesTests
     [InlineData(101, "days")]
     [InlineData(102, "days")]
     [InlineData(105, "days")]
-    public void En_PluralizerTests(double n, string expected)
+    public void EnUS_Cardinal_PluralizerTests(double n, string expected)
     {
         var subject = new PluralFormatter();
         var args = new Dictionary<string, object> { { "test", n } };
@@ -73,12 +73,67 @@ public class GeneratedPluralRulesTests
             new ParsedArguments(
                 new[]
                 {
+                    // Regression test to ensure 0 does not match 'zero' for English
+                    new KeyedBlock("zero", "FAIL"),
                     new KeyedBlock("one", "day"),
                     new KeyedBlock("other", "days")
                 },
                 new FormatterExtension[0]);
-        var request = new FormatterRequest(new Literal(1, 1, 1, 1, ""), "test", "plural", null);
-        var actual = subject.Pluralize("en", arguments, new PluralContext(Convert.ToDecimal(args[request.Variable])), 0);
+        var request = new FormatterRequest(new Literal(1, 1, 1, 1, ""), "test", PluralFormatter.PluralFunction, null);
+        var actual = subject.Pluralize("en_US", PluralRulesMetadata.TryGetCardinalRuleByLocale, subject.CardinalPluralizers, arguments, new PluralContext(Convert.ToDecimal(args[request.Variable])), 0);
         Assert.Equal(expected, actual);
+    }
+
+    [Theory]
+    [InlineData(0, "0th")]
+    [InlineData(1, "1st")]
+    [InlineData(2, "2nd")]
+    [InlineData(3, "3rd")]
+    [InlineData(4, "4th")]
+    [InlineData(9, "9th")]
+    [InlineData(11, "11th")]
+    [InlineData(21, "21st")]
+    public void EnUS_Ordinal_PluralizerTests(double n, string expected)
+    {
+        var subject = new PluralFormatter();
+        var args = new Dictionary<string, object> { { "test", n } };
+        var arguments =
+            new ParsedArguments(
+                new[]
+                {
+                    new KeyedBlock("one", "#st"),
+                    new KeyedBlock("two", "#nd"),
+                    new KeyedBlock("few", "#rd"),
+                    new KeyedBlock("other", "#th"),
+                },
+                new FormatterExtension[0]);
+        var request = new FormatterRequest(new Literal(1, 1, 1, 1, ""), "test", PluralFormatter.OrdinalFunction, null);
+        var pluralized = subject.Pluralize("en-US", PluralRulesMetadata.TryGetOrdinalRuleByLocale, subject.OrdinalPluralizers, arguments, new PluralContext(Convert.ToDecimal(args[request.Variable])), 0);
+        var actual = subject.ReplaceNumberLiterals(pluralized, n);
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void RootLocale_MatchesRules()
+    {
+        Assert.True(PluralRulesMetadata.TryGetCardinalRuleByLocale(PluralRulesMetadata.RootLocale, out _));
+        Assert.True(PluralRulesMetadata.TryGetOrdinalRuleByLocale(PluralRulesMetadata.RootLocale, out _));
+    }
+
+    /// <summary>
+    ///     Tests to confirm that separators normalize properly in the data,
+    ///     and that language lookups are case insensitive.
+    /// </summary>
+    [Fact]
+    public void Fallback_PluralizerTests()
+    {
+        Assert.True(PluralRulesMetadata.TryGetCardinalRuleByLocale("kok_Latn", out _));
+        Assert.True(PluralRulesMetadata.TryGetCardinalRuleByLocale("pt-PT", out _));
+        Assert.True(PluralRulesMetadata.TryGetCardinalRuleByLocale("pt-pt", out _));
+        Assert.True(PluralRulesMetadata.TryGetCardinalRuleByLocale("PT_PT", out _));
+        Assert.True(PluralRulesMetadata.TryGetCardinalRuleByLocale("pT", out _));
+
+        Assert.True(PluralRulesMetadata.TryGetOrdinalRuleByLocale("kok_Latn", out _));
+        Assert.False(PluralRulesMetadata.TryGetOrdinalRuleByLocale("pt-PT", out _));
     }
 }

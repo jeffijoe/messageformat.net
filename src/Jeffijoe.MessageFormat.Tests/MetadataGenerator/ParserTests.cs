@@ -23,7 +23,7 @@ public class ParserTests
 </supplementalData>
 ");
 
-        var rule = Assert.Single(rules);
+        var rule = Assert.Single(rules.UniqueRules);
         var expected = new[]
         {
             "am", "as", "bn", "doi", "fa", "gu", "hi", "kn", "pcm", "zu"
@@ -44,7 +44,7 @@ public class ParserTests
     </plurals>
 </supplementalData>
 ");
-        var rule = Assert.Single(rules);
+        var rule = Assert.Single(rules.UniqueRules);
         Assert.Empty(rule.Conditions);
     }
 
@@ -53,7 +53,7 @@ public class ParserTests
     {
         var rules = ParseRules(GenerateXmlWithRuleContent("@integer 1, 21, 31, 41, 51, 61, 71, 81, 101, 1001, …"));
 
-        var rule = Assert.Single(rules);
+        var rule = Assert.Single(rules.UniqueRules);
         var condition = Assert.Single(rule.Conditions);
         var expected = "@integer 1, 21, 31, 41, 51, 61, 71, 81, 101, 1001, …";
         Assert.Equal(expected, condition.RuleDescription);
@@ -64,7 +64,7 @@ public class ParserTests
     {
         var rules = ParseRules(
             GenerateXmlWithRuleContent(@"v = 0 @integer 1, 21, 31, 41, 51, 61, 71, 81, 101, 1001, …"));
-        var rule = Assert.Single(rules);
+        var rule = Assert.Single(rules.UniqueRules);
         var condition = Assert.Single(rule.Conditions);
         var orCondition = Assert.Single(condition.OrConditions);
         var actual = Assert.Single(orCondition.AndConditions);
@@ -78,7 +78,7 @@ public class ParserTests
     {
         var rules = ParseRules(
             GenerateXmlWithRuleContent(@"i = 0 @integer 1, 21, 31, 41, 51, 61, 71, 81, 101, 1001, …"));
-        var rule = Assert.Single(rules);
+        var rule = Assert.Single(rules.UniqueRules);
         var condition = Assert.Single(rule.Conditions);
         var orCondition = Assert.Single(condition.OrConditions);
         var actual = Assert.Single(orCondition.AndConditions);
@@ -92,7 +92,7 @@ public class ParserTests
     {
         var rules = ParseRules(
             GenerateXmlWithRuleContent("n = 1 @integer 1, 21, 31, 41, 51, 61, 71, 81, 101, 1001, …"));
-        var rule = Assert.Single(rules);
+        var rule = Assert.Single(rules.UniqueRules);
         var condition = Assert.Single(rule.Conditions);
         var orCondition = Assert.Single(condition.OrConditions);
         var actual = Assert.Single(orCondition.AndConditions);
@@ -107,7 +107,7 @@ public class ParserTests
     public void CanParseVariousRelations(string ruleText, Relation expectedRelation)
     {
         var rules = ParseRules(GenerateXmlWithRuleContent(ruleText));
-        var rule = Assert.Single(rules);
+        var rule = Assert.Single(rules.UniqueRules);
         var condition = Assert.Single(rule.Conditions);
         var orCondition = Assert.Single(condition.OrConditions);
         var actual = Assert.Single(orCondition.AndConditions);
@@ -120,7 +120,7 @@ public class ParserTests
     public void CanParseOrRules()
     {
         var rules = ParseRules(GenerateXmlWithRuleContent("n = 2 or n = 1 or n = 0 @integer 1, 21, 31, 41, 51, 61, 71, 81, 101, 1001, …"));
-        var rule = Assert.Single(rules);
+        var rule = Assert.Single(rules.UniqueRules);
         var condition = Assert.Single(rule.Conditions);
             
         Assert.Equal(3, condition.OrConditions.Count);
@@ -142,7 +142,7 @@ public class ParserTests
     public void CanParseAndRules()
     {
         var rules = ParseRules(GenerateXmlWithRuleContent("n = 2 and n = 1 and n = 0 @integer 1, 21, 31, 41, 51, 61, 71, 81, 101, 1001, …"));
-        var rule = Assert.Single(rules);
+        var rule = Assert.Single(rules.UniqueRules);
         var condition = Assert.Single(rule.Conditions);
 
         var orCondition = Assert.Single(condition.OrConditions);
@@ -166,7 +166,7 @@ public class ParserTests
     {
         var rules = ParseRules(
             GenerateXmlWithRuleContent("n % 5 = 3 @integer 1, 21, 31, 41, 51, 61, 71, 81, 101, 1001, …"));
-        var rule = Assert.Single(rules);
+        var rule = Assert.Single(rules.UniqueRules);
         var condition = Assert.Single(rule.Conditions);
         var orCondition = Assert.Single(condition.OrConditions);
         var actual = Assert.Single(orCondition.AndConditions);
@@ -181,7 +181,7 @@ public class ParserTests
     {
         var rules = ParseRules(
             GenerateXmlWithRuleContent("n = 3..5 @integer 1, 21, 31, 41, 51, 61, 71, 81, 101, 1001, …"));
-        var rule = Assert.Single(rules);
+        var rule = Assert.Single(rules.UniqueRules);
         var condition = Assert.Single(rule.Conditions);
         var orCondition = Assert.Single(condition.OrConditions);
         var actual = Assert.Single(orCondition.AndConditions);
@@ -196,7 +196,7 @@ public class ParserTests
     {
         var rules = ParseRules(
             GenerateXmlWithRuleContent("n = 3,5,8, 10 @integer 1, 21, 31, 41, 51, 61, 71, 81, 101, 1001, …"));
-        var rule = Assert.Single(rules);
+        var rule = Assert.Single(rules.UniqueRules);
         var condition = Assert.Single(rule.Conditions);
         var orCondition = Assert.Single(condition.OrConditions);
         var actual = Assert.Single(orCondition.AndConditions);
@@ -211,7 +211,7 @@ public class ParserTests
     {
         var rules = ParseRules(
             GenerateXmlWithRuleContent("n = 3,5..7,12,15 @integer 1, 21, 31, 41, 51, 61, 71, 81, 101, 1001, …"));
-        var rule = Assert.Single(rules);
+        var rule = Assert.Single(rules.UniqueRules);
         var condition = Assert.Single(rule.Conditions);
         var orCondition = Assert.Single(condition.OrConditions);
         var actual = Assert.Single(orCondition.AndConditions);
@@ -234,7 +234,7 @@ public class ParserTests
     {
         var rules = ParseRules(
             GenerateXmlWithRuleContent($"{variable} = 3"));
-        var rule = Assert.Single(rules);
+        var rule = Assert.Single(rules.UniqueRules);
         var condition = Assert.Single(rule.Conditions);
         var orCondition = Assert.Single(condition.OrConditions);
         var actual = Assert.Single(orCondition.AndConditions);
@@ -264,7 +264,7 @@ public class ParserTests
         Assert.Equal(expected.OperandRight, actual.OperandRight);
     }
 
-    private static IEnumerable<PluralRule> ParseRules(string xmlText)
+    private static PluralRuleSet ParseRules(string xmlText)
     {
         var xml = new XmlDocument();
         xml.LoadXml(xmlText);

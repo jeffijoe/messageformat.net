@@ -6,6 +6,7 @@
 
 using System.Collections.Generic;
 using Jeffijoe.MessageFormat.Formatting;
+using Jeffijoe.MessageFormat.Formatting.Formatters;
 using Jeffijoe.MessageFormat.Tests.TestHelpers;
 using Xunit;
 using Xunit.Abstractions;
@@ -202,6 +203,14 @@ public class MessageFormatterFullIntegrationTests
                                         other {and # others added this to their profiles}
                                         }.";
 
+            const string Case7 = @"Your {count, selectordinal,
+                                        =0 {nonexistent}
+                                        one {#st}
+                                        two {#nd}
+                                        few {#rd}
+                                        other {#th}
+                                        } notification is the most recent one.";
+
             yield return
                 new object[]
                 {
@@ -351,6 +360,20 @@ public class MessageFormatterFullIntegrationTests
             yield return
                 new object[]
                 {
+                    Case7,
+                    new Dictionary<string, object?> { { "count", 0 } },
+                    "Your nonexistent notification is the most recent one."
+                };
+            yield return
+                new object[]
+                {
+                    Case7,
+                    new Dictionary<string, object?> { { "count", 2 } },
+                    "Your 2nd notification is the most recent one."
+                };
+            yield return
+                new object[]
+                {
                     "{ count, plural, one {1 thing} other {# things} }",
                     new Dictionary<string, object?> { { "count", 2 } },
                     "2 things"
@@ -379,6 +402,24 @@ public class MessageFormatterFullIntegrationTests
     public void FormatMessage(string source, Dictionary<string, object?> args, string expected)
     {
         var subject = new MessageFormatter(false);
+
+        // Historically these tests relied on a default English pluralizer that mapped
+        // 0 to "zero"; adding that back in manually to ensure we maintain test coverage
+        // for multiple forms.
+        subject.CardinalPluralizers!.Add("en", (number) =>
+        {
+            if (number == 0)
+            {
+                return "zero";
+            } else if (number == 1)
+            {
+                return "one";
+            }
+            else
+            {
+                return "other";
+            }
+        });
 
         // Warmup
         subject.FormatMessage(source, args);
@@ -463,7 +504,7 @@ public class MessageFormatterFullIntegrationTests
     {
         var subject = new MessageFormatter(false);
         const string Pattern = "You have {UnreadCount, plural, "
-                               + "zero {no unread messages}"
+                               + "=0 {no unread messages}"
                                + "one {just one unread message}" + "other {# unread messages}" + "} today.";
         var actual = subject.FormatMessage(Pattern, new { UnreadCount = 0 });
         Assert.Equal("You have no unread messages today.", actual);
@@ -490,7 +531,7 @@ public class MessageFormatterFullIntegrationTests
         {
             var mf = new MessageFormatter(false);
             const string Str = @"You have {notifications, plural,
-                              zero {no notifications}
+                              =0 {no notifications}
                               one {one notification}
                               =42 {a universal amount of notifications}
                               other {# notifications}
@@ -505,7 +546,7 @@ public class MessageFormatterFullIntegrationTests
             var mf = new MessageFormatter(false);
             const string Str = @"You {NUM_ADDS, plural, offset:1
                               =0{didnt add this to your profile} 
-                              zero{added this to your profile}
+                              =1{added this to your profile}
                               one{and one other person added this to their profile}
                               other{and # others added this to their profiles}
                           }.";
@@ -578,6 +619,16 @@ public class MessageFormatterFullIntegrationTests
 
         {
             var mf = new MessageFormatter(false);
+            const string Str = @"You are the {position, selectordinal, one {#st} two {#nd} few {#rd} other {#th}} person in line.";
+            var formatted = mf.FormatMessage(Str, new Dictionary<string, object?> { {  "position", 23 } });
+            Assert.Equal("You are the 23rd person in line.", formatted);
+
+            formatted = mf.FormatMessage(Str, new Dictionary<string, object?> { { "position", 1 } });
+            Assert.Equal("You are the 1st person in line.", formatted);
+        }
+
+        {
+            var mf = new MessageFormatter(false);
             const string Str = @"His name is {LAST_NAME}... {FIRST_NAME} {LAST_NAME}";
             var formatted = mf.FormatMessage(
                 Str,
@@ -603,7 +654,7 @@ public class MessageFormatterFullIntegrationTests
 
         {
             var mf = new MessageFormatter(useCache: true, locale: "en");
-            mf.Pluralizers!["en"] = n =>
+            mf.CardinalPluralizers!["en"] = n =>
             {
                 // ´n´ is the number being pluralized.
                 // ReSharper disable once CompareOfFloatsByEqualityOperator
