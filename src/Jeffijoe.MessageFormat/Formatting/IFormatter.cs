@@ -4,6 +4,7 @@
 // Copyright (C) Jeff Hansen 2014. All rights reserved.
 
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace Jeffijoe.MessageFormat.Formatting;
 
@@ -41,7 +42,7 @@ public interface IFormatter
     /// nested formatting. This is only called if <see cref="CanFormat" /> returns true.
     /// The args will always contain the <see cref="FormatterRequest.Variable" />.
     /// </summary>
-    /// <param name="locale">The locale being used. It is up to the formatter what they do with this information.</param>
+    /// <param name="culture">The culture being used. It is up to the formatter what they do with this information.</param>
     /// <param name="request">The parameters.</param>
     /// <param name="args">The arguments.</param>
     /// <param name="value">The value of <see cref="FormatterRequest.Variable"/> from the given args dictionary. Can be null.</param>
@@ -50,7 +51,7 @@ public interface IFormatter
     /// The <see cref="string" />.
     /// </returns>
     string Format(
-        string locale,
+        CultureInfo culture,
         FormatterRequest request,
         IReadOnlyDictionary<string, object?> args,
         object? value,

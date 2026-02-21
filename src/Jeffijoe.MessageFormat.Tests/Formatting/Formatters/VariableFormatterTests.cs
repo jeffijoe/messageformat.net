@@ -5,6 +5,7 @@
 // Copyright (C) Jeff Hansen 2015. All rights reserved.
 
 using System.Collections.Generic;
+using System.Globalization;
 using Jeffijoe.MessageFormat.Formatting;
 using Jeffijoe.MessageFormat.Formatting.Formatters;
 using Jeffijoe.MessageFormat.Parsing;
@@ -57,7 +58,7 @@ public class VariableFormatterTests
         var req = CreateRequest();
         var args = new Dictionary<string, object?>();
 
-        Assert.Equal(string.Empty, this.subject.Format("en", req, args, null, this.formatter));
+        Assert.Equal(string.Empty, this.subject.Format(CultureInfo.GetCultureInfo("en"), req, args, null, this.formatter));
     }
 
     /// <summary>
@@ -69,7 +70,7 @@ public class VariableFormatterTests
         var req = CreateRequest();
         var args = new Dictionary<string, object?>();
 
-        Assert.Equal("is good", this.subject.Format("en", req, args, "is good", this.formatter));
+        Assert.Equal("is good", this.subject.Format(CultureInfo.GetCultureInfo("en"), req, args, "is good", this.formatter));
     }
 
     #endregion

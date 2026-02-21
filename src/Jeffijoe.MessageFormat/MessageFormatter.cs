@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -64,19 +65,19 @@ public class MessageFormatter : IMessageFormatter
     /// <param name="useCache">
     ///     The use Cache.
     /// </param>
-    /// <param name="locale">
-    ///     The locale.
+    /// <param name="culture">
+    ///     The culture to use. Defaults to <see cref="CultureInfo.CurrentCulture"/> if not specified.
     /// </param>
     /// <param name="customValueFormatter">
     ///     The custom value formatter to use. Can be <c>null</c>.
     /// </param>
-    public MessageFormatter(bool useCache = true, string locale = "en",
+    public MessageFormatter(bool useCache = true, CultureInfo? culture = null,
         CustomValueFormatter? customValueFormatter = null)
         : this(
             patternParser: new PatternParser(new LiteralParser()),
             library: new FormatterLibrary(),
             useCache: useCache,
-            locale: locale,
+            culture: culture,
             customValueFormatter: customValueFormatter)
     {
     }
@@ -93,8 +94,8 @@ public class MessageFormatter : IMessageFormatter
     /// <param name="useCache">
     ///     if set to <c>true</c> uses the cache.
     /// </param>
-    /// <param name="locale">
-    ///     The locale to use. Formatters may need this.
+    /// <param name="culture">
+    ///     The culture to use. Formatters may need this. Defaults to <see cref="CultureInfo.CurrentCulture"/> if not specified.
     /// </param>
     /// <param name="customValueFormatter">
     ///     The custom value formatter to use. Can be <c>null</c>.
@@ -103,13 +104,13 @@ public class MessageFormatter : IMessageFormatter
         IPatternParser patternParser,
         IFormatterLibrary library,
         bool useCache,
-        string locale = "en",
+        CultureInfo? culture = null,
         CustomValueFormatter? customValueFormatter = null)
     {
         this.patternParser = patternParser ?? throw new ArgumentNullException("patternParser");
         this.library = library ?? throw new ArgumentNullException("library");
         this.CustomValueFormatter = customValueFormatter;
-        this.Locale = locale;
+        this.Culture = culture ?? CultureInfo.CurrentCulture;
         if (useCache)
         {
             this.cache = new ConcurrentDictionary<string, IFormatterRequestCollection>();
@@ -137,12 +138,12 @@ public class MessageFormatter : IMessageFormatter
     }
 
     /// <summary>
-    ///     Gets or sets the locale.
+    ///     Gets or sets the culture.
     /// </summary>
     /// <value>
-    ///     The locale.
+    ///     The culture.
     /// </value>
-    public string Locale { get; set; }
+    public CultureInfo Culture { get; set; }
 
     /// <summary>
     ///     Gets the custom cardinal pluralizers dictionary from the <see cref="PluralFormatter" />, if set. Key is the locale.
@@ -276,7 +277,7 @@ public class MessageFormatter : IMessageFormatter
                 }
 
                 // Double dispatch, yeah!
-                var result = formatter.Format(this.Locale, request, args, value, this);
+                var result = formatter.Format(this.Culture, request, args, value, this);
 
                 // First, we remove the literal from the source.
                 var sourceLiteral = request.SourceLiteral;

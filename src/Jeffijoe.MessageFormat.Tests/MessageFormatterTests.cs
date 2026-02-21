@@ -5,6 +5,7 @@
 // Copyright (C) Jeff Hansen 2015. All rights reserved.
 
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
 
 using Jeffijoe.MessageFormat.Formatting;
@@ -110,7 +111,7 @@ public class MessageFormatterTests
 
         public bool CanFormat(FormatterRequest request) => request.FormatterName == this.formatterName;
 
-        public string Format(string locale, FormatterRequest request, IReadOnlyDictionary<string, object?> args, object? value,
+        public string Format(CultureInfo culture, FormatterRequest request, IReadOnlyDictionary<string, object?> args, object? value,
             IMessageFormatter messageFormatter)
         {
             return "formatted";

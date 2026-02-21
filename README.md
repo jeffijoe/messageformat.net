@@ -127,7 +127,7 @@ var custom = new CustomValueFormatters
 };
 
 // Create a MessageFormatter with the custom value formatter.
-var formatter = new MessageFormatter(locale: "en-US", customValueFormatter: custom);
+var formatter = new MessageFormatter(culture: CultureInfo.GetCultureInfo("en-US"), customValueFormatter: custom);
 
 // Format a message.
 var message = formatter.FormatMessage("{value, number, $0.0}", new { value = 23 });
@@ -162,7 +162,7 @@ There's no restrictions on what strings you may return, nor what strings
 you may use in your pluralization block.
 
 ````csharp
-var mf = new MessageFormatter(true, "en"); // true = use cache
+var mf = new MessageFormatter(true, CultureInfo.GetCultureInfo("en")); // true = use cache
 mf.CardinalPluralizers["en"] = n =>
 {
     // ´n´ is the number being pluralized.

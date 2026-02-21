@@ -13,7 +13,7 @@ public class NumberFormatterTests
     [InlineData(1234567.1234567, "1,234,567.123")]
     public void NumberFormatter_Default(decimal number, string expected)
     {
-        var mf = new MessageFormatter(locale: "en-US");
+        var mf = new MessageFormatter(culture: CultureInfo.GetCultureInfo("en-US"));
         // NOTE: The whitespace at the end is on purpose to cover whitespace tolerance in parsing.
         var actual = mf.FormatMessage("{value, number }", new
         {
@@ -36,7 +36,7 @@ public class NumberFormatterTests
                 return true;
             }
         };
-        var mf = new MessageFormatter(locale: "en-US", customValueFormatter: formatters);
+        var mf = new MessageFormatter(culture: CultureInfo.GetCultureInfo("en-US"), customValueFormatter: formatters);
 
         var actual = mf.FormatMessage("{value, number, 0.0000}", new
         {
@@ -52,7 +52,7 @@ public class NumberFormatterTests
     [InlineData(1234567.1234567, "123,456,712%")]
     public void NumberFormatter_Percent(decimal number, string expected)
     {
-        var mf = new MessageFormatter(locale: "en-US");
+        var mf = new MessageFormatter(culture: CultureInfo.GetCultureInfo("en-US"));
             
         // NOTE: The inconsistent whitespace in the pattern is to cover whitespace tolerance in parsing.
         var actual = mf.FormatMessage("{value, number,percent}", new
@@ -72,7 +72,7 @@ public class NumberFormatterTests
     [InlineData(true, "True")]
     public void NumberFormatter_Integer(object? value, string expected)
     {
-        var mf = new MessageFormatter(locale: "en-US");
+        var mf = new MessageFormatter(culture: CultureInfo.GetCultureInfo("en-US"));
         var actual = mf.FormatMessage("{value, number, integer}", new
         {
             value
@@ -87,7 +87,7 @@ public class NumberFormatterTests
     [InlineData("da-DK", 99.99, "99,99 kr.")]
     public void NumberFormatter_Currency(string locale, decimal number, string expected)
     {
-        var mf = new MessageFormatter(locale: locale);
+        var mf = new MessageFormatter(culture: CultureInfo.GetCultureInfo(locale));
 
         // NOTE: The inconsistent whitespace in the pattern is to cover whitespace tolerance in parsing.
         var actual = mf.FormatMessage("{value, number, currency }", new
@@ -102,7 +102,7 @@ public class NumberFormatterTests
     public void NumberFormatter_ThrowsIfStyleIsNotSupported()
     {
         const decimal Number = 12.34m;
-        var mf = new MessageFormatter(locale: "en-US");
+        var mf = new MessageFormatter(culture: CultureInfo.GetCultureInfo("en-US"));
         var ex = Assert.Throws<UnsupportedFormatStyleException>(() =>
             mf.FormatMessage($"{{value, number, wow}}",
                 new
@@ -117,7 +117,7 @@ public class NumberFormatterTests
     [Fact]
     public void NumberFormatter_BadInput_FallsBackToRegularFormat()
     {
-        var mf = new MessageFormatter(locale: "en-US");
+        var mf = new MessageFormatter(culture: CultureInfo.GetCultureInfo("en-US"));
 
         {
             var actual = mf.FormatMessage($"{{value, number, currency}}", new

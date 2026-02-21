@@ -5,6 +5,7 @@
 // Copyright (C) Jeff Hansen 2015. All rights reserved.
 
 using System.Collections.Generic;
+using System.Globalization;
 using Jeffijoe.MessageFormat.Formatting;
 using Jeffijoe.MessageFormat.Formatting.Formatters;
 using Jeffijoe.MessageFormat.Parsing;
@@ -62,7 +63,7 @@ public class SelectFormatterTests
             "select",
             formatterArgs);
         var args = new Dictionary<string, object?> { { "gender", gender } };
-        var result = subject.Format("en", req, args, gender, messageFormatter);
+        var result = subject.Format(CultureInfo.GetCultureInfo("en"), req, args, gender, messageFormatter);
         Assert.Equal(expectedBlock, result);
     }
 
@@ -83,7 +84,7 @@ public class SelectFormatterTests
 
         Assert.Throws<MessageFormatterException>(() =>
         {
-            subject.Format("en", req, args, "non-binary", messageFormatter);
+            subject.Format(CultureInfo.GetCultureInfo("en"), req, args, "non-binary", messageFormatter);
         });
     }
 

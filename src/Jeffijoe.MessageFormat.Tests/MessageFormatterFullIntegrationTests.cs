@@ -5,6 +5,7 @@
 // Copyright (C) Jeff Hansen 2015. All rights reserved.
 
 using System.Collections.Generic;
+using System.Globalization;
 using Jeffijoe.MessageFormat.Formatting;
 using Jeffijoe.MessageFormat.Formatting.Formatters;
 using Jeffijoe.MessageFormat.Tests.TestHelpers;
@@ -401,7 +402,7 @@ public class MessageFormatterFullIntegrationTests
     [MemberData(nameof(Tests))]
     public void FormatMessage(string source, Dictionary<string, object?> args, string expected)
     {
-        var subject = new MessageFormatter(false);
+        var subject = new MessageFormatter(useCache: false, culture: CultureInfo.GetCultureInfo("en"));
 
         // Historically these tests relied on a default English pluralizer that mapped
         // 0 to "zero"; adding that back in manually to ensure we maintain test coverage
@@ -653,7 +654,7 @@ public class MessageFormatterFullIntegrationTests
         }
 
         {
-            var mf = new MessageFormatter(useCache: true, locale: "en");
+            var mf = new MessageFormatter(useCache: true, culture: CultureInfo.GetCultureInfo("en"));
             mf.CardinalPluralizers!["en"] = n =>
             {
                 // ´n´ is the number being pluralized.

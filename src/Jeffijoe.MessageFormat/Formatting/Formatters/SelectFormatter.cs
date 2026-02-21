@@ -6,6 +6,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 
 namespace Jeffijoe.MessageFormat.Formatting.Formatters;
 
@@ -48,7 +49,7 @@ public class SelectFormatter : BaseFormatter, IFormatter
     /// nested formatting. This is only called if <see cref="CanFormat" /> returns true.
     /// The args will always contain the <see cref="FormatterRequest.Variable" />.
     /// </summary>
-    /// <param name="locale">The locale being used. It is up to the formatter what they do with this information.</param>
+    /// <param name="culture">The culture being used. It is up to the formatter what they do with this information.</param>
     /// <param name="request">The parameters.</param>
     /// <param name="args">The arguments.</param>
     /// <param name="value">The value of <see cref="FormatterRequest.Variable" /> from the given args dictionary. Can be null.</param>
@@ -59,7 +60,7 @@ public class SelectFormatter : BaseFormatter, IFormatter
     /// <exception cref="MessageFormatterException">'other' option not found in pattern, and variable was not present in collection.</exception>
     [SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1126:PrefixCallsCorrectly",
         Justification = "Reviewed. Suppression is OK here.")]
-    public string Format(string locale,
+    public string Format(CultureInfo culture,
         FormatterRequest request,
         IReadOnlyDictionary<string, object?> args,
         object? value,

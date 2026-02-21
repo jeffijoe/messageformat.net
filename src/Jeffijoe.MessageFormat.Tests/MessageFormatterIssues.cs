@@ -5,6 +5,7 @@
 // Copyright (C) Jeff Hansen 2015. All rights reserved.
 
 using System.Collections.Generic;
+using System.Globalization;
 using Xunit;
 
 namespace Jeffijoe.MessageFormat.Tests;
@@ -41,7 +42,7 @@ public class MessageFormatterIssues
     [Fact]
     public void Issue31_IDictionary_interface_support()
     {
-        var subject = new MessageFormatter(locale: "en-US");
+        var subject = new MessageFormatter(culture: CultureInfo.GetCultureInfo("en-US"));
 
         IDictionary<string, object> idict = new Dictionary<string, object>
         {
@@ -60,7 +61,7 @@ public class MessageFormatterIssues
     [Fact]
     public void Issue34_Newlines_are_stripped()
     {
-        var subject = new MessageFormatter(locale: "en-US");
+        var subject = new MessageFormatter(culture: CultureInfo.GetCultureInfo("en-US"));
 
         const string Expected = "Single text which will not change.\nSummary:\nAccepted\nData:\n-X\n-Y\n-Z";
 
@@ -76,7 +77,7 @@ public class MessageFormatterIssues
     [Fact]
     public void Issue45_Url_should_not_be_parsed_as_extension()
     {
-        var subject = new MessageFormatter(locale: "en-US");
+        var subject = new MessageFormatter(culture: CultureInfo.GetCultureInfo("en-US"));
 
         IDictionary<string, object> dict = new Dictionary<string, object>
         {

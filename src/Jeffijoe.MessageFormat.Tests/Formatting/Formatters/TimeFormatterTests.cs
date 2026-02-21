@@ -14,7 +14,7 @@ public partial class TimeFormatterTests
     [InlineData("da-DK", "1994-09-06T15:01:23Z", "15.01")]
     public void TimeFormatter_Short(string locale, string dateStr, string expected)
     {
-        var mf = new MessageFormatter(locale: locale);
+        var mf = new MessageFormatter(culture: CultureInfo.GetCultureInfo(locale));
         var actual = mf.FormatMessage("{value, time, short}", new
         {
             value = DateTimeOffset.Parse(dateStr)
@@ -31,7 +31,7 @@ public partial class TimeFormatterTests
     [InlineData("da-DK", "1994-09-06T15:01:23Z", "15.01.23")]
     public void TimeFormatter_Default(string locale, string dateStr, string expected)
     {
-        var mf = new MessageFormatter(locale: locale);
+        var mf = new MessageFormatter(culture: CultureInfo.GetCultureInfo(locale));
         var actual = mf.FormatMessage("{value, time}", new
         {
             value = DateTimeOffset.Parse(dateStr)
@@ -65,7 +65,7 @@ public partial class TimeFormatterTests
                 return true;
             }
         };
-        var mf = new MessageFormatter(locale: "en-US", customValueFormatter: formatter);
+        var mf = new MessageFormatter(culture: CultureInfo.GetCultureInfo("en-US"), customValueFormatter: formatter);
         var actual = mf.FormatMessage("{value, time, long}", new
         {
             value = DateTimeOffset.Parse("1994-09-06T16:20:09Z")

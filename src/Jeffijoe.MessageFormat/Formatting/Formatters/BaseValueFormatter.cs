@@ -37,14 +37,13 @@ public abstract class BaseValueFormatter : BaseFormatter, IFormatter
 
     /// <inheritdoc />
     public string Format(
-        string locale,
+        CultureInfo culture,
         FormatterRequest request,
         IReadOnlyDictionary<string, object?> args,
         object? value,
         IMessageFormatter messageFormatter)
     {
         var formatterArgs = request.FormatterArguments!;
-        var culture = CultureInfo.GetCultureInfo(locale);
         return FormatValue(
             culture: culture,
             customValueFormatter: messageFormatter.CustomValueFormatter,

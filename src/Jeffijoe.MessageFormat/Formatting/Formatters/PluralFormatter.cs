@@ -7,6 +7,7 @@ using Jeffijoe.MessageFormat.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Linq;
 
 namespace Jeffijoe.MessageFormat.Formatting.Formatters;
@@ -96,8 +97,8 @@ public class PluralFormatter : BaseFormatter, IFormatter
     ///     nested formatting. This is only called if <see cref="CanFormat" /> returns true.
     ///     The args will always contain the <see cref="FormatterRequest.Variable" />.
     /// </summary>
-    /// <param name="locale">
-    ///     The locale being used. It is up to the formatter what they do with this information.
+    /// <param name="culture">
+    ///     The culture being used. It is up to the formatter what they do with this information.
     /// </param>
     /// <param name="request">
     ///     The parameters.
@@ -115,7 +116,7 @@ public class PluralFormatter : BaseFormatter, IFormatter
     /// <exception cref="MessageFormatterException">
     ///     If <paramref name="request"/> does not specify a formatter name supported by <see cref="CanFormat(FormatterRequest)"/>.
     /// </exception>
-    public string Format(string locale,
+    public string Format(CultureInfo culture,
         FormatterRequest request,
         IReadOnlyDictionary<string, object?> args,
         object? value,
@@ -148,6 +149,7 @@ public class PluralFormatter : BaseFormatter, IFormatter
             throw new MessageFormatterException($"Unsupported plural formatter name: {request.FormatterName}");
         }
 
+        var locale = culture.Name;
         var ctx = CreatePluralContext(value, offset);
         var pluralized = this.Pluralize(
             locale,
