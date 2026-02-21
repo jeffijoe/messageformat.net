@@ -7,16 +7,18 @@ namespace Jeffijoe.MessageFormat.Tests.Formatting.Formatters;
 
 public class DateFormatterTests
 {
+    private static readonly CultureInfo En = CultureInfo.GetCultureInfo("en");
+
     [Theory]
     [InlineData("en-US", "1994-09-06T15:00:00Z", "9/6/1994")]
     [InlineData("da-DK", "1994-09-06T15:00:00Z", "06.09.1994")]
     public void DateFormatter_Short(string locale, string dateStr, string expected)
     {
-        var mf = new MessageFormatter(culture: CultureInfo.GetCultureInfo(locale));
+        var mf = new MessageFormatter();
         var actual = mf.FormatMessage("{value, date}", new
         {
             value = DateTimeOffset.Parse(dateStr)
-        });
+        }, CultureInfo.GetCultureInfo(locale));
 
         Assert.Equal(expected, actual);
     }
@@ -26,11 +28,11 @@ public class DateFormatterTests
     [InlineData("da-DK", "1994-09-06T15:00:00Z", "tirsdag den 6. september 1994")]
     public void DateFormatter_Full(string locale, string dateStr, string expected)
     {
-        var mf = new MessageFormatter(culture: CultureInfo.GetCultureInfo(locale));
+        var mf = new MessageFormatter();
         var actual = mf.FormatMessage("{value, date, full}", new
         {
             value = DateTimeOffset.Parse(dateStr)
-        });
+        }, CultureInfo.GetCultureInfo(locale));
 
         Assert.Equal(expected, actual);
     }
@@ -45,24 +47,24 @@ public class DateFormatterTests
                 value = DateTimeOffset.UtcNow
             }));
     }
-        
+
     [Fact]
     public void DateFormatter_Custom()
     {
         var formatter = new CustomValueFormatters
         {
-            Date = (CultureInfo culture, object? value, string? _, out string? formatted) =>
+            Date = (culture, value, _, out formatted) =>
             {
                 // This is just a test, you probably shouldn't be doing this in real workloads.
                 formatted = ((FormattableString)$"{value:MMMM d 'in the year' yyyy}").ToString(culture);
                 return true;
             }
         };
-        var mf = new MessageFormatter(culture: CultureInfo.GetCultureInfo("en-US"), customValueFormatter: formatter);
+        var mf = new MessageFormatter(customValueFormatter: formatter);
         var actual = mf.FormatMessage("{value, date, long}", new
         {
             value = DateTimeOffset.Parse("1994-09-06T15:00:00Z")
-        });
+        }, En);
 
         Assert.Equal("September 6 in the year 1994", actual);
     }

@@ -73,7 +73,7 @@ public class SelectFormatter : BaseFormatter, IFormatter
         {
             if (str == keyedBlock.Key)
             {
-                return messageFormatter.FormatMessage(keyedBlock.BlockText, args);
+                return messageFormatter.FormatMessage(keyedBlock.BlockText, args, culture);
             }
 
             if (keyedBlock.Key == OtherKey)
@@ -88,7 +88,7 @@ public class SelectFormatter : BaseFormatter, IFormatter
                 "'other' option not found in pattern, and variable was not present in collection.");
         }
 
-        return messageFormatter.FormatMessage(other.BlockText, args);
+        return messageFormatter.FormatMessage(other.BlockText, args, culture);
     }
 
     #endregion

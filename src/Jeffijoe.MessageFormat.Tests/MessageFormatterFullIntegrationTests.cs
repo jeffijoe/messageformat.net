@@ -1,4 +1,4 @@
-﻿// MessageFormat for .NET
+// MessageFormat for .NET
 // - MessageFormatter_full_integration_tests.cs
 //
 // Author: Jeff Hansen <jeff@jeffijoe.com>
@@ -7,7 +7,6 @@
 using System.Collections.Generic;
 using System.Globalization;
 using Jeffijoe.MessageFormat.Formatting;
-using Jeffijoe.MessageFormat.Formatting.Formatters;
 using Jeffijoe.MessageFormat.Tests.TestHelpers;
 using Xunit;
 using Xunit.Abstractions;
@@ -20,6 +19,10 @@ namespace Jeffijoe.MessageFormat.Tests;
 public class MessageFormatterFullIntegrationTests
 {
     #region Fields
+
+    private static readonly CultureInfo En = CultureInfo.GetCultureInfo("en");
+    private static readonly CultureInfo EnUs = CultureInfo.GetCultureInfo("en-US");
+    private static readonly CultureInfo DaDk = CultureInfo.GetCultureInfo("da-DK");
 
     /// <summary>
     /// The output helper.
@@ -143,32 +146,32 @@ public class MessageFormatterFullIntegrationTests
     {
         get
         {
-            const string Case1 = @"{gender, select, 
+            const string Case1 = @"{gender, select,
                            male {He - '{'{name}'}' -}
                            female {She - '{'{name}'}' -}
                            other {They}
                       } said: You're pretty cool!";
-            const string Case2 = @"{gender, select, 
+            const string Case2 = @"{gender, select,
                            male {He - '{'{name}'}' -}
                            female {She - '{'{name}'}' -}
                            other {They}
-                      } said: You have {count, plural, 
+                      } said: You have {count, plural,
                             zero {no notifications}
                             one {just one notification}
                             =42 {a universal amount of notifications}
                             other {# notifications}
                       }. Have a nice day!";
-            const string Case3 = @"You have {count, plural, 
+            const string Case3 = @"You have {count, plural,
                             zero {no notifications}
                             one {just one notification}
                             =42 {a universal amount of notifications}
                             other {# notifications}
                       }. Have a nice day!";
-            const string Case4 = @"{gender, select, 
+            const string Case4 = @"{gender, select,
                            male {He}
                            female {She}
                            other {They}
-                      } said: You have {count, plural, 
+                      } said: You have {count, plural,
                             zero {no notifications}
                             one {just one notification}
                             =42 {a universal amount of notifications}
@@ -176,21 +179,21 @@ public class MessageFormatterFullIntegrationTests
                       }. Have a nice day!";
 
             // Please take the following sample in the spirit it was intended. :)
-            const string Case5 = @"{gender, select, 
-                           male {He (who has {genitals, plural, 
+            const string Case5 = @"{gender, select,
+                           male {He (who has {genitals, plural,
                                     zero {no testicles}
                                     one {just one testicle}
                                     =2 {a normal amount of testicles}
                                     other {the insane amount of # testicles}
                                 })}
-                           female {She (who has {genitals, plural, 
+                           female {She (who has {genitals, plural,
                                     zero {no boobies}
                                     one {just one boob}
                                     =2 {a pair of lovelies}
                                     other {the freakish amount of # boobies}
                                 })}
                            other {They}
-                      } said: You have {count, plural, 
+                      } said: You have {count, plural,
                             zero {no notifications}
                             one {just one notification}
                             =42 {a universal amount of notifications}
@@ -402,30 +405,22 @@ public class MessageFormatterFullIntegrationTests
     [MemberData(nameof(Tests))]
     public void FormatMessage(string source, Dictionary<string, object?> args, string expected)
     {
-        var subject = new MessageFormatter(useCache: false, culture: CultureInfo.GetCultureInfo("en"));
+        var subject = new MessageFormatter(useCache: false);
 
         // Historically these tests relied on a default English pluralizer that mapped
         // 0 to "zero"; adding that back in manually to ensure we maintain test coverage
         // for multiple forms.
-        subject.CardinalPluralizers!.Add("en", (number) =>
+        subject.CardinalPluralizers!.Add("en", number => number switch
         {
-            if (number == 0)
-            {
-                return "zero";
-            } else if (number == 1)
-            {
-                return "one";
-            }
-            else
-            {
-                return "other";
-            }
+            0 => "zero",
+            1 => "one",
+            _ => "other"
         });
 
         // Warmup
-        subject.FormatMessage(source, args);
+        subject.FormatMessage(source, args, En);
         Benchmark.Start("Formatting", this.outputHelper);
-        string result = subject.FormatMessage(source, args);
+        string result = subject.FormatMessage(source, args, En);
         Benchmark.End(this.outputHelper);
         Assert.Equal(expected, result);
         this.outputHelper.WriteLine(result);
@@ -450,11 +445,11 @@ public class MessageFormatterFullIntegrationTests
     [Fact]
     public void FormatMessage_debug()
     {
-        const string Source = @"{gender, select, 
+        const string Source = @"{gender, select,
                            male {He}
                            female {She}
                            other {They}
-                      } said: You have {count, plural, 
+                      } said: You have {count, plural,
                             zero {no notifications}
                             one {just one notification}
                             =42 {a universal amount of notifications}
@@ -487,8 +482,8 @@ public class MessageFormatterFullIntegrationTests
     public void FormatMessage_nesting_with_brace_escaping()
     {
         var subject = new MessageFormatter(false);
-        const string Pattern = @"{s1, select, 
-                                1 {{s2, select, 
+        const string Pattern = @"{s1, select,
+                                1 {{s2, select,
                                    2 {'{'}
                                 }}
                             }";
@@ -503,7 +498,7 @@ public class MessageFormatterFullIntegrationTests
     [Fact]
     public void FormatMessage_with_reflection_overload()
     {
-        var subject = new MessageFormatter(false);
+        var subject = new MessageFormatter(false, culture: EnUs);
         const string Pattern = "You have {UnreadCount, plural, "
                                + "=0 {no unread messages}"
                                + "one {just one unread message}" + "other {# unread messages}" + "} today.";
@@ -526,7 +521,7 @@ public class MessageFormatterFullIntegrationTests
     /// <summary>
     /// The read me_test_to_make_sure_ i_dont_look_like_a_fool.
     /// </summary>
-    [Fact]
+    [Fact, UseCulture("en")]
     public void ReadMe_test_to_make_sure_I_dont_look_like_a_fool()
     {
         {
@@ -546,7 +541,7 @@ public class MessageFormatterFullIntegrationTests
         {
             var mf = new MessageFormatter(false);
             const string Str = @"You {NUM_ADDS, plural, offset:1
-                              =0{didnt add this to your profile} 
+                              =0{didnt add this to your profile}
                               =1{added this to your profile}
                               one{and one other person added this to their profile}
                               other{and # others added this to their profiles}
@@ -654,7 +649,7 @@ public class MessageFormatterFullIntegrationTests
         }
 
         {
-            var mf = new MessageFormatter(useCache: true, culture: CultureInfo.GetCultureInfo("en"));
+            var mf = new MessageFormatter(useCache: true);
             mf.CardinalPluralizers!["en"] = n =>
             {
                 // ´n´ is the number being pluralized.
@@ -681,9 +676,50 @@ public class MessageFormatterFullIntegrationTests
             var actual =
                 mf.FormatMessage(
                     "You have {number, plural, thatsalot {a shitload of notifications} other {# notifications}}",
-                    new Dictionary<string, object?> { { "number", 1001 } });
+                    new Dictionary<string, object?> { { "number", 1001 } },
+                    En);
             Assert.Equal("You have a shitload of notifications", actual);
         }
+    }
+
+    [Fact]
+    public void FormatMessage_uses_constructor_culture_as_default()
+    {
+        var mf = new MessageFormatter(culture: DaDk);
+
+        // Should use da-DK formatting without specifying culture on FormatMessage.
+        var result = mf.FormatMessage("{value, number}", new Dictionary<string, object?> { { "value", 1234.5m } });
+        Assert.Equal("1.234,5", result);
+    }
+
+    [Fact]
+    public void FormatMessage_with_culture_override()
+    {
+        var mf = new MessageFormatter(culture: EnUs);
+
+        // Without override, uses the constructor culture (en-US).
+        var resultUs = mf.FormatMessage("{value, number}", new Dictionary<string, object?> { { "value", 1234.5m } });
+        Assert.Equal("1,234.5", resultUs);
+
+        // With override, uses da-DK formatting (period as thousands separator, comma as decimal).
+        var resultDk = mf.FormatMessage(
+            "{value, number}",
+            new Dictionary<string, object?> { { "value", 1234.5m } },
+            DaDk);
+        Assert.Equal("1.234,5", resultDk);
+    }
+
+    [Fact]
+    public void FormatMessage_culture_override_propagates_to_nested_formatting()
+    {
+        var mf = new MessageFormatter();
+
+        // The culture override should propagate through nested formatting (e.g. select -> number).
+        var result = mf.FormatMessage(
+            "{gender, select, male {He earned {amount, number}} other {They earned {amount, number}}}",
+            new Dictionary<string, object?> { { "gender", "male" }, { "amount", 1234.5m } },
+            DaDk);
+        Assert.Equal("He earned 1.234,5", result);
     }
 
     #endregion

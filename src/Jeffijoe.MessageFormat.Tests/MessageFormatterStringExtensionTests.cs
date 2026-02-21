@@ -4,6 +4,7 @@
 // Author: Jeff Hansen <jeff@jeffijoe.com>
 // Copyright (C) Jeff Hansen 2015. All rights reserved.
 
+using System.Globalization;
 using System.Threading.Tasks;
 
 using Xunit;
@@ -26,12 +27,14 @@ public class MessageFormatterStringExtensionTests
     [Fact]
     public async Task FormatMessage_with_multiple_tasks()
     {
-        var pattern = "Copying {fileCount, plural, one {one file} other{# files}}.";
+        const string Pattern = "Copying {fileCount, plural, one {one file} other{# files}}.";
+        
+        var en = CultureInfo.GetCultureInfo("en");
 
         // 2 with the same message to test there are no issues with caching with multiple threads.
-        var t1 = Task.Run(() => MessageFormatter.Format(pattern, new { fileCount = 1 }));
-        var t2 = Task.Run(() => MessageFormatter.Format(pattern, new { fileCount = 1 }));
-        var t3 = Task.Run(() => MessageFormatter.Format(pattern, new { fileCount = 5 }));
+        var t1 = Task.Run(() => MessageFormatter.Format(Pattern, new { fileCount = 1 }, en));
+        var t2 = Task.Run(() => MessageFormatter.Format(Pattern, new { fileCount = 1 }, en));
+        var t3 = Task.Run(() => MessageFormatter.Format(Pattern, new { fileCount = 5 }, en));
         await Task.WhenAll(t1, t2, t3);
 
         Assert.Equal("Copying one file.", t1.Result);

@@ -6,6 +6,8 @@ namespace Jeffijoe.MessageFormat.Tests.Formatting.Formatters;
 
 public class NumberFormatterTests
 {
+    private static readonly CultureInfo En = CultureInfo.GetCultureInfo("en");
+
     [Theory]
     [InlineData(69, "69")]
     [InlineData(69.420, "69.42")]
@@ -13,12 +15,12 @@ public class NumberFormatterTests
     [InlineData(1234567.1234567, "1,234,567.123")]
     public void NumberFormatter_Default(decimal number, string expected)
     {
-        var mf = new MessageFormatter(culture: CultureInfo.GetCultureInfo("en-US"));
+        var mf = new MessageFormatter();
         // NOTE: The whitespace at the end is on purpose to cover whitespace tolerance in parsing.
         var actual = mf.FormatMessage("{value, number }", new
         {
             value = number
-        });
+        }, En);
 
         Assert.Equal(expected, actual);
     }
@@ -30,18 +32,18 @@ public class NumberFormatterTests
     {
         var formatters = new CustomValueFormatters
         {
-            Number = (CultureInfo culture, object? value, string? style, out string? formatted) =>
+            Number = (culture, value, style, out formatted) =>
             {
                 formatted = string.Format(culture, $"{{0:{style}}}", value);
                 return true;
             }
         };
-        var mf = new MessageFormatter(culture: CultureInfo.GetCultureInfo("en-US"), customValueFormatter: formatters);
+        var mf = new MessageFormatter(customValueFormatter: formatters);
 
         var actual = mf.FormatMessage("{value, number, 0.0000}", new
         {
             value = number
-        });
+        }, En);
 
         Assert.Equal(expected, actual);
     }
@@ -52,13 +54,13 @@ public class NumberFormatterTests
     [InlineData(1234567.1234567, "123,456,712%")]
     public void NumberFormatter_Percent(decimal number, string expected)
     {
-        var mf = new MessageFormatter(culture: CultureInfo.GetCultureInfo("en-US"));
-            
+        var mf = new MessageFormatter();
+
         // NOTE: The inconsistent whitespace in the pattern is to cover whitespace tolerance in parsing.
         var actual = mf.FormatMessage("{value, number,percent}", new
         {
             value = number
-        });
+        }, En);
 
         Assert.Equal(expected, actual);
     }
@@ -72,11 +74,11 @@ public class NumberFormatterTests
     [InlineData(true, "True")]
     public void NumberFormatter_Integer(object? value, string expected)
     {
-        var mf = new MessageFormatter(culture: CultureInfo.GetCultureInfo("en-US"));
+        var mf = new MessageFormatter();
         var actual = mf.FormatMessage("{value, number, integer}", new
         {
             value
-        });
+        }, En);
 
         Assert.Equal(expected, actual);
     }
@@ -87,13 +89,13 @@ public class NumberFormatterTests
     [InlineData("da-DK", 99.99, "99,99 kr.")]
     public void NumberFormatter_Currency(string locale, decimal number, string expected)
     {
-        var mf = new MessageFormatter(culture: CultureInfo.GetCultureInfo(locale));
+        var mf = new MessageFormatter();
 
         // NOTE: The inconsistent whitespace in the pattern is to cover whitespace tolerance in parsing.
         var actual = mf.FormatMessage("{value, number, currency }", new
         {
             value = number
-        });
+        }, CultureInfo.GetCultureInfo(locale));
 
         Assert.Equal(expected, actual);
     }
@@ -102,13 +104,13 @@ public class NumberFormatterTests
     public void NumberFormatter_ThrowsIfStyleIsNotSupported()
     {
         const decimal Number = 12.34m;
-        var mf = new MessageFormatter(culture: CultureInfo.GetCultureInfo("en-US"));
+        var mf = new MessageFormatter();
         var ex = Assert.Throws<UnsupportedFormatStyleException>(() =>
             mf.FormatMessage($"{{value, number, wow}}",
                 new
                 {
                     value = Number
-                }));
+                }, En));
         Assert.Equal("value", ex.Variable);
         Assert.Equal("number", ex.Format);
         Assert.Equal("wow", ex.Style);
@@ -117,13 +119,13 @@ public class NumberFormatterTests
     [Fact]
     public void NumberFormatter_BadInput_FallsBackToRegularFormat()
     {
-        var mf = new MessageFormatter(culture: CultureInfo.GetCultureInfo("en-US"));
+        var mf = new MessageFormatter();
 
         {
             var actual = mf.FormatMessage($"{{value, number, currency}}", new
             {
                 value = "a lot of money"
-            });
+            }, En);
 
             Assert.Equal("a lot of money", actual);
         }
@@ -132,7 +134,7 @@ public class NumberFormatterTests
             var actual = mf.FormatMessage($"{{value, number, integer}}", new
             {
                 value = "a lot of money"
-            });
+            }, En);
 
             Assert.Equal("a lot of money", actual);
         }
@@ -141,7 +143,7 @@ public class NumberFormatterTests
             var actual = mf.FormatMessage($"{{value, number, integer}}", new
             {
                 value = true
-            });
+            }, En);
 
             Assert.Equal("True", actual);
         }

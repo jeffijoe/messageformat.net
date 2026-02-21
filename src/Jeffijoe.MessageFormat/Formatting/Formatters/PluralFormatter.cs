@@ -159,7 +159,7 @@ public class PluralFormatter : BaseFormatter, IFormatter
             ctx,
             offset);
         var result = this.ReplaceNumberLiterals(pluralized, ctx.Number);
-        var formatted = messageFormatter.FormatMessage(result, args);
+        var formatted = messageFormatter.FormatMessage(result, args, culture);
         return formatted;
     }
 

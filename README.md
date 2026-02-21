@@ -127,10 +127,11 @@ var custom = new CustomValueFormatters
 };
 
 // Create a MessageFormatter with the custom value formatter.
-var formatter = new MessageFormatter(culture: CultureInfo.GetCultureInfo("en-US"), customValueFormatter: custom);
+var formatter = new MessageFormatter(customValueFormatter: custom);
 
-// Format a message.
-var message = formatter.FormatMessage("{value, number, $0.0}", new { value = 23 });
+// Format a message, passing the culture to FormatMessage.
+var message = formatter.FormatMessage("{value, number, $0.0}", new { value = 23 },
+    CultureInfo.GetCultureInfo("en-US"));
 // "$23.0"
 ```
 
@@ -158,11 +159,11 @@ mf.CardinalPluralizers.Add("<locale>", n => {
 });
 ````
 
-There's no restrictions on what strings you may return, nor what strings
+There are no restrictions on what strings you may return, nor what strings
 you may use in your pluralization block.
 
 ````csharp
-var mf = new MessageFormatter(true, CultureInfo.GetCultureInfo("en")); // true = use cache
+var mf = new MessageFormatter(); // uses cache by default
 mf.CardinalPluralizers["en"] = n =>
 {
     // ´n´ is the number being pluralized.
@@ -175,7 +176,7 @@ mf.CardinalPluralizers["en"] = n =>
 
 mf.FormatMessage("You have {number, plural, thatsalot {a shitload of notifications} other {# notifications}}", new Dictionary<string, object>{
   {"number", 1001}
-});
+}, CultureInfo.GetCultureInfo("en"));
 ````
 
 ## Escaping literals

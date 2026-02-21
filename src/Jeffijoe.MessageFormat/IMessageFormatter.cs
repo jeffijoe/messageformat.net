@@ -4,6 +4,7 @@
 // Copyright (C) Jeff Hansen 2014. All rights reserved.
 
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace Jeffijoe.MessageFormat;
 
@@ -32,10 +33,13 @@ public interface IMessageFormatter
     /// <param name="argsMap">
     ///     The arguments.
     /// </param>
+    /// <param name="culture">
+    ///     The culture to use, or <c>null</c> to use <see cref="CultureInfo.CurrentCulture"/>.
+    /// </param>
     /// <returns>
     ///     The <see cref="string" />.
     /// </returns>
-    string FormatMessage(string pattern, IReadOnlyDictionary<string, object?> argsMap);
+    string FormatMessage(string pattern, IReadOnlyDictionary<string, object?> argsMap, CultureInfo? culture = null);
 
     #endregion
 }
