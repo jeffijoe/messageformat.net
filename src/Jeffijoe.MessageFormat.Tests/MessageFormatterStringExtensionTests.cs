@@ -37,9 +37,9 @@ public class MessageFormatterStringExtensionTests
         var t3 = Task.Run(() => MessageFormatter.Format(Pattern, new { fileCount = 5 }, en));
         await Task.WhenAll(t1, t2, t3);
 
-        Assert.Equal("Copying one file.", t1.Result);
-        Assert.Equal("Copying one file.", t2.Result);
-        Assert.Equal("Copying 5 files.", t3.Result);
+        Assert.Equal("Copying one file.", await t1);
+        Assert.Equal("Copying one file.", await t2);
+        Assert.Equal("Copying 5 files.", await t3);
     }
 
     #endregion

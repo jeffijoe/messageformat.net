@@ -33,7 +33,6 @@ public class PluralRulesMetadataGenerator
         // Export a constant for the normalized root locale to match the logic we're using internally.
         // This way the rest of the lib's locale chaining can continue to work if we swap out
         // normalization internally.
-        var rootRules = _rules.RuleIndicesByLocale[PluralRuleSet.RootLocale];
         WriteLine($"public static readonly string RootLocale = \"{PluralRuleSet.RootLocale}\";");
 
         // Generate a method for each unique rule, by index, that chooses the plural form
