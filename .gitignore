@@ -29,3 +29,4 @@ imagecache
 /src/.vs
 src/.idea/.idea.MessageFormat/.idea/workspace.xml
 .DS_Store
+BenchmarkDotNet.Artifacts/
