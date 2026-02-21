@@ -35,8 +35,5 @@
     <ProjectReference Include="../Jeffijoe.MessageFormat.MetadataGenerator/Jeffijoe.MessageFormat.MetadataGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
   </ItemGroup>
 
-  <ItemGroup>
-    <CompilerVisibleProperty Include="PluralLanguagesMetadataExcludeLocales" />
-  </ItemGroup>
 
 </Project>
