@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace Jeffijoe.MessageFormat.Tests.TestHelpers;
 
@@ -9,7 +10,7 @@ internal class FakeMessageFormatter : IMessageFormatter
 {
     public CustomValueFormatter? CustomValueFormatter { get; set; }
 
-    public string FormatMessage(string pattern, IReadOnlyDictionary<string, object?> argsMap) => pattern;
+    public string FormatMessage(string pattern, IReadOnlyDictionary<string, object?> argsMap, CultureInfo? culture = null) => pattern;
 
     public string FormatMessage(string pattern, object args) => pattern;
 }

@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -64,19 +65,20 @@ public class MessageFormatter : IMessageFormatter
     /// <param name="useCache">
     ///     The use Cache.
     /// </param>
-    /// <param name="locale">
-    ///     The locale.
+    /// <param name="culture">
+    ///     The default culture to use, or <c>null</c> to use <see cref="CultureInfo.CurrentCulture"/>.
     /// </param>
     /// <param name="customValueFormatter">
     ///     The custom value formatter to use. Can be <c>null</c>.
     /// </param>
-    public MessageFormatter(bool useCache = true, string locale = "en",
+    public MessageFormatter(bool useCache = true,
+        CultureInfo? culture = null,
         CustomValueFormatter? customValueFormatter = null)
         : this(
             patternParser: new PatternParser(new LiteralParser()),
             library: new FormatterLibrary(),
             useCache: useCache,
-            locale: locale,
+            culture: culture,
             customValueFormatter: customValueFormatter)
     {
     }
@@ -93,8 +95,8 @@ public class MessageFormatter : IMessageFormatter
     /// <param name="useCache">
     ///     if set to <c>true</c> uses the cache.
     /// </param>
-    /// <param name="locale">
-    ///     The locale to use. Formatters may need this.
+    /// <param name="culture">
+    ///     The default culture to use, or <c>null</c> to use <see cref="CultureInfo.CurrentCulture"/>.
     /// </param>
     /// <param name="customValueFormatter">
     ///     The custom value formatter to use. Can be <c>null</c>.
@@ -103,13 +105,13 @@ public class MessageFormatter : IMessageFormatter
         IPatternParser patternParser,
         IFormatterLibrary library,
         bool useCache,
-        string locale = "en",
+        CultureInfo? culture = null,
         CustomValueFormatter? customValueFormatter = null)
     {
         this.patternParser = patternParser ?? throw new ArgumentNullException("patternParser");
         this.library = library ?? throw new ArgumentNullException("library");
+        this.Culture = culture;
         this.CustomValueFormatter = customValueFormatter;
-        this.Locale = locale;
         if (useCache)
         {
             this.cache = new ConcurrentDictionary<string, IFormatterRequestCollection>();
@@ -119,6 +121,11 @@ public class MessageFormatter : IMessageFormatter
     #endregion
 
     #region Public Properties
+
+    /// <summary>
+    ///     The default culture to use for formatting, or <c>null</c> to use <see cref="CultureInfo.CurrentCulture"/>.
+    /// </summary>
+    public CultureInfo? Culture { get; }
 
     /// <summary>
     ///     The custom value formatter to use for formats like `number`, `date`, `time` etc.
@@ -135,14 +142,6 @@ public class MessageFormatter : IMessageFormatter
     {
         get { return this.library; }
     }
-
-    /// <summary>
-    ///     Gets or sets the locale.
-    /// </summary>
-    /// <value>
-    ///     The locale.
-    /// </value>
-    public string Locale { get; set; }
 
     /// <summary>
     ///     Gets the custom cardinal pluralizers dictionary from the <see cref="PluralFormatter" />, if set. Key is the locale.
@@ -192,7 +191,7 @@ public class MessageFormatter : IMessageFormatter
     ///     Formats the specified pattern with the specified data.
     /// </summary>
     /// <remarks>
-    ///     This method calls <see cref="Format(string, IReadOnlyDictionary{string, object})"/>
+    ///     This method calls <see cref="FormatMessage(string, IReadOnlyDictionary{string, object}, CultureInfo)"/>
     ///     on a singleton instance using a lock.
     ///     Do not use in a tight loop, as a lock is being used to ensure thread safety.
     /// </remarks>
@@ -202,14 +201,17 @@ public class MessageFormatter : IMessageFormatter
     /// <param name="data">
     ///     The data.
     /// </param>
+    /// <param name="culture">
+    ///     The culture to use, or <c>null</c> to use <see cref="CultureInfo.CurrentCulture"/>.
+    /// </param>
     /// <returns>
     ///     The formatted message.
     /// </returns>
-    public static string Format(string pattern, IReadOnlyDictionary<string, object?> data)
+    public static string Format(string pattern, IReadOnlyDictionary<string, object?> data, CultureInfo? culture = null)
     {
         lock (Lock)
         {
-            return Instance.FormatMessage(pattern, data);
+            return Instance.FormatMessage(pattern, data, culture);
         }
     }
 
@@ -217,7 +219,7 @@ public class MessageFormatter : IMessageFormatter
     ///     Formats the specified pattern with the specified data.
     /// </summary>
     /// This method calls
-    /// <see cref="MessageFormatterExtensions.FormatMessage(Jeffijoe.MessageFormat.IMessageFormatter,string,object)" />
+    /// <see cref="MessageFormatterExtensions.FormatMessage(IMessageFormatter,string,object,CultureInfo)" />
     /// on a singleton instance using a lock.
     /// Do not use in a tight loop, as a lock is being used to ensure thread safety.
     /// <param name="pattern">
@@ -226,16 +228,19 @@ public class MessageFormatter : IMessageFormatter
     /// <param name="data">
     ///     The data.
     /// </param>
+    /// <param name="culture">
+    ///     The culture to use, or <c>null</c> to use <see cref="CultureInfo.CurrentCulture"/>.
+    /// </param>
     /// <returns>
     ///     The formatted message.
     /// </returns>
     [OverloadResolutionPriority(-1)]
     [RequiresUnreferencedCode("This method uses the FormatMessage extension which uses reflection to convert object into dictionary")]
-    public static string Format(string pattern, object data)
+    public static string Format(string pattern, object data, CultureInfo? culture = null)
     {
         lock (Lock)
         {
-            return Instance.FormatMessage(pattern, data);
+            return Instance.FormatMessage(pattern, data, culture);
         }
     }
 
@@ -248,15 +253,19 @@ public class MessageFormatter : IMessageFormatter
     /// <param name="args">
     ///     The arguments.
     /// </param>
+    /// <param name="culture">
+    ///     The culture to use, or <c>null</c> to use <see cref="CultureInfo.CurrentCulture"/>.
+    /// </param>
     /// <returns>
     ///     The <see cref="string" />.
     /// </returns>
-    public string FormatMessage(string pattern, IReadOnlyDictionary<string, object?> args)
+    public string FormatMessage(string pattern, IReadOnlyDictionary<string, object?> args, CultureInfo? culture = null)
     {
         /*
          * We are assuming the formatters are ordered correctly
          * - that is, from left to right, string-wise.
          */
+        var activeCulture = culture ?? this.Culture ?? CultureInfo.CurrentCulture;
         var sourceBuilder = StringBuilderPool.Get();
 
         try
@@ -276,7 +285,7 @@ public class MessageFormatter : IMessageFormatter
                 }
 
                 // Double dispatch, yeah!
-                var result = formatter.Format(this.Locale, request, args, value, this);
+                var result = formatter.Format(activeCulture, request, args, value, this);
 
                 // First, we remove the literal from the source.
                 var sourceLiteral = request.SourceLiteral;

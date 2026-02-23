@@ -2,7 +2,6 @@
 using Jeffijoe.MessageFormat.MetadataGenerator.Plural.Parsing.AST;
 
 using System;
-using System.Collections.Generic;
 using System.Xml;
 
 using Xunit;

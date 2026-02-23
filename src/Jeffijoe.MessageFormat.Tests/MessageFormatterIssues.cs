@@ -1,10 +1,11 @@
-﻿// MessageFormat for .NET
+// MessageFormat for .NET
 // - MessageFormatter_full_integration_tests.cs
-// 
+//
 // Author: Jeff Hansen <jeff@jeffijoe.com>
 // Copyright (C) Jeff Hansen 2015. All rights reserved.
 
 using System.Collections.Generic;
+using System.Globalization;
 using Xunit;
 
 namespace Jeffijoe.MessageFormat.Tests;
@@ -14,6 +15,8 @@ namespace Jeffijoe.MessageFormat.Tests;
 /// </summary>
 public class MessageFormatterIssues
 {
+    private static readonly CultureInfo En = CultureInfo.GetCultureInfo("en");
+
     [Fact]
     public void Issue13_Bad_escaping_on_pound_symbol()
     {
@@ -41,7 +44,7 @@ public class MessageFormatterIssues
     [Fact]
     public void Issue31_IDictionary_interface_support()
     {
-        var subject = new MessageFormatter(locale: "en-US");
+        var subject = new MessageFormatter();
 
         IDictionary<string, object> idict = new Dictionary<string, object>
         {
@@ -53,14 +56,14 @@ public class MessageFormatterIssues
             ["string"] = "value"
         };
 
-        Assert.Equal("value", subject.FormatMessage("{string}", idict));
-        Assert.Equal("value", subject.FormatMessage("{string}", idictNullable!));
+        Assert.Equal("value", subject.FormatMessage("{string}", idict, En));
+        Assert.Equal("value", subject.FormatMessage("{string}", idictNullable!, En));
     }
 
     [Fact]
     public void Issue34_Newlines_are_stripped()
     {
-        var subject = new MessageFormatter(locale: "en-US");
+        var subject = new MessageFormatter();
 
         const string Expected = "Single text which will not change.\nSummary:\nAccepted\nData:\n-X\n-Y\n-Z";
 
@@ -69,14 +72,14 @@ public class MessageFormatterIssues
             new
             {
                 acceptedData = "\n-X\n-Y\n-Z"
-            });
+            }, En);
         Assert.Equal(Expected, result);
     }
 
     [Fact]
     public void Issue45_Url_should_not_be_parsed_as_extension()
     {
-        var subject = new MessageFormatter(locale: "en-US");
+        var subject = new MessageFormatter();
 
         IDictionary<string, object> dict = new Dictionary<string, object>
         {
@@ -85,7 +88,7 @@ public class MessageFormatterIssues
 
         var result = subject.FormatMessage(
             "{cond, select, foo{https://www.google.com/} other{https://www.bing.com/}}",
-            dict);
+            dict, En);
         Assert.Equal("https://www.google.com/", result);
     }
 }

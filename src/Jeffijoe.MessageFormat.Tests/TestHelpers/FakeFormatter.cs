@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Globalization;
 using Jeffijoe.MessageFormat.Formatting;
 
 namespace Jeffijoe.MessageFormat.Tests.TestHelpers;
@@ -43,7 +44,7 @@ internal class FakeFormatter : IFormatter
 
     /// <inheritdoc />
     public string Format(
-        string locale,
+        CultureInfo culture,
         FormatterRequest request,
         IReadOnlyDictionary<string, object?> args,
         object? value,
