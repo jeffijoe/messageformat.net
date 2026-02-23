@@ -1,25 +1,28 @@
-﻿using System.Text;
-using Microsoft.Extensions.ObjectPool;
+using System.Text;
 
 namespace Jeffijoe.MessageFormat;
 
 internal static class StringBuilderPool
 {
-    private static readonly ObjectPool<StringBuilder> SbPool;
+    private const int MaxBuilderCapacity = 4096;
 
-    static StringBuilderPool()
-    {
-        var shared = new DefaultObjectPoolProvider();
-        SbPool = shared.CreateStringBuilderPool();
-    }
+    private static readonly ObjectPool<StringBuilder> SbPool = new(static () => new StringBuilder());
 
     public static StringBuilder Get()
     {
-        return SbPool.Get();
+        return SbPool.Allocate();
     }
 
     public static void Return(StringBuilder sb)
     {
-        SbPool.Return(sb);
+        // If the builder grew too large, just let it go
+        // rather than returning it so it can get garbage-collected.
+        if (sb.Capacity > MaxBuilderCapacity)
+        {
+            return;
+        }
+
+        sb.Clear();
+        SbPool.Free(sb);
     }
 }
